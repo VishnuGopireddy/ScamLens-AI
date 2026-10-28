@@ -1,0 +1,324 @@
+"""Universal OpenAI-Compatible Client for Groq, Ollama, vLLM, OpenAI, and Gemini.
+
+Provides a unified tool calling interface:
+- Groq: https://api.groq.com/openai/v1
+- Ollama: http://localhost:11434/v1
+- vLLM: http://localhost:8000/v1
+- Gemini (OpenAI endpoint): https://generativelanguage.googleapis.com/v1beta/openai
+- OpenAI: https://api.openai.com/v1
+"""
+
+from __future__ import annotations
+
+import base64
+import json
+import mimetypes
+import os
+import urllib.error
+import urllib.request
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+from scamlens.ai.base import BaseLLMClient
+from scamlens.ai.tools import SCAMLENS_TOOLS, ToolDispatcher
+from scamlens.core.config import get_settings
+from scamlens.core.exceptions import ModelInferenceError
+
+DEFAULT_PRESET_ENDPOINTS = {
+    "groq": "https://api.groq.com/openai/v1",
+    "openai": "https://api.openai.com/v1",
+    "ollama": "http://localhost:11434/v1",
+    "vllm": "http://localhost:8000/v1",
+    "gemini": "https://generativelanguage.googleapis.com/v1beta/openai",
+}
+
+
+class OpenAICompatibleClient(BaseLLMClient):
+    """Universal client supporting the standard OpenAI Chat Completions & Tool Calling API."""
+
+    def __init__(
+        self,
+        base_url: Optional[str] = None,
+        api_key: Optional[str] = None,
+        model: Optional[str] = None,
+        vision_model: Optional[str] = None,
+        provider: str = "groq",
+    ):
+        settings = get_settings()
+        self.provider = provider.lower()
+        default_url = DEFAULT_PRESET_ENDPOINTS.get(self.provider, DEFAULT_PRESET_ENDPOINTS["groq"])
+        self.base_url = (base_url or default_url).rstrip("/")
+
+        # API key resolution
+        if api_key is not None:
+            self.api_key = api_key
+        elif self.provider == "groq":
+            self.api_key = settings.groq_api_key or os.getenv("GROQ_API_KEY", "")
+        elif self.provider == "gemini":
+            self.api_key = settings.gemini_api_key or os.getenv("GEMINI_API_KEY", "")
+        elif self.provider == "openai":
+            self.api_key = settings.openai_api_key or os.getenv("OPENAI_API_KEY", "")
+        elif self.provider in ("ollama", "vllm"):
+            self.api_key = os.getenv("OPENAI_API_KEY", "local-token")
+        else:
+            self.api_key = os.getenv("AI_API_KEY", "")
+
+        # Model resolution
+        if model:
+            self.model = model
+        elif self.provider == "groq":
+            self.model = settings.groq_model or "llama-3.3-70b-versatile"
+        elif self.provider == "gemini":
+            self.model = settings.gemini_model or "gemini-1.5-flash"
+        elif self.provider == "openai":
+            self.model = settings.openai_model or "gpt-4o-mini"
+        elif self.provider == "ollama":
+            self.model = "llama3.1:latest"
+        elif self.provider == "vllm":
+            self.model = "default"
+        else:
+            self.model = "llama-3.3-70b-versatile"
+
+        # Vision model resolution
+        if vision_model:
+            self.vision_model = vision_model
+        elif self.provider == "groq":
+            self.vision_model = settings.groq_vision_model or "llama-3.2-11b-vision-preview"
+        elif self.provider == "gemini":
+            self.vision_model = "gemini-1.5-flash"
+        elif self.provider == "openai":
+            self.vision_model = "gpt-4o-mini"
+        else:
+            self.vision_model = "llama-3.2-11b-vision-preview"
+
+    def _call_chat_completions(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Perform POST request to /chat/completions endpoint."""
+        endpoint = f"{self.base_url}/chat/completions"
+
+        # Safe offline mock fallback when testing or developing without key
+        if not self.api_key and self.provider not in ("ollama", "vllm"):
+            return {
+                "choices": [{
+                    "message": {
+                        "content": (
+                            f"[Simulated {self.provider.upper()} Output] Model: {self.model}. "
+                            f"Configure {self.provider.upper()}_API_KEY for live inference."
+                        ),
+                        "tool_calls": None,
+                    }
+                }]
+            }
+
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "ScamLens-AI/0.1.0",
+        }
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
+
+        req_data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(endpoint, data=req_data, headers=headers, method="POST")
+
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                resp_bytes = resp.read()
+                return json.loads(resp_bytes.decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            err_body = exc.read().decode("utf-8", errors="replace")
+            raise ModelInferenceError(
+                f"{self.provider.upper()} API HTTP error {exc.code} at {endpoint}: {err_body}"
+            ) from exc
+        except Exception as exc:
+            raise ModelInferenceError(
+                f"Failed to communicate with {self.provider.upper()} API at {endpoint}: {exc}"
+            ) from exc
+
+    def chat_completion(
+        self,
+        messages: List[Dict[str, Any]],
+        tools: Optional[List[Dict[str, Any]]] = None,
+        tool_choice: str = "auto",
+        temperature: float = 0.2,
+        model: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Standard OpenAI chat completion call with tool definitions."""
+        payload: Dict[str, Any] = {
+            "model": model or self.model,
+            "messages": messages,
+            "temperature": temperature,
+        }
+        if tools:
+            payload["tools"] = tools
+            payload["tool_choice"] = tool_choice
+
+        return self._call_chat_completions(payload)
+
+    def generate_text(
+        self,
+        prompt: str,
+        system_prompt: Optional[str] = None,
+        temperature: float = 0.2,
+    ) -> str:
+        """Simple text generation using the OpenAI format."""
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+
+        response = self.chat_completion(messages=messages, temperature=temperature)
+        choices = response.get("choices", [])
+        if not choices:
+            raise ModelInferenceError("Empty response choices received.")
+        return choices[0].get("message", {}).get("content", "")
+
+    def generate_json(
+        self,
+        prompt: str,
+        system_prompt: Optional[str] = None,
+        temperature: float = 0.1,
+    ) -> Dict[str, Any]:
+        """Structured JSON generation using response_format={'type': 'json_object'}."""
+        sys_p = system_prompt or "You are an AI scam investigator. Output must be valid JSON."
+        if "json" not in sys_p.lower():
+            sys_p += " Output must be valid JSON."
+
+        messages = [
+            {"role": "system", "content": sys_p},
+            {"role": "user", "content": prompt},
+        ]
+        payload = {
+            "model": self.model,
+            "messages": messages,
+            "temperature": temperature,
+            "response_format": {"type": "json_object"},
+        }
+
+        if not self.api_key and self.provider not in ("ollama", "vllm"):
+            return {
+                "assessment": "SIMULATED_MOCK",
+                "provider": self.provider,
+                "model": self.model,
+            }
+
+        response = self._call_chat_completions(payload)
+        content = response["choices"][0]["message"]["content"]
+        try:
+            return json.loads(content)
+        except json.JSONDecodeError as exc:
+            raise ModelInferenceError(f"Failed to parse JSON response: {content}") from exc
+
+    def analyze_image(
+        self,
+        image_path: str,
+        prompt: str,
+        system_prompt: Optional[str] = None,
+    ) -> str:
+        """Multimodal image/screenshot analysis via OpenAI standard image_url format."""
+        path = Path(image_path)
+        if not path.is_file():
+            raise FileNotFoundError(f"Image not found at path: {image_path}")
+
+        mime_type, _ = mimetypes.guess_type(str(path))
+        if not mime_type:
+            mime_type = "image/png"
+
+        with open(path, "rb") as f:
+            encoded_bytes = base64.b64encode(f.read()).decode("utf-8")
+
+        data_url = f"data:{mime_type};base64,{encoded_bytes}"
+
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+
+        user_content = [
+            {"type": "text", "text": prompt},
+            {"type": "image_url", "image_url": {"url": data_url}},
+        ]
+        messages.append({"role": "user", "content": user_content})
+
+        response = self.chat_completion(
+            messages=messages,
+            model=self.vision_model,
+            temperature=0.2,
+        )
+        return response["choices"][0]["message"]["content"]
+
+    def run_agent_loop(
+        self,
+        initial_prompt: str,
+        system_prompt: str,
+        tools: Optional[List[Dict[str, Any]]] = None,
+        dispatcher: Optional[ToolDispatcher] = None,
+        max_turns: int = 5,
+    ) -> Dict[str, Any]:
+        """Execute an agentic tool calling loop in OpenAI format.
+
+        Compatible with Groq, OpenAI, Ollama, vLLM, and Gemini.
+        1. Model receives messages and available tools.
+        2. If model generates tool_calls, dispatcher executes them.
+        3. Tool results are appended with role: 'tool' and sent back to model.
+        4. Loop repeats until model generates final text answer or max_turns is reached.
+        """
+        tools_to_use = tools or SCAMLENS_TOOLS
+        tool_dispatcher = dispatcher or ToolDispatcher()
+
+        messages: List[Dict[str, Any]] = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": initial_prompt},
+        ]
+        executed_tool_calls: List[Dict[str, Any]] = []
+
+        for turn in range(max_turns):
+            response = self.chat_completion(
+                messages=messages,
+                tools=tools_to_use,
+                tool_choice="auto",
+            )
+            message = response["choices"][0]["message"]
+            tool_calls = message.get("tool_calls")
+
+            # Append assistant message to context
+            messages.append(message)
+
+            if not tool_calls:
+                # Agent completed investigation without further tools
+                return {
+                    "final_response": message.get("content", ""),
+                    "tool_history": executed_tool_calls,
+                    "turns": turn + 1,
+                }
+
+            # Execute all requested tools
+            for tc in tool_calls:
+                tc_id = tc.get("id", f"call_{turn}")
+                fn = tc.get("function", {})
+                fn_name = fn.get("name", "")
+                args_str = fn.get("arguments", "{}")
+                try:
+                    args = json.loads(args_str) if isinstance(args_str, str) else args_str
+                except Exception:
+                    args = {}
+
+                # Execute local tool
+                tool_result = tool_dispatcher.execute_tool(fn_name, args)
+                executed_tool_calls.append({
+                    "id": tc_id,
+                    "tool": fn_name,
+                    "arguments": args,
+                    "result": tool_result,
+                })
+
+                # Append tool result to conversation in standard OpenAI tool format
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tc_id,
+                    "content": json.dumps(tool_result),
+                })
+
+        return {
+            "final_response": messages[-1].get("content", ""),
+            "tool_history": executed_tool_calls,
+            "turns": max_turns,
+        }
+

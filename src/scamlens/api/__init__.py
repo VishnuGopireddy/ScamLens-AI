@@ -1,0 +1,2 @@
+"""ScamLens-AI API application."""
+

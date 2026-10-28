@@ -1,0 +1,56 @@
+{
+  "banks": {
+    "sbi": {
+      "official_name": "State Bank of India",
+      "official_domains": ["sbi.co.in", "onlinesbi.sbi", "bank.sbi"],
+      "helpline": "1800 1234",
+      "sms_headers": ["SBIINB", "SBIPSG", "SBISMS"]
+    },
+    "hdfc": {
+      "official_name": "HDFC Bank",
+      "official_domains": ["hdfcbank.com"],
+      "helpline": "1800 202 6161",
+      "sms_headers": ["HDFCBK"]
+    },
+    "icici": {
+      "official_name": "ICICI Bank",
+      "official_domains": ["icicibank.com"],
+      "helpline": "1800 1080",
+      "sms_headers": ["ICICIB"]
+    },
+    "pnb": {
+      "official_name": "Punjab National Bank",
+      "official_domains": ["pnbindia.in"],
+      "helpline": "1800 180 2222",
+      "sms_headers": ["PNBSMS"]
+    }
+  },
+  "government_services": {
+    "cybercrime": {
+      "name": "National Cyber Crime Reporting Portal",
+      "portal": "https://cybercrime.gov.in",
+      "national_helpline": "1930"
+    },
+    "uidai": {
+      "name": "Unique Identification Authority of India (Aadhaar)",
+      "official_domains": ["uidai.gov.in", "myaadhaar.uidai.gov.in"],
+      "helpline": "1947"
+    },
+    "incometax": {
+      "name": "Income Tax Department",
+      "official_domains": ["incometax.gov.in"],
+      "helpline": "1800 103 0025"
+    },
+    "indiapost": {
+      "name": "India Post",
+      "official_domains": ["indiapost.gov.in"],
+      "helpline": "1800 266 6868"
+    }
+  },
+  "upi_legitimacy_guidelines": [
+    "Receiving money via UPI NEVER requires entering your UPI PIN.",
+    "Scanning a QR code is ONLY required to SEND/PAY money, never to receive money.",
+    "Legitimate banks will never send APK files via WhatsApp or SMS to update KYC."
+  ]
+}
+

@@ -1,0 +1,67 @@
+[
+  {
+    "id": "CASE-001",
+    "name": "SBI KYC Suspension Phishing SMS",
+    "submission": {
+      "text": "Dear Customer, your SBI account will be blocked within 24 hours. Immediately update your PAN/KYC at http://sbi-verification-portal.xyz to avoid suspension.",
+      "urls": ["http://sbi-verification-portal.xyz"],
+      "incident_stage": "PRE_ACTION"
+    },
+    "expected": {
+      "verdict": "Likely scam",
+      "min_risk_score": 70,
+      "requires_recommendation_never_share_credentials": true
+    }
+  },
+  {
+    "id": "CASE-002",
+    "name": "Benign Bank Transaction Notification",
+    "submission": {
+      "text": "Your A/C ending with 4321 is credited by INR 5,000.00 on 28-Oct-26 by UPI ref 628192019281. Check balance at https://onlinesbi.sbi or call 18001234.",
+      "urls": ["https://onlinesbi.sbi"],
+      "incident_stage": "PRE_ACTION"
+    },
+    "expected": {
+      "verdict": "No clear scam indicators found",
+      "max_risk_score": 35
+    }
+  },
+  {
+    "id": "CASE-003",
+    "name": "UPI QR Code Claiming to Receive Money",
+    "submission": {
+      "text": "Scan this QR code and enter your UPI PIN to receive your lottery cashback prize of Rs 25,000!",
+      "qr_payloads": ["upi://pay?pa=frauder99@fakeupi&pn=CashbackManager&am=25000"],
+      "incident_stage": "PRE_ACTION"
+    },
+    "expected": {
+      "verdict": "Likely scam",
+      "min_risk_score": 70
+    }
+  },
+  {
+    "id": "CASE-004",
+    "name": "Ambiguous / Insufficient Evidence Case",
+    "submission": {
+      "text": "Hi, please call me back when free.",
+      "incident_stage": "PRE_ACTION"
+    },
+    "expected": {
+      "verdict": "No clear scam indicators found",
+      "max_risk_score": 20
+    }
+  },
+  {
+    "id": "CASE-005",
+    "name": "Post-Harm Money Transferred Scenario",
+    "submission": {
+      "text": "I clicked on an electricity bill SMS and transferred Rs 15,000 to an unknown UPI ID yesterday. Now they are asking for another 10,000.",
+      "incident_stage": "POST_ACTION"
+    },
+    "expected": {
+      "verdict": "Likely scam",
+      "emergency_guidance_present": true
+    }
+  }
+]
+
