@@ -47,8 +47,8 @@ class Settings:
     # Multimodal AI
     default_ai_provider: str = os.getenv("DEFAULT_AI_PROVIDER", "groq")
     groq_api_key: Optional[str] = os.getenv("GROQ_API_KEY")
-    groq_model: str = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
-    groq_vision_model: str = os.getenv("GROQ_VISION_MODEL", "llama-3.2-11b-vision-preview")
+    groq_model: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
+    groq_vision_model: str = os.getenv("GROQ_VISION_MODEL", "qwen/qwen3.8-27b")
     gemini_api_key: Optional[str] = os.getenv("GEMINI_API_KEY")
     gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-1.5-flash-latest")
     openai_api_key: Optional[str] = os.getenv("OPENAI_API_KEY")

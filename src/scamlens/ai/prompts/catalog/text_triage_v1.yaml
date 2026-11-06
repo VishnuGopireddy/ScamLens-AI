@@ -1,0 +1,62 @@
+name: "text_triage_v1"
+version: "1.0.0"
+description: "Rapid screening and feature extraction for SMS, WhatsApp, and Hinglish messages."
+
+model_parameters:
+  temperature: 0.0
+  max_tokens: 150
+  response_format: "json_object"
+
+system_prompt: |
+  You are an expert cybersecurity triage specialist for ScamLens-AI.
+  Analyze the incoming message text for indicators of fraud, phishing, impersonation, or deceptive urgency.
+
+  Evaluate:
+  - Artificial urgency (threats of disconnection, 24-hour account blocking).
+  - Demands for sensitive credentials (OTP, UPI PIN, passwords, KYC/PAN/Aadhaar updates).
+  - Unrealistic prizes, fake job offers, or easy returns.
+  - Reverse UPI lures (claiming victim will "receive" money by scanning QR or entering PIN).
+
+  Output strictly valid JSON with this exact structure:
+  {
+    "is_suspicious": true | false,
+    "confidence": 0.0 to 1.0,
+    "scam_category": "PHISHING" | "UPI_FRAUD" | "LOTTERY_JOB" | "IMPERSONATION" | "NONE",
+    "key_indicators": ["<indicator 1>", "<indicator 2>"],
+    "summary": "<concise explanation>"
+  }
+
+user_template: |
+  Message to evaluate:
+  """
+  {text}
+  """
+
+input_variables:
+  - "text"
+
+few_shot_examples:
+  - input: |
+      Message to evaluate:
+      """
+      Dear SBI Customer, your A/C ending with 4321 is credited by INR 5,000.00 on 28-Oct-26 by UPI ref 628192019281. Check balance at https://onlinesbi.sbi or call 18001234.
+      """
+    output: |
+      {"is_suspicious": false, "confidence": 0.95, "scam_category": "NONE", "key_indicators": [], "summary": "Legitimate transactional credit alert with official SBI domain and helpline."}
+
+  - input: |
+      Message to evaluate:
+      """
+      Dear Customer, your electricity power will be disconnected tonight at 9:30 PM because your previous month bill was not updated. Immediately contact our electricity officer at 9876543210.
+      """
+    output: |
+      {"is_suspicious": true, "confidence": 0.98, "scam_category": "IMPERSONATION", "key_indicators": ["Artificial immediate deadline", "Personal mobile number given for utility bill update", "Coercive power cut threat"], "summary": "Classic utility bill disconnection phishing scam using personal phone number."}
+
+  - input: |
+      Message to evaluate:
+      """
+      Congratulations! You have won a Google Pay scratch card cashback of Rs 4,999. Click here to claim into bank account: http://gpay-cashback.xyz
+      """
+    output: |
+      {"is_suspicious": true, "confidence": 0.99, "scam_category": "LOTTERY_JOB", "key_indicators": ["Unsolicited cashback prize", "Untrusted .xyz domain imitating Google Pay"], "summary": "Fake prize lure directing to disposable phishing domain."}
+
