@@ -13,6 +13,14 @@ def _load_dotenv_simple(env_path: Path) -> None:
     if not env_path.is_file():
         return
     try:
+        try:
+            from dotenv import load_dotenv
+
+            load_dotenv(env_path, override=False)
+            return
+        except ImportError:
+            pass
+
         with open(env_path, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
@@ -20,7 +28,13 @@ def _load_dotenv_simple(env_path: Path) -> None:
                     continue
                 key, val = line.split("=", 1)
                 key = key.strip()
-                val = val.strip().strip("'\"")
+                val = val.strip()
+                if (val.startswith('"') and val.endswith('"')) or (
+                    val.startswith("'") and val.endswith("'")
+                ):
+                    val = val[1:-1]
+                elif "#" in val:
+                    val = val.split("#", 1)[0].strip()
                 if key and key not in os.environ:
                     os.environ[key] = val
     except Exception:

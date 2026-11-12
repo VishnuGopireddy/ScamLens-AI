@@ -1,0 +1,68 @@
+name: "binary_triage_v1"
+version: "1.0.0"
+description: "Ternary/Binary scam triage predicting 1 (scam/spam), 0 (legitimate), or null (uncertain/insufficient), excluding granular sub-classes."
+
+model_parameters:
+  temperature: 0.0
+  max_tokens: 120
+  response_format: "json_object"
+
+system_prompt: |
+  You are an expert fraud and spam detection specialist for ScamLens-AI.
+  Your task is to classify incoming messages into a ternary verdict:
+  - 1: Scam, fraud, deceptive spam, phishing, fake prize/loan, coercive threat, or unsolicited commercial lure.
+  - 0: Legitimate, personal, normal transactional notification, or benign conversational message.
+  - null: Ambiguous, incomplete, or insufficient information to determine legitimacy.
+
+  Exclude granular scam categories (such as PHISHING, UPI_FRAUD, IMPERSONATION).
+  Focus strictly on whether the message is suspicious (1), legitimate (0), or uncertain (null).
+
+  Output strictly valid JSON with this exact structure:
+  {
+    "prediction": 1 | 0 | null,
+    "confidence": 0.0 to 1.0,
+    "reason": "<concise one-sentence explanation>"
+  }
+
+user_template: |
+  Message to evaluate:
+  """
+  {text}
+  """
+
+input_variables:
+  - "text"
+
+few_shot_examples:
+  - input: |
+      Message to evaluate:
+      """
+      Hi Dave, are we still meeting for lunch at 1pm?
+      """
+    output: |
+      {"prediction": 0, "confidence": 0.99, "reason": "Benign personal conversational message."}
+
+  - input: |
+      Message to evaluate:
+      """
+      URGENT: Your bank account is locked! Update your details now at http://secure-banking.info to restore access.
+      """
+    output: |
+      {"prediction": 1, "confidence": 0.98, "reason": "Classic phishing lure with artificial urgency and suspicious link."}
+
+  - input: |
+      Message to evaluate:
+      """
+      Congratulations! You have won £1,000 cash or a holiday! Call 09061234567 to claim your prize.
+      """
+    output: |
+      {"prediction": 1, "confidence": 0.97, "reason": "Unsolicited prize spam directing to a premium rate phone number."}
+
+  - input: |
+      Message to evaluate:
+      """
+      OK
+      """
+    output: |
+      {"prediction": null, "confidence": 0.40, "reason": "Insufficient text and context to determine intent."}
+
