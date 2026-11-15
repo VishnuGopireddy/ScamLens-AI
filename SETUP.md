@@ -17,8 +17,14 @@ cp .env.example .env
 ```
 
 Key configuration options in `.env`:
-- `DEFAULT_AI_PROVIDER`: Select your AI engine (`groq`, `ollama`, `vllm`, `gemini`, `openai`). Default: `groq`.
-- `GROQ_API_KEY`: Enter your Groq API key for cloud inference with open-source Llama models. (If left empty, ScamLens automatically runs in safe offline mock mode).
+- `DEFAULT_AI_PROVIDER`: Select your AI engine (`custom`, `groq`, `ollama`, `vllm`, `gemini`, `openai`). **Default: `custom`**.
+- **Custom / Private Endpoint Configuration (Default)**:
+  - `CUSTOM_AI_BASE_URL`: OpenAI-compatible API base URL (e.g. `https://103.42.50.41:1034/v1`).
+  - `CUSTOM_AI_API_KEY`: Bearer token / API password for the custom endpoint.
+  - `CUSTOM_AI_MODEL`: Model name deployed on the endpoint (e.g. `Qwen/Qwen3-8B`).
+  - `CUSTOM_AI_CA_CERT`: Path to CA certificate for private/self-signed SSL (e.g. `assets/vm04-ca.crt`).
+    > **Note**: Place your certificate files inside the `assets/` folder. All `*.crt` and `*.pem` files are ignored by `.gitignore` to prevent committing private credentials.
+- `GROQ_API_KEY`: (Optional) Groq API key if using cloud Llama models instead.
 - `USE_MOCK_INTELLIGENCE`: Set to `true` (default) for offline testing, or `false` when connecting live VirusTotal / Safe Browsing keys.
 - `ENABLE_PII_REDACTION`: Set to `true` (default) to automatically sanitize OTPs, passwords, and sensitive cards.
 
@@ -66,7 +72,20 @@ This script will:
 python3 -c "from scamlens.ai import get_ai_client; client = get_ai_client(); print(client.generate_text('Reply with OK if online.'))"
 ```
 
-### Method 3: Direct cURL Test (e.g. Groq)
+### Method 3: Direct cURL Test (Custom Endpoint)
+```bash
+curl --cacert "assets/vm04-ca.crt" \
+  https://103.42.50.41:1034/v1/chat/completions \
+  -H "Authorization: Bearer $CUSTOM_AI_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Qwen/Qwen3-8B",
+    "messages": [{"role": "user", "content": "Reply with OK"}],
+    "max_tokens": 50
+  }'
+```
+
+### Method 4: Alternative Direct cURL Test (e.g. Groq)
 ```bash
 curl -X POST https://api.groq.com/openai/v1/chat/completions \
   -H "Authorization: Bearer $GROQ_API_KEY" \

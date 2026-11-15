@@ -37,7 +37,7 @@ def _load_dotenv_simple(env_path: Path) -> None:
                     val = val.split("#", 1)[0].strip()
                 if key and key not in os.environ:
                     os.environ[key] = val
-    except Exception:
+    except (OSError, ValueError):
         pass
 
 
@@ -59,7 +59,7 @@ class Settings:
     secret_key: str = os.getenv("SECRET_KEY", "scamlens-dev-insecure-secret-key-32-bytes-min")
 
     # Multimodal AI
-    default_ai_provider: str = os.getenv("DEFAULT_AI_PROVIDER", "groq")
+    default_ai_provider: str = os.getenv("DEFAULT_AI_PROVIDER", "custom")
     groq_api_key: Optional[str] = os.getenv("GROQ_API_KEY")
     groq_model: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
     groq_vision_model: str = os.getenv("GROQ_VISION_MODEL", "qwen/qwen3.8-27b")
@@ -70,20 +70,42 @@ class Settings:
     anthropic_api_key: Optional[str] = os.getenv("ANTHROPIC_API_KEY")
     anthropic_model: str = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
 
+    # Custom / Self-Hosted OpenAI-Compatible Endpoint (vLLM, Ollama, Private GPU)
+    custom_ai_base_url: Optional[str] = os.getenv("CUSTOM_AI_BASE_URL")
+    custom_ai_api_key: Optional[str] = os.getenv("CUSTOM_AI_API_KEY")
+    custom_ai_model: str = os.getenv("CUSTOM_AI_MODEL", "Qwen/Qwen3-8B")
+    custom_ai_vision_model: str = os.getenv("CUSTOM_AI_VISION_MODEL", "Qwen/Qwen3-8B")
+    custom_ai_ca_cert: Optional[str] = os.getenv("CUSTOM_AI_CA_CERT")
+    custom_ai_insecure_skip_verify: bool = (
+        os.getenv("CUSTOM_AI_INSECURE_SKIP_VERIFY", "false").lower() in ("1", "true", "yes")
+    )
+
+    # vLLM-specific overrides
+    vllm_base_url: Optional[str] = os.getenv("VLLM_BASE_URL")
+    vllm_api_key: Optional[str] = os.getenv("VLLM_API_KEY")
+    vllm_model: Optional[str] = os.getenv("VLLM_MODEL")
+    vllm_ca_cert: Optional[str] = os.getenv("VLLM_CA_CERT")
+
     # Threat Intelligence
-    use_mock_intelligence: bool = os.getenv("USE_MOCK_INTELLIGENCE", "true").lower() in ("1", "true", "yes")
+    use_mock_intelligence: bool = (
+        os.getenv("USE_MOCK_INTELLIGENCE", "true").lower() in ("1", "true", "yes")
+    )
     google_safe_browsing_api_key: Optional[str] = os.getenv("GOOGLE_SAFE_BROWSING_API_KEY")
     virustotal_api_key: Optional[str] = os.getenv("VIRUSTOTAL_API_KEY")
     whoisxml_api_key: Optional[str] = os.getenv("WHOISXML_API_KEY")
 
     # Privacy & Safety
-    enable_pii_redaction: bool = os.getenv("ENABLE_PII_REDACTION", "true").lower() in ("1", "true", "yes")
+    enable_pii_redaction: bool = (
+        os.getenv("ENABLE_PII_REDACTION", "true").lower() in ("1", "true", "yes")
+    )
     max_image_upload_mb: int = int(os.getenv("MAX_IMAGE_UPLOAD_MB", "10"))
     max_text_input_chars: int = int(os.getenv("MAX_TEXT_INPUT_CHARS", "10000"))
 
     # Regional & Domain defaults
     default_region: str = os.getenv("DEFAULT_REGION", "IN")
-    enable_regional_advisories: bool = os.getenv("ENABLE_REGIONAL_ADVISORIES", "true").lower() in ("1", "true", "yes")
+    enable_regional_advisories: bool = (
+        os.getenv("ENABLE_REGIONAL_ADVISORIES", "true").lower() in ("1", "true", "yes")
+    )
     data_dir: Path = Path(os.getenv("DATA_DIR", str(_PROJECT_ROOT / "data")))
 
 
