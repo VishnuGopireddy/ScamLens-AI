@@ -151,33 +151,7 @@ class OpenAICompatibleClient(BaseLLMClient):
         req = urllib.request.Request(endpoint, data=req_data, headers=headers, method="POST")
 
         # SSL context for custom CA certificate or self-signed/private endpoints
-        urlopen_kwargs: Dict[str, Any] = {"timeout": 30}
-        settings = get_settings()
-        ca_cert_path = (
-            self.ca_cert
-            or getattr(settings, "custom_ai_ca_cert", None)
-            or os.getenv("CUSTOM_AI_CA_CERT")
-            or os.getenv("SSL_CERT_FILE")
-        )
-        if ca_cert_path:
-            p = Path(ca_cert_path)
-            if not p.is_absolute():
-                _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-                p = (_PROJECT_ROOT / p).resolve()
-            if p.is_file():
-                import ssl
-
-                urlopen_kwargs["context"] = ssl.create_default_context(cafile=str(p))
-        elif endpoint.startswith("https://") and (
-            getattr(settings, "custom_ai_insecure_skip_verify", False)
-            or os.getenv("CUSTOM_AI_INSECURE_SKIP_VERIFY", "").lower() in ("1", "true", "yes")
-        ):
-            import ssl
-
-            urlopen_kwargs["context"] = ssl._create_unverified_context()
-
-        # SSL context for custom CA certificate or self-signed/private endpoints
-        urlopen_kwargs: Dict[str, Any] = {"timeout": 30}
+        urlopen_kwargs: Dict[str, Any] = {"timeout": 60}
         settings = get_settings()
         ca_cert_path = (
             self.ca_cert
@@ -223,13 +197,18 @@ class OpenAICompatibleClient(BaseLLMClient):
         tool_choice: str = "auto",
         temperature: float = 0.2,
         model: Optional[str] = None,
+        max_tokens: Optional[int] = None,
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Standard OpenAI chat completion call with tool definitions."""
         payload: Dict[str, Any] = {
             "model": model or self.model,
             "messages": messages,
             "temperature": temperature,
+            **kwargs,
         }
+        if max_tokens is not None:
+            payload["max_tokens"] = max_tokens
         if tools:
             payload["tools"] = tools
             payload["tool_choice"] = tool_choice
