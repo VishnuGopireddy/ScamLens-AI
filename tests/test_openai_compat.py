@@ -13,15 +13,17 @@ if str(_SRC) not in sys.path:
 from scamlens.ai.factory import get_ai_client
 from scamlens.ai.openai_compat import OpenAICompatibleClient
 from scamlens.ai.tools import SCAMLENS_TOOLS, ToolDispatcher
+from scamlens.core.config import get_settings
 
 
 class TestOpenAICompat(unittest.TestCase):
     def test_providers_initialization(self):
+        settings = get_settings()
         # Test Groq preset
         groq_client = get_ai_client("groq")
         self.assertEqual(groq_client.base_url, "https://api.groq.com/openai/v1")
-        self.assertEqual(groq_client.model, "llama-3.3-70b-versatile")
-        self.assertEqual(groq_client.vision_model, "llama-3.2-11b-vision-preview")
+        self.assertEqual(groq_client.model, settings.groq_model)
+        self.assertEqual(groq_client.vision_model, settings.groq_vision_model)
 
         # Test Ollama preset (local)
         ollama_client = get_ai_client("ollama")

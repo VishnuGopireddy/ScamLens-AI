@@ -30,6 +30,7 @@ DEFAULT_PRESET_ENDPOINTS = {
     "ollama": "http://localhost:11434/v1",
     "vllm": "http://localhost:8000/v1",
     "gemini": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "custom": "",
 }
 
 
@@ -43,15 +44,29 @@ class OpenAICompatibleClient(BaseLLMClient):
         model: Optional[str] = None,
         vision_model: Optional[str] = None,
         provider: str = "groq",
+        ca_cert: Optional[str] = None,
     ):
         settings = get_settings()
         self.provider = provider.lower()
-        default_url = DEFAULT_PRESET_ENDPOINTS.get(self.provider, DEFAULT_PRESET_ENDPOINTS["groq"])
-        self.base_url = (base_url or default_url).rstrip("/")
+
+        # Base URL resolution
+        if base_url:
+            self.base_url = base_url.rstrip("/")
+        elif self.provider == "custom":
+            self.base_url = (settings.custom_ai_base_url or os.getenv("CUSTOM_AI_BASE_URL", "")).rstrip("/")
+        elif self.provider == "vllm" and settings.vllm_base_url:
+            self.base_url = settings.vllm_base_url.rstrip("/")
+        else:
+            default_url = DEFAULT_PRESET_ENDPOINTS.get(self.provider, DEFAULT_PRESET_ENDPOINTS["groq"])
+            self.base_url = default_url.rstrip("/")
 
         # API key resolution
         if api_key is not None:
             self.api_key = api_key
+        elif self.provider == "custom":
+            self.api_key = settings.custom_ai_api_key or os.getenv("CUSTOM_AI_API_KEY", "")
+        elif self.provider == "vllm" and settings.vllm_api_key:
+            self.api_key = settings.vllm_api_key
         elif self.provider == "groq":
             self.api_key = settings.groq_api_key or os.getenv("GROQ_API_KEY", "")
         elif self.provider == "gemini":
@@ -66,6 +81,10 @@ class OpenAICompatibleClient(BaseLLMClient):
         # Model resolution
         if model:
             self.model = model
+        elif self.provider == "custom":
+            self.model = settings.custom_ai_model or os.getenv("CUSTOM_AI_MODEL") or "Qwen/Qwen3-8B"
+        elif self.provider == "vllm" and settings.vllm_model:
+            self.model = settings.vllm_model
         elif self.provider == "groq":
             self.model = settings.groq_model or "llama-3.3-70b-versatile"
         elif self.provider == "gemini":
@@ -82,6 +101,8 @@ class OpenAICompatibleClient(BaseLLMClient):
         # Vision model resolution
         if vision_model:
             self.vision_model = vision_model
+        elif self.provider == "custom":
+            self.vision_model = settings.custom_ai_vision_model or os.getenv("CUSTOM_AI_VISION_MODEL") or self.model
         elif self.provider == "groq":
             self.vision_model = settings.groq_vision_model or "llama-3.2-11b-vision-preview"
         elif self.provider == "gemini":
@@ -91,12 +112,22 @@ class OpenAICompatibleClient(BaseLLMClient):
         else:
             self.vision_model = "llama-3.2-11b-vision-preview"
 
+        # CA Cert resolution (for custom SSL certificates)
+        if ca_cert:
+            self.ca_cert = ca_cert
+        elif self.provider == "custom":
+            self.ca_cert = settings.custom_ai_ca_cert or os.getenv("CUSTOM_AI_CA_CERT")
+        elif self.provider == "vllm":
+            self.ca_cert = settings.vllm_ca_cert or settings.custom_ai_ca_cert or os.getenv("VLLM_CA_CERT") or os.getenv("CUSTOM_AI_CA_CERT")
+        else:
+            self.ca_cert = os.getenv("CUSTOM_AI_CA_CERT") or os.getenv("SSL_CERT_FILE")
+
     def _call_chat_completions(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         """Perform POST request to /chat/completions endpoint."""
         endpoint = f"{self.base_url}/chat/completions"
 
         # Safe offline mock fallback when testing or developing without key
-        if not self.api_key and self.provider not in ("ollama", "vllm"):
+        if not self.api_key and self.provider not in ("ollama", "vllm", "custom"):
             return {
                 "choices": [{
                     "message": {
@@ -119,8 +150,34 @@ class OpenAICompatibleClient(BaseLLMClient):
         req_data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(endpoint, data=req_data, headers=headers, method="POST")
 
+        # SSL context for custom CA certificate or self-signed/private endpoints
+        urlopen_kwargs: Dict[str, Any] = {"timeout": 60}
+        settings = get_settings()
+        ca_cert_path = (
+            self.ca_cert
+            or getattr(settings, "custom_ai_ca_cert", None)
+            or os.getenv("CUSTOM_AI_CA_CERT")
+            or os.getenv("SSL_CERT_FILE")
+        )
+        if ca_cert_path:
+            p = Path(ca_cert_path)
+            if not p.is_absolute():
+                _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+                p = (_PROJECT_ROOT / p).resolve()
+            if p.is_file():
+                import ssl
+
+                urlopen_kwargs["context"] = ssl.create_default_context(cafile=str(p))
+        elif endpoint.startswith("https://") and (
+            getattr(settings, "custom_ai_insecure_skip_verify", False)
+            or os.getenv("CUSTOM_AI_INSECURE_SKIP_VERIFY", "").lower() in ("1", "true", "yes")
+        ):
+            import ssl
+
+            urlopen_kwargs["context"] = ssl._create_unverified_context()
+
         try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            with urllib.request.urlopen(req, **urlopen_kwargs) as resp:
                 resp_bytes = resp.read()
                 return json.loads(resp_bytes.decode("utf-8"))
         except urllib.error.HTTPError as exc:
@@ -140,13 +197,18 @@ class OpenAICompatibleClient(BaseLLMClient):
         tool_choice: str = "auto",
         temperature: float = 0.2,
         model: Optional[str] = None,
+        max_tokens: Optional[int] = None,
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Standard OpenAI chat completion call with tool definitions."""
         payload: Dict[str, Any] = {
             "model": model or self.model,
             "messages": messages,
             "temperature": temperature,
+            **kwargs,
         }
+        if max_tokens is not None:
+            payload["max_tokens"] = max_tokens
         if tools:
             payload["tools"] = tools
             payload["tool_choice"] = tool_choice

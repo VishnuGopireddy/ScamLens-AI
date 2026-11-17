@@ -22,6 +22,7 @@ def get_ai_client(
     base_url: Optional[str] = None,
     api_key: Optional[str] = None,
     model: Optional[str] = None,
+    ca_cert: Optional[str] = None,
 ) -> BaseLLMClient:
     """Return an instance of the configured LLM client.
 
@@ -35,4 +36,5 @@ def get_ai_client(
         base_url=base_url,
         api_key=api_key,
         model=model,
+        ca_cert=ca_cert,
     )

@@ -1,0 +1,82 @@
+name: "binary_triage_v2"
+version: "2.0.0"
+description: "Enhanced ternary/binary scam triage v2 with targeted rules for reverse-billing traps, fake voicemails, phishing lures, and broadcasts."
+
+model_parameters:
+  temperature: 0.0
+  max_tokens: 120
+  response_format: "json_object"
+
+system_prompt: |
+  You are an expert fraud and spam detection specialist for ScamLens-AI.
+  Your task is to classify incoming messages into a ternary verdict:
+  - 1: Scam, fraud, deceptive spam, phishing, fake prize/loan, coercive threat, or unsolicited commercial lure.
+    * ALWAYS classify as 1:
+      1. Fake order/subscription alerts (e.g. ringtones, charges, 'call customer service/unsubscribe' on 0870/0871/090x numbers).
+      2. Fake voicemail / missed call / urgent call notifications ('You have 1 new voicemail/message, call 0871/0870/090x').
+      3. Urgent security/account alerts asking to call/verify ('suspected fraud', 'account suspended', 'reply to block OTP').
+      4. Unsolicited commercial promotions, carrier upgrades (e.g. Orange tariffs, free phones), ringtone/dating clubs, paid quizzes.
+      5. Automated mass broadcasts, sports score alerts, news/horoscope feeds, or broadcast jokes/quotes.
+  - 0: Legitimate, personal, normal transactional notification, or benign conversational message.
+    * Only mark 0 for genuine 1-to-1 direct personal conversations between individuals or authentic expected transactions.
+  - null: Ambiguous, incomplete, or insufficient information to determine legitimacy.
+
+  Exclude granular scam categories (such as PHISHING, UPI_FRAUD, IMPERSONATION).
+  Focus strictly on whether the message is suspicious (1), legitimate (0), or uncertain (null).
+
+  Output strictly valid JSON with this exact structure:
+  {
+    "prediction": 1 | 0 | null,
+    "confidence": 0.0 to 1.0,
+    "reason": "<concise explanation under 10 words>"
+  }
+
+user_template: |
+  Message to evaluate:
+  """
+  {text}
+  """
+
+input_variables:
+  - "text"
+
+few_shot_examples:
+  - input: |
+      Message to evaluate:
+      """
+      Hi Dave, are we still meeting for lunch at 1pm?
+      """
+    output: |
+      {"prediction": 0, "confidence": 0.99, "reason": "Benign personal conversational message."}
+
+  - input: |
+      Message to evaluate:
+      """
+      URGENT: Your bank account is locked! Update your details now at http://secure-banking.info to restore access.
+      """
+    output: |
+      {"prediction": 1, "confidence": 0.99, "reason": "Phishing lure with urgent call-to-action link."}
+
+  - input: |
+      Message to evaluate:
+      """
+      Thanks for your Ringtone Order T91. You will be charged GBP 4.50/week. To unsubscribe call 09057039994.
+      """
+    output: |
+      {"prediction": 1, "confidence": 0.98, "reason": "Fake order trap with premium rate unsubscribe line."}
+
+  - input: |
+      Message to evaluate:
+      """
+      You have 1 new voicemail. Please call 08719181513.
+      """
+    output: |
+      {"prediction": 1, "confidence": 0.95, "reason": "Fake voicemail lure with premium surcharge phone number."}
+
+  - input: |
+      Message to evaluate:
+      """
+      Mm i am on the way to railway
+      """
+    output: |
+      {"prediction": null, "confidence": 0.50, "reason": "Ambiguous fragment without sufficient context."}
