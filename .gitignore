@@ -49,6 +49,10 @@ venv.bak/
 *.key
 *.cer
 assets/*.crt
+credentials.json
+token.json
+*token*.json
+client_secret*.json
 
 # ==========================================
 # Package managers (uv, pip, poetry)

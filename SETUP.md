@@ -34,14 +34,18 @@ Key configuration options in `.env`:
 
 ### Option A: Using `uv` (Fastest)
 ```bash
-uv pip install -e ".[dev,ai]"
+uv pip install -e ".[dev,ai,gmail]"
+# Or install using requirements.txt
+uv pip install -r requirements.txt
 ```
 
 ### Option B: Using standard Python venv
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e ".[dev,ai]"
+pip install -e ".[dev,ai,gmail]"
+# Or install using requirements.txt
+pip install -r requirements.txt
 ```
 
 ### Option C: Automated Setup Script
@@ -118,7 +122,100 @@ python3 src/scamlens/cli.py --text "Urgent electricity bill power cut" --json
 
 ---
 
-## 6. Starting the REST API Service
+## 6. Accessing & Reading Emails (Gmail REST API)
+
+ScamLens-AI provides an official Google Gmail REST API connector using OAuth 2.0 with least-privilege read-only permissions (`https://www.googleapis.com/auth/gmail.readonly`).
+
+### A. Google Cloud Console Setup
+1. Open the [Google Cloud Console](https://console.cloud.google.com).
+2. Create a project (or select an existing one).
+3. Navigate to **APIs & Services > Library**, search for **Gmail API**, and click **Enable**.
+4. Configure the **OAuth consent screen**:
+   - User Type: **External**.
+   - Under **Test users**, add your email (e.g. `your-email@gmail.com`) and click **Save**, OR click **Publish App** to allow access.
+5. Create **OAuth 2.0 Credentials**:
+   - Go to **APIs & Services > Credentials**.
+   - Click **Create Credentials > OAuth client ID**.
+   - Application type: **Desktop app** *(Recommended for scripts and notebooks; permits localhost login without redirect URI restrictions)*.
+   - Click **Create**, download the JSON client secret, and save it in the project root as `credentials.json`:
+     ```bash
+     cp ~/Downloads/client_secret_*.json credentials.json
+     ```
+
+> **Security Note**: Both `credentials.json` and `token.json` are listed in `.gitignore` to prevent committing secrets to version control.
+
+### B. Environment Configuration (Optional)
+In `.env`, you can customize the credential paths if needed:
+```bash
+GMAIL_CREDENTIALS_FILE=credentials.json
+GMAIL_TOKEN_FILE=token.json
+GMAIL_SCOPES=https://www.googleapis.com/auth/gmail.readonly
+```
+
+### C. Interactive Demo in Jupyter Notebook
+Launch the dedicated Gmail parsing notebook to authenticate and print all extracted email fields:
+```bash
+# Open in VS Code, Cursor, or Jupyter Lab
+notebooks/gmail_auth_and_read.ipynb
+```
+The notebook automatically:
+- Connects using `credentials.json` (and caches your login in `token.json`).
+- Queries emails by folder or category (`is:unread`, `label:INBOX`, `category:primary`, `category:updates`, etc.).
+- Decodes MIME payloads and extracts:
+  - **Sender** (Display Name & Email Address)
+  - **Domain of the Sender**
+  - **Subject**
+  - **Time of the Email**
+  - **Recipient(s)**
+  - **Reply-To**
+  - **Has Attachment** (Boolean flag, filenames, MIME types, and sizes)
+  - **Email Content** (Decoded text content)
+  - **Embedded Links** (All URLs extracted from text and HTML)
+  - **Security Headers** (SPF, DKIM, DMARC validation)
+
+### D. Scanning Emails via CLI
+Run the CLI scanner to triage emails directly from your terminal:
+```bash
+# Scan the 5 latest unread emails
+python3 scripts/scan_gmail.py --query "is:unread" --max-results 5
+
+# Scan latest emails in the Inbox
+python3 scripts/scan_gmail.py --query "label:INBOX" --max-results 10
+
+# Scan a specific email by Gmail message ID with structured JSON output
+python3 scripts/scan_gmail.py --msg-id <MESSAGE_ID> --json
+```
+
+### E. Programmatic Usage in Python
+```python
+from scamlens.extractors.email import GmailReader
+from scamlens.investigator.engine import ScamInvestigator
+
+# 1. Initialize reader and fetch messages
+reader = GmailReader()
+messages = reader.fetch_messages(query="label:INBOX", max_results=5)
+
+# 2. Inspect parsed fields
+for msg in messages:
+    print(f"Subject:        {msg.subject}")
+    print(f"Sender:         {msg.sender_email} (domain: {msg.sender_domain})")
+    print(f"Time:           {msg.date}")
+    print(f"Has Attachment: {msg.has_attachment}")
+    print(f"Content:        {msg.body_cleaned[:200]}...")
+
+    # Optional: Run ScamLens multi-evidence investigation
+    # investigator = ScamInvestigator()
+    # result = investigator.investigate_email(msg)
+```
+
+### F. Troubleshooting Common Errors
+- **`Error 400: redirect_uri_mismatch`**: Your OAuth client ID in Google Cloud Console was created as a "Web application" instead of a "Desktop app". In GCP Console > Credentials, create a new OAuth client ID with Application type = **Desktop app**.
+- **`Error 403: access_denied`**: The GCP project is in "Testing" status and your email is not in the Test Users list. In GCP Console > OAuth consent screen, either add your email under **Test users** and click Save, or click **Publish App**.
+- **`google-api-python-client is not installed`**: Install with `pip install -r requirements.txt` or `pip install -e ".[gmail]"`.
+
+---
+
+## 7. Starting the REST API Service
 
 Launch the FastAPI development server:
 ```bash
@@ -130,7 +227,7 @@ uvicorn scamlens.api.main:app --host 0.0.0.0 --port 8000 --reload
 
 ---
 
-## 7. Running Tests & Evaluation Benchmark
+## 8. Running Tests & Evaluation Benchmark
 
 ```bash
 # Run unit test suite

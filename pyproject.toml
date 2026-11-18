@@ -61,6 +61,11 @@ ai = [
     "google-genai>=0.1.0",
     "openai>=1.14.0",
 ]
+gmail = [
+    "google-api-python-client>=2.120.0",
+    "google-auth-httplib2>=0.2.0",
+    "google-auth-oauthlib>=1.2.0",
+]
 
 [project.scripts]
 scamlens = "scamlens.cli:app"

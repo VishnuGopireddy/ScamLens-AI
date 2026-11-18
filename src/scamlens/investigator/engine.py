@@ -20,6 +20,7 @@ from scamlens.core.models import (
     SeverityLevel,
     VerdictEnum,
 )
+from scamlens.extractors.email import EmailMessage, extract_email_evidence
 from scamlens.extractors.privacy import redact_pii
 from scamlens.extractors.qr import analyze_qr_payload
 from scamlens.extractors.text import extract_text_indicators
@@ -40,11 +41,28 @@ class ScamInvestigator:
         self.intel = ThreatIntelligenceClient(use_mock=self.settings.use_mock_intelligence)
         self.ai = get_ai_client()
 
-    def investigate(self, submission: InvestigationSubmission) -> InvestigationResult:
+    def investigate_email(
+        self,
+        email_msg: EmailMessage,
+        incident_stage: IncidentStage = IncidentStage.PRE_ACTION,
+    ) -> InvestigationResult:
+        """Run an end-to-end multi-evidence investigation on a parsed email."""
+        submission = email_msg.to_submission(incident_stage=incident_stage)
+        email_evidence = extract_email_evidence(email_msg)
+        return self.investigate(submission, extra_evidence=email_evidence)
+
+    def investigate(
+        self,
+        submission: InvestigationSubmission,
+        extra_evidence: Optional[List[EvidenceItem]] = None,
+    ) -> InvestigationResult:
         """Run an end-to-end multi-evidence investigation."""
         start_time = time.time()
         findings: List[EvidenceItem] = []
         provenance: List[Dict[str, Any]] = []
+
+        if extra_evidence:
+            findings.extend(extra_evidence)
 
         raw_text = submission.text or ""
         cleaned_text = raw_text
