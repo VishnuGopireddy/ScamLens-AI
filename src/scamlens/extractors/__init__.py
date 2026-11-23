@@ -5,8 +5,11 @@ from scamlens.extractors.email import (
     EmailMessage,
     GmailAuthManager,
     GmailReader,
+    LocalEmailReader,
     extract_email_evidence,
+    load_emails_from_file,
     parse_gmail_message,
+    parse_raw_email,
 )
 from scamlens.extractors.privacy import redact_pii
 from scamlens.extractors.qr import analyze_qr_payload
@@ -22,7 +25,10 @@ __all__ = [
     "EmailMessage",
     "GmailAuthManager",
     "GmailReader",
+    "LocalEmailReader",
     "extract_email_evidence",
+    "load_emails_from_file",
     "parse_gmail_message",
+    "parse_raw_email",
 ]
 

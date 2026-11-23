@@ -10,6 +10,8 @@ Provides:
 from __future__ import annotations
 
 import base64
+import email
+from email import policy
 import html
 import json
 import logging
@@ -19,7 +21,7 @@ from dataclasses import dataclass, field
 from email.utils import parseaddr
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 
 from scamlens.core.config import get_settings
@@ -111,6 +113,7 @@ class EmailMessage:
     sender_email: str = ""
     sender_domain: str = ""
     recipient: str = ""
+    cc: str = ""
     date: str = ""
     reply_to: Optional[str] = None
     reply_to_email: Optional[str] = None
@@ -140,6 +143,8 @@ class EmailMessage:
             f"From: {self.sender}\n"
             f"Date: {self.date}\n"
         )
+        if self.cc:
+            combined_text += f"Cc: {self.cc}\n"
         if self.reply_to:
             combined_text += f"Reply-To: {self.reply_to}\n"
         combined_text += f"\n{self.body_cleaned or self.body_plain or self.snippet}"
@@ -175,6 +180,7 @@ class EmailMessage:
             "sender_email": self.sender_email,
             "sender_domain": self.sender_domain,
             "recipient": self.recipient,
+            "cc": self.cc,
             "date": self.date,
             "time_of_email": self.date,
             "has_attachment": self.has_attachment,
@@ -237,6 +243,7 @@ def parse_gmail_message(msg_data: Dict[str, Any]) -> EmailMessage:
     subject = lower_headers.get("subject", "(No Subject)")
     sender_raw = lower_headers.get("from", "")
     recipient = lower_headers.get("to", "")
+    cc = lower_headers.get("cc", "")
     date = lower_headers.get("date", "")
     reply_to = lower_headers.get("reply-to")
     return_path = lower_headers.get("return-path")
@@ -335,6 +342,138 @@ def parse_gmail_message(msg_data: Dict[str, Any]) -> EmailMessage:
         sender_email=sender_email,
         sender_domain=sender_domain,
         recipient=recipient,
+        cc=cc,
+        date=date,
+        reply_to=reply_to,
+        reply_to_email=reply_to_email,
+        return_path=return_path,
+        auth_results=auth_results,
+        spf_status=spf_status,
+        dkim_status=dkim_status,
+        dmarc_status=dmarc_status,
+        body_plain=body_plain,
+        body_html=body_html,
+        body_cleaned=body_cleaned,
+        extracted_urls=deduped_urls,
+        attachments=attachments,
+        raw_headers=headers,
+    )
+
+
+def parse_raw_email(raw_content: Union[str, bytes], msg_id: Optional[str] = None) -> EmailMessage:
+    """Parse a raw RFC 5322 / MIME email string or bytes into an EmailMessage dataclass."""
+    if isinstance(raw_content, bytes):
+        msg = email.message_from_bytes(raw_content, policy=policy.default)
+    else:
+        msg = email.message_from_string(raw_content, policy=policy.default)
+
+    headers: Dict[str, str] = {k: str(v) for k, v in msg.items()}
+    lower_headers = {k.lower(): v for k, v in headers.items()}
+
+    subject = lower_headers.get("subject", "(No Subject)")
+    sender_raw = lower_headers.get("from", "")
+    recipient = lower_headers.get("to", "")
+    cc = lower_headers.get("cc", "")
+    date = lower_headers.get("date", "")
+    reply_to = lower_headers.get("reply-to")
+    return_path = lower_headers.get("return-path")
+
+    sender_name, sender_email = parseaddr(sender_raw)
+    sender_domain = ""
+    if "@" in sender_email:
+        sender_domain = sender_email.split("@")[-1].lower()
+
+    reply_to_email = None
+    if reply_to:
+        _, reply_to_email = parseaddr(reply_to)
+
+    auth_results = lower_headers.get("authentication-results", "")
+    received_spf = lower_headers.get("received-spf", "")
+
+    spf_status = _extract_auth_status(auth_results, "spf")
+    if spf_status == "unknown" and received_spf:
+        spf_match = re.match(r"^([a-zA-Z]+)", received_spf.strip())
+        if spf_match:
+            spf_status = spf_match.group(1).lower()
+
+    dkim_status = _extract_auth_status(auth_results, "dkim")
+    dmarc_status = _extract_auth_status(auth_results, "dmarc")
+
+    plain_parts: List[str] = []
+    html_parts: List[str] = []
+    attachments: List[EmailAttachment] = []
+    html_links: List[str] = []
+
+    for part in msg.walk():
+        content_disposition = str(part.get("Content-Disposition", ""))
+        content_type = part.get_content_type()
+        filename = part.get_filename()
+
+        if filename or "attachment" in content_disposition.lower():
+            fname = filename or "unnamed_attachment"
+            try:
+                payload_bytes = part.get_payload(decode=True) or b""
+            except Exception:
+                payload_bytes = b""
+            attachments.append(
+                EmailAttachment(
+                    filename=fname,
+                    mime_type=content_type,
+                    size_bytes=len(payload_bytes),
+                    attachment_id=part.get("Content-ID", fname),
+                )
+            )
+        elif content_type == "text/plain":
+            try:
+                text_content = part.get_content()
+            except Exception:
+                payload = part.get_payload(decode=True)
+                text_content = payload.decode("utf-8", errors="replace") if payload else ""
+            if text_content:
+                plain_parts.append(text_content)
+        elif content_type == "text/html":
+            try:
+                html_content = part.get_content()
+            except Exception:
+                payload = part.get_payload(decode=True)
+                html_content = payload.decode("utf-8", errors="replace") if payload else ""
+            if html_content:
+                html_parts.append(html_content)
+                parser = _HTMLTextExtractor()
+                try:
+                    parser.feed(html_content)
+                    html_links.extend(parser.links)
+                except Exception:
+                    pass
+
+    body_plain = "\n".join(plain_parts)
+    body_html = "\n".join(html_parts)
+    body_cleaned = body_plain.strip()
+    if not body_cleaned and body_html:
+        parser = _HTMLTextExtractor()
+        try:
+            parser.feed(body_html)
+            body_cleaned = parser.get_text().strip()
+        except Exception:
+            body_cleaned = re.sub(r"<[^>]+>", " ", body_html).strip()
+
+    urls_found = extract_urls(body_cleaned) + extract_urls(body_plain) + html_links
+    deduped_urls = list(dict.fromkeys([u for u in urls_found if u.startswith("http")]))
+
+    derived_id = msg_id or msg.get("Message-ID", "") or f"msg_{abs(hash(subject + sender_raw)):x}"
+    clean_id = derived_id.strip("<> ")
+
+    return EmailMessage(
+        id=clean_id,
+        thread_id=clean_id,
+        snippet=body_cleaned[:120],
+        subject=subject,
+        sender=sender_raw,
+        sender_name=sender_name,
+        sender_email=sender_email,
+        sender_domain=sender_domain,
+        recipient=recipient,
+        cc=cc,
         date=date,
         reply_to=reply_to,
         reply_to_email=reply_to_email,
@@ -639,3 +778,110 @@ class GmailReader:
             except Exception as e:
                 logger.error(f"Failed to fetch message {item.get('id')}: {e}")
         return messages
+
+
+def load_emails_from_file(file_path: Union[str, Path]) -> List[EmailMessage]:
+    """Load and parse emails from a local JSON, Markdown (.md), or raw .eml file.
+
+    Supports:
+    - .json: List or dict of Gmail REST API message objects (parsed via parse_gmail_message)
+    - .md / .txt: Files containing raw RFC 5322 MIME email blocks (e.g. ```email ... ```)
+    - .eml: Standard RFC 5322 MIME email files
+    """
+    path = Path(file_path)
+    if not path.is_file():
+        # Fallback to repo root resolution if relative path called from a subfolder
+        repo_root = Path(__file__).resolve().parent.parent.parent
+        if (repo_root / path).is_file():
+            path = repo_root / path
+        else:
+            raise FileNotFoundError(f"Email dataset file not found: {path}")
+
+    suffix = path.suffix.lower()
+    if suffix == ".json":
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        items = data.get("emails", data) if isinstance(data, dict) else data
+        if not isinstance(items, list):
+            items = [items]
+        return [parse_gmail_message(item) for item in items]
+
+    content = path.read_text(encoding="utf-8")
+    # Extract fenced raw email blocks (e.g. ```email ... ``` or ```rfc822 ... ```)
+    email_blocks = re.findall(r"```(?:email|rfc822|eml|mail)\s*\n(.*?)\n```", content, re.DOTALL)
+    if not email_blocks:
+        email_blocks = re.findall(r"```(?:[a-zA-Z0-9_-]+)?\s*\n(.*?)\n```", content, re.DOTALL)
+    if not email_blocks:
+        # Check for demarcation or treat as single raw RFC822 email
+        if "From:" in content and "Subject:" in content:
+            email_blocks = [content]
+
+    messages: List[EmailMessage] = []
+    for idx, block in enumerate(email_blocks, start=1):
+        clean_block = block.strip()
+        if not clean_block or "From:" not in clean_block:
+            continue
+        msg = parse_raw_email(clean_block, msg_id=f"email_{idx:03d}")
+        messages.append(msg)
+    return messages
+
+
+class LocalEmailReader:
+    """Local drop-in replacement for GmailReader for offline testing, PoC, and pipelines.
+
+    Loads raw emails from a local file (.json, .md, .eml) or directory of .eml files
+    and provides the exact same API as GmailReader (`fetch_messages`, `get_message`, `list_message_summaries`).
+    """
+
+    def __init__(self, data_source: Union[str, Path] = "data/spam-indian-bank-emails.json") -> None:
+        self.data_source = Path(data_source)
+        self._messages: List[EmailMessage] = []
+        self._load()
+
+    def _load(self) -> None:
+        source = self.data_source
+        if not source.exists():
+            repo_root = Path(__file__).resolve().parent.parent.parent
+            if (repo_root / source).exists():
+                source = repo_root / source
+
+        if source.is_dir():
+            def _eml_sort_key(p: Path) -> Any:
+                return (0, int(p.stem)) if p.stem.isdigit() else (1, p.stem)
+
+            eml_files = sorted(source.glob("*.eml"), key=_eml_sort_key)
+            self._messages = [
+                parse_raw_email(f.read_text(encoding="utf-8"), msg_id=f.stem)
+                for f in eml_files
+            ]
+        elif source.is_file():
+            self._messages = load_emails_from_file(source)
+        else:
+            raise FileNotFoundError(f"Local email data source not found: {self.data_source}")
+
+    def list_message_summaries(
+        self, query: str = "", max_results: Optional[int] = None, user_id: str = "me"
+    ) -> List[Dict[str, str]]:
+        """List summary dictionaries for available local messages."""
+        results = [
+            {"id": msg.id, "threadId": msg.thread_id, "subject": msg.subject}
+            for msg in self._messages
+        ]
+        if max_results:
+            return results[:max_results]
+        return results
+
+    def get_message(self, message_id: str, user_id: str = "me") -> EmailMessage:
+        """Retrieve a specific message by its ID."""
+        for msg in self._messages:
+            if msg.id == message_id:
+                return msg
+        raise KeyError(f"Message ID '{message_id}' not found in local dataset.")
+
+    def fetch_messages(
+        self, query: str = "", max_results: Optional[int] = None, user_id: str = "me"
+    ) -> List[EmailMessage]:
+        """Return all parsed EmailMessage instances."""
+        if max_results:
+            return self._messages[:max_results]
+        return list(self._messages)

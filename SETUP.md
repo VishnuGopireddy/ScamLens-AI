@@ -34,7 +34,7 @@ Key configuration options in `.env`:
 
 ### Option A: Using `uv` (Fastest)
 ```bash
-uv pip install -e ".[dev,ai,gmail]"
+uv pip install -e ".[dev,ai,gmail,agentic]"
 # Or install using requirements.txt
 uv pip install -r requirements.txt
 ```
@@ -43,7 +43,7 @@ uv pip install -r requirements.txt
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e ".[dev,ai,gmail]"
+pip install -e ".[dev,ai,gmail,agentic]"
 # Or install using requirements.txt
 pip install -r requirements.txt
 ```
@@ -122,11 +122,67 @@ python3 src/scamlens/cli.py --text "Urgent electricity bill power cut" --json
 
 ---
 
-## 6. Accessing & Reading Emails (Gmail REST API)
+## 6. Email Analysis & Forensics (Local Datasets & Gmail REST API)
 
-ScamLens-AI provides an official Google Gmail REST API connector using OAuth 2.0 with least-privilege read-only permissions (`https://www.googleapis.com/auth/gmail.readonly`).
+ScamLens-AI provides dual support for email investigation:
+1. **Local Offline Datasets** (`LocalEmailReader`): Test pipelines, algorithms, and agentic workflows completely offline without Google Cloud credentials or OAuth.
+2. **Live Gmail REST API** (`GmailReader`): Securely fetch and triage live inbox messages using OAuth 2.0 read-only permissions (`https://www.googleapis.com/auth/gmail.readonly`).
 
-### A. Google Cloud Console Setup
+---
+
+### A. Offline Development & Local Proof-of-Concept (Recommended for PoC)
+
+For rapid local testing and development, ScamLens-AI includes a 20-email benchmark dataset covering authentic Indian financial and government communications (5 HAM, 15 SPAM):
+- **Raw RFC 5322 MIME messages**: `data/raw_emails/1.eml` through `data/raw_emails/20.eml` (ignored by git).
+- **Gmail REST API JSON format**: `data/spam-indian-bank-emails.json` (exact schema returned by `users.messages.get`).
+- **Raw Markdown dataset**: `data/spam-indian-bank-emails.md` (raw MIME code blocks without manual field categorization).
+
+#### 1. Programmatic Usage with `LocalEmailReader`
+`LocalEmailReader` provides the exact same API interface as `GmailReader` (`fetch_messages()`, `get_message()`, `list_message_summaries()`):
+
+```python
+from scamlens.extractors.email import LocalEmailReader, extract_email_evidence
+from scamlens.investigator.engine import ScamInvestigator
+
+# Option 1: Load individual numbered .eml files (data/raw_emails/1.eml ... 20.eml)
+reader = LocalEmailReader("data/raw_emails")
+
+# Option 2: Load Gmail REST API JSON format
+# reader = LocalEmailReader("data/spam-indian-bank-emails.json")
+
+# Option 3: Load directly from Markdown dataset
+# reader = LocalEmailReader("data/spam-indian-bank-emails.md")
+
+# Fetch all parsed EmailMessage objects (sorted numerically 1..20)
+messages = reader.fetch_messages()
+
+# Inspect automatically separated fields
+for msg in messages[:3]:
+    print(f"[{msg.id}] {msg.subject}")
+    print(f"  Sender:      {msg.sender_name} <{msg.sender_email}> (domain: {msg.sender_domain})")
+    print(f"  To / CC:     {msg.recipient} | CC: {msg.cc}")
+    print(f"  Auth:        SPF={msg.spf_status}, DKIM={msg.dkim_status}, DMARC={msg.dmarc_status}")
+    print(f"  Attachments: {[a.filename for a in msg.attachments]}")
+    print(f"  URLs Found:  {msg.extracted_urls}")
+    print(f"  Content:     {msg.body_cleaned[:120]}...\n")
+
+# Run evidence extraction or full scam investigation
+investigator = ScamInvestigator()
+result = investigator.investigate_email(messages[0])
+print(f"Verdict: {result.verdict.value} | Risk Score: {result.risk_score}/100")
+```
+
+#### 2. Regenerating or Customizing Dummy Datasets
+The data preparation and generation scripts are maintained under `src/data_generate_dummy/`:
+```bash
+# Generate/regenerate data/raw_emails/1.eml ... 20.eml, .json, and .md
+python3 src/data_generate_dummy/generate_raw_datasets.py
+```
+
+---
+
+### B. Live Google Cloud Gmail REST API Setup
+To connect to live Gmail accounts:
 1. Open the [Google Cloud Console](https://console.cloud.google.com).
 2. Create a project (or select an existing one).
 3. Navigate to **APIs & Services > Library**, search for **Gmail API**, and click **Enable**.
@@ -215,7 +271,27 @@ for msg in messages:
 
 ---
 
-## 7. Starting the REST API Service
+## 7. Agentic AI & LangGraph Workflows
+
+ScamLens-AI includes an advanced Agentic AI investigation framework that transitions from static heuristic scoring to dynamic, cyclic ReAct reasoning and hierarchical multi-agent orchestration powered by **LangGraph**.
+
+### A. Installing Agentic Dependencies
+Install the dedicated `agentic` extras group:
+```bash
+uv pip install -e ".[agentic]"
+# Or using pip:
+pip install langgraph>=1.2.0 langchain-core>=0.3.0
+```
+
+### B. Architectural Blueprints
+Refer to [claude/agentic-ai-plan.md](claude/agentic-ai-plan.md) for the complete engineering specification:
+- **Plan A (Hierarchical Multi-Agent Orchestrator)**: A supervisor agent routes investigation tasks to specialized domain subagents (Email Forensics, Threat Intel, Content Triage, Evidence Synthesizer).
+- **Plan B (Cyclic ReAct State Machine)**: A stateful ReAct cycle with iterative tool invocation (`extract_email_evidence`, `analyze_url`, `knowledge_lookup`) and dynamic termination safeguards.
+- **Plan C (Unified Hybrid Engine)**: Dynamically selects Plan B for low-latency single email triage and Plan A for complex, multi-evidence incidents.
+
+---
+
+## 8. Starting the REST API Service
 
 Launch the FastAPI development server:
 ```bash
@@ -227,10 +303,10 @@ uvicorn scamlens.api.main:app --host 0.0.0.0 --port 8000 --reload
 
 ---
 
-## 8. Running Tests & Evaluation Benchmark
+## 9. Running Tests & Evaluation Benchmark
 
 ```bash
-# Run unit test suite
+# Run unit test suite (30 unit tests covering extractors, models, readers, scorer)
 python3 -m unittest discover tests
 
 # Run reproducible evaluation benchmark (README §9 & §10)

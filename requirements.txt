@@ -20,6 +20,10 @@ groq>=0.11.0
 google-genai>=0.1.0
 openai>=1.14.0
 
+# Agentic AI & Workflow Orchestration
+langgraph>=1.2.0
+langchain-core>=0.3.0
+
 # Google Gmail REST API & OAuth 2.0 Integration
 google-api-python-client>=2.120.0
 google-auth-httplib2>=0.2.0
