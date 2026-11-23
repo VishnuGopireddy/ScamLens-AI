@@ -1,0 +1,2013 @@
+{
+  "description": "ScamLens-AI Benchmark Dataset: 20 Indian Institutional Emails (Gmail REST API format)",
+  "version": "2.0.0",
+  "total_count": 20,
+  "ham_count": 5,
+  "spam_count": 15,
+  "emails": [
+    {
+      "id": "18cf0001scam01",
+      "threadId": "thr_18cf0001",
+      "labelIds": [
+        "UNREAD",
+        "INBOX"
+      ],
+      "snippet": "Dear PRAKASH R,  Thank you for banking with HDFC Bank.  Please find attached your password-protected monthly e-Statement",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/mixed",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "HDFC Bank NetBanking Alerts <alerts@hdfcbank.net>"
+          },
+          {
+            "name": "To",
+            "value": "customer.prakash@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "Your HDFC Bank Credit Card e-Statement for Card ending 4892 (Billing Cycle: Sept 2026)"
+          },
+          {
+            "name": "Date",
+            "value": "Sat, 05 Oct 2026 04:15:30 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "customer.service@hdfcbank.com"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=pass; dkim=pass; dmarc=pass"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "pass (sender IP: 175.100.162.24 is authorized by hdfcbank.net)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<1.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1947,
+              "data": "RGVhciBQUkFLQVNIIFIsCgpUaGFuayB5b3UgZm9yIGJhbmtpbmcgd2l0aCBIREZDIEJhbmsuCgpQbGVhc2UgZmluZCBhdHRhY2hlZCB5b3VyIHBhc3N3b3JkLXByb3RlY3RlZCBtb250aGx5IGUtU3RhdGVtZW50IGZvciBIREZDIEJhbmsgQ3JlZGl0IENhcmQgZW5kaW5nIHdpdGggNDg5MiBmb3IgdGhlIGJpbGxpbmcgY3ljbGUgZW5kaW5nIDA0LU9jdC0yMDI2LgoKU1RBVEVNRU5UIFNVTU1BUlk6Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClRvdGFsIEFtb3VudCBEdWUgICAgICAgIDogUnMuIDE0LDgyMC41MApNaW5pbXVtIEFtb3VudCBEdWUgICAgICA6IFJzLiA4NTAuMDAKUGF5bWVudCBEdWUgRGF0ZSAgICAgICAgOiAyNC1PY3QtMjAyNgpDcmVkaXQgTGltaXQgICAgICAgICAgICA6IFJzLiAyLDUwLDAwMC4wMApBdmFpbGFibGUgQ3JlZGl0IExpbWl0ICA6IFJzLiAyLDM1LDE3OS41MApSZXdhcmQgUG9pbnRzIEVhcm5lZCAgICA6IDEsNDgwIFBvaW50cwotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQoKSE9XIFRPIE9QRU4gWU9VUiBBVFRBQ0hFRCBTVEFURU1FTlQ6ClRoZSBhdHRhY2hlZCBzdGF0ZW1lbnQgaXMgcGFzc3dvcmQtcHJvdGVjdGVkLiBZb3VyIHBhc3N3b3JkIGlzIHlvdXIgNC1jaGFyYWN0ZXIgRGF0ZSAmIE1vbnRoIG9mIEJpcnRoIChERE1NKSBmb2xsb3dlZCBieSB0aGUgbGFzdCA0IGRpZ2l0cyBvZiB5b3VyIENyZWRpdCBDYXJkIG51bWJlci4KRXhhbXBsZTogSWYgeW91ciBEYXRlIG9mIEJpcnRoIGlzIDE1dGggQXVndXN0IGFuZCB5b3VyIGNhcmQgbnVtYmVyIGVuZHMgd2l0aCA0ODkyLCB5b3VyIHBhc3N3b3JkIGlzOiAxNTA4NDg5Mi4KClBBWU1FTlQgT1BUSU9OUzoKWW91IGNhbiBzZXR0bGUgeW91ciBkdWVzIHNlYW1sZXNzbHkgdXNpbmc6CjEuIEhERkMgQmFuayBOZXRCYW5raW5nIC8gTW9iaWxlQmFua2luZyBBcHA6IGh0dHBzOi8vbmV0YmFua2luZy5oZGZjYmFuay5jb20KMi4gQXV0by1EZWJpdCBpbnN0cnVjdGlvbnMgZnJvbSB5b3VyIEhERkMgc2F2aW5ncyBhY2NvdW50CjMuIFVQSSAvIEJpbGxEZXNrIC8gQkJQUyB1c2luZyB5b3VyIGNhcmQgbnVtYmVyCgpTRUNVUklUWSBOT1RJQ0U6CkhERkMgQmFuayBuZXZlciBhc2tzIGZvciB5b3VyIE5ldEJhbmtpbmcgcGFzc3dvcmQsIE9UUCwgQ3JlZGl0IENhcmQgUElOLCBvciBDVlYgb3ZlciBlbWFpbCwgcGhvbmUgY2FsbCwgb3IgU01TLiBJZiB5b3Ugbm90aWNlIGFueSBzdXNwaWNpb3VzIGFjdGl2aXR5LCBpbW1lZGlhdGVseSBjYWxsIG91ciAyNHg3IHRvbGwtZnJlZSBoZWxwbGluZSBhdCAxODAwIDIwMiA2MTYxLgoKLS0KV2FybSBSZWdhcmRzLApDcmVkaXQgQ2FyZCBDdXN0b21lciBTZXJ2aWNlcyBUZWFtCkhERkMgQmFuayBMaW1pdGVkClJlZ2lzdGVyZWQgT2ZmaWNlOiBIREZDIEJhbmsgSG91c2UsIFNlbmFwYXRpIEJhcGF0IE1hcmcsIExvd2VyIFBhcmVsIChXZXN0KSwgTXVtYmFpIC0gNDAwMDEzCkNJTjogTDY1OTIwTUgxOTk0UExDMDgwNjE4IHwgV2Vic2l0ZTogaHR0cHM6Ly93d3cuaGRmY2JhbmsuY29tCk5hdGlvbmFsIEN5YmVyIENyaW1lIEhlbHBsaW5lOiAxOTMwIHwgUkJJIEJhbmtpbmcgT21idWRzbWFuOiBodHRwczovL2Ntcy5yYmkub3JnLmluCgpESVNDTEFJTUVSOgpUaGlzIGVtYWlsIGFuZCBhbnkgZmlsZXMgdHJhbnNtaXR0ZWQgd2l0aCBpdCBhcmUgY29uZmlkZW50aWFsIGFuZCBpbnRlbmRlZCBzb2xlbHkgZm9yIHRoZSB1c2Ugb2YgdGhlIGluZGl2aWR1YWwgdG8gd2hvbSB0aGV5IGFyZSBhZGRyZXNzZWQuIElmIHlvdSBoYXZlIHJlY2VpdmVkIHRoaXMgdHJhbnNtaXNzaW9uIGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIgaW1tZWRpYXRlbHkgYW5kIGRlbGV0ZSB0aGlzIGVtYWlsIGZyb20geW91ciBzeXN0ZW0u"
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 3144,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cHM6Ly93d3cuaGRmY2JhbmsuY29tL2NvbnRlbnQvYXBpL2NvbnRlbnRzdHJlYW0taWQvNzIzZmI4MGEtMmRkZS00MmEzLTk3OTMtN2FlMWJlNTdjODdmLzJjOWM3ZjY4LTdjODUtNGRiYi04YjVkLTAwN2EwY2JlNmE4ZS9sb2dvLnBuZyIgYWx0PSJIREZDIEJhbmsgT2ZmaWNpYWwgQmx1ZSBMb2dvIiBzdHlsZT0ibWF4LWhlaWdodDogNDhweDsgbWFyZ2luLXJpZ2h0OiAxMnB4OyB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlOyIgLz4KICA8aW1nIHNyYz0iaHR0cHM6Ly93d3cuaGRmY2JhbmsuY29tL2Fzc2V0cy9pbWFnZXMvc2VjdXJpdHktZ3VhcmFudGVlLXNoaWVsZC5wbmciIGFsdD0iVmVyaVNpZ24gU1NMIFNlY3VyZWQgRW1haWwgU2hpZWxkIiBzdHlsZT0ibWF4LWhlaWdodDogNDhweDsgbWFyZ2luLXJpZ2h0OiAxMnB4OyB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlOyIgLz4KPC9kaXY-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5EZWFyIFBSQUtBU0ggUiw8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5UaGFuayB5b3UgZm9yIGJhbmtpbmcgd2l0aCBIREZDIEJhbmsuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-UGxlYXNlIGZpbmQgYXR0YWNoZWQgeW91ciBwYXNzd29yZC1wcm90ZWN0ZWQgbW9udGhseSBlLVN0YXRlbWVudCBmb3IgSERGQyBCYW5rIENyZWRpdCBDYXJkIGVuZGluZyB3aXRoIDQ4OTIgZm9yIHRoZSBiaWxsaW5nIGN5Y2xlIGVuZGluZyAwNC1PY3QtMjAyNi48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5TVEFURU1FTlQgU1VNTUFSWTo8YnIvPi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPGJyLz5Ub3RhbCBBbW91bnQgRHVlICAgICAgICA6IFJzLiAxNCw4MjAuNTA8YnIvPk1pbmltdW0gQW1vdW50IER1ZSAgICAgIDogUnMuIDg1MC4wMDxici8-UGF5bWVudCBEdWUgRGF0ZSAgICAgICAgOiAyNC1PY3QtMjAyNjxici8-Q3JlZGl0IExpbWl0ICAgICAgICAgICAgOiBScy4gMiw1MCwwMDAuMDA8YnIvPkF2YWlsYWJsZSBDcmVkaXQgTGltaXQgIDogUnMuIDIsMzUsMTc5LjUwPGJyLz5SZXdhcmQgUG9pbnRzIEVhcm5lZCAgICA6IDEsNDgwIFBvaW50czxici8-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS08L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5IT1cgVE8gT1BFTiBZT1VSIEFUVEFDSEVEIFNUQVRFTUVOVDo8YnIvPlRoZSBhdHRhY2hlZCBzdGF0ZW1lbnQgaXMgcGFzc3dvcmQtcHJvdGVjdGVkLiBZb3VyIHBhc3N3b3JkIGlzIHlvdXIgNC1jaGFyYWN0ZXIgRGF0ZSAmYW1wOyBNb250aCBvZiBCaXJ0aCAoRERNTSkgZm9sbG93ZWQgYnkgdGhlIGxhc3QgNCBkaWdpdHMgb2YgeW91ciBDcmVkaXQgQ2FyZCBudW1iZXIuPGJyLz5FeGFtcGxlOiBJZiB5b3VyIERhdGUgb2YgQmlydGggaXMgMTV0aCBBdWd1c3QgYW5kIHlvdXIgY2FyZCBudW1iZXIgZW5kcyB3aXRoIDQ4OTIsIHlvdXIgcGFzc3dvcmQgaXM6IDE1MDg0ODkyLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlBBWU1FTlQgT1BUSU9OUzo8YnIvPllvdSBjYW4gc2V0dGxlIHlvdXIgZHVlcyBzZWFtbGVzc2x5IHVzaW5nOjxici8-MS4gSERGQyBCYW5rIE5ldEJhbmtpbmcgLyBNb2JpbGVCYW5raW5nIEFwcDogPGEgaHJlZj0iaHR0cHM6Ly9uZXRiYW5raW5nLmhkZmNiYW5rLmNvbSIgc3R5bGU9ImNvbG9yOiAjMDA2NmNjOyB0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTsiPkhERkMgQmFuayBOZXRCYW5raW5nIFBvcnRhbDwvYT48YnIvPjIuIEF1dG8tRGViaXQgaW5zdHJ1Y3Rpb25zIGZyb20geW91ciBIREZDIHNhdmluZ3MgYWNjb3VudDxici8-My4gVVBJIC8gQmlsbERlc2sgLyBCQlBTIHVzaW5nIHlvdXIgY2FyZCBudW1iZXI8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5TRUNVUklUWSBOT1RJQ0U6PGJyLz5IREZDIEJhbmsgbmV2ZXIgYXNrcyBmb3IgeW91ciBOZXRCYW5raW5nIHBhc3N3b3JkLCBPVFAsIENyZWRpdCBDYXJkIFBJTiwgb3IgQ1ZWIG92ZXIgZW1haWwsIHBob25lIGNhbGwsIG9yIFNNUy4gSWYgeW91IG5vdGljZSBhbnkgc3VzcGljaW91cyBhY3Rpdml0eSwgaW1tZWRpYXRlbHkgY2FsbCBvdXIgMjR4NyB0b2xsLWZyZWUgaGVscGxpbmUgYXQgMTgwMCAyMDIgNjE2MS48L3A-CjxociBzdHlsZT0iYm9yZGVyOiBub25lOyBib3JkZXItdG9wOiAxcHggc29saWQgI2RkZDsgbWFyZ2luOiAyMHB4IDA7IiAvPgo8ZGl2IHN0eWxlPSJmb250LXNpemU6IDEycHg7IGNvbG9yOiAjNjY2OyI-V2FybSBSZWdhcmRzLDxici8-Q3JlZGl0IENhcmQgQ3VzdG9tZXIgU2VydmljZXMgVGVhbTxici8-SERGQyBCYW5rIExpbWl0ZWQ8YnIvPlJlZ2lzdGVyZWQgT2ZmaWNlOiBIREZDIEJhbmsgSG91c2UsIFNlbmFwYXRpIEJhcGF0IE1hcmcsIExvd2VyIFBhcmVsIChXZXN0KSwgTXVtYmFpIC0gNDAwMDEzPGJyLz5DSU46IEw2NTkyME1IMTk5NFBMQzA4MDYxOCB8IFdlYnNpdGU6IGh0dHBzOi8vd3d3LmhkZmNiYW5rLmNvbTxici8-TmF0aW9uYWwgQ3liZXIgQ3JpbWUgSGVscGxpbmU6IDE5MzAgfCBSQkkgQmFua2luZyBPbWJ1ZHNtYW46IGh0dHBzOi8vY21zLnJiaS5vcmcuaW48YnIvPjxici8-RElTQ0xBSU1FUjo8YnIvPlRoaXMgZW1haWwgYW5kIGFueSBmaWxlcyB0cmFuc21pdHRlZCB3aXRoIGl0IGFyZSBjb25maWRlbnRpYWwgYW5kIGludGVuZGVkIHNvbGVseSBmb3IgdGhlIHVzZSBvZiB0aGUgaW5kaXZpZHVhbCB0byB3aG9tIHRoZXkgYXJlIGFkZHJlc3NlZC4gSWYgeW91IGhhdmUgcmVjZWl2ZWQgdGhpcyB0cmFuc21pc3Npb24gaW4gZXJyb3IsIHBsZWFzZSBub3RpZnkgdGhlIHNlbmRlciBpbW1lZGlhdGVseSBhbmQgZGVsZXRlIHRoaXMgZW1haWwgZnJvbSB5b3VyIHN5c3RlbS48L2Rpdj4KPC9ib2R5Pgo8L2h0bWw-"
+            }
+          },
+          {
+            "partId": "2",
+            "mimeType": "application/pdf",
+            "filename": "HDFC_Statement_Sep2026_4892.pdf",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/pdf"
+              },
+              {
+                "name": "Content-Disposition",
+                "value": "attachment; filename=\"HDFC_Statement_Sep2026_4892.pdf\""
+              }
+            ],
+            "body": {
+              "attachmentId": "att_18cf0001scam01_2",
+              "size": 245000
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_001",
+        "eml_file": "1.eml",
+        "classification": "HAM",
+        "category": "Banking",
+        "sub_category": "Monthly Credit Card e-Statement",
+        "claimed_org": "HDFC Bank Limited"
+      }
+    },
+    {
+      "id": "18cf0002scam02",
+      "threadId": "thr_18cf0002",
+      "labelIds": [
+        "UNREAD",
+        "INBOX"
+      ],
+      "snippet": "Dear Customer,  Your State Bank of India Account XXXXXXXX4012 has been debited by Rs. 25,000.00 on 16-Oct-2026 14:21:42",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "SBI Internet Banking Alerts <donotreply@sbi.co.in>"
+          },
+          {
+            "name": "To",
+            "value": "anita.deshmukh@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "Debit Alert: Your SBI A/C XXXXXXXX4012 has been debited by Rs 25,000.00 via NEFT"
+          },
+          {
+            "name": "Date",
+            "value": "Wed, 16 Oct 2026 14:22:15 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "None"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=pass; dkim=pass; dmarc=pass"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "pass (sender IP: 115.112.234.18 is authorized by sbi.co.in)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<2.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1256,
+              "data": "RGVhciBDdXN0b21lciwKCllvdXIgU3RhdGUgQmFuayBvZiBJbmRpYSBBY2NvdW50IFhYWFhYWFhYNDAxMiBoYXMgYmVlbiBkZWJpdGVkIGJ5IFJzLiAyNSwwMDAuMDAgb24gMTYtT2N0LTIwMjYgMTQ6MjE6NDIgSVNUIHRvd2FyZHMgYW4gb3V0d2FyZCBORUZUIHRyYW5zZmVyLgoKVFJBTlNBQ1RJT04gREVUQUlMUzoKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KVHJhbnNhY3Rpb24gUmVmZXJlbmNlIChVVFIpIDogU0JJTjMyNjI4OTEwNDgyMQpCZW5lZmljaWFyeSBOYW1lICAgICAgICAgICAgOiBTVVJFU0ggUEFUSUwKQmVuZWZpY2lhcnkgQWNjb3VudCBOdW1iZXIgIDogWFhYWFhYWFhYWDg5MTAKQmVuZWZpY2lhcnkgQmFuayAmIElGU0MgICAgIDogSERGQyBCYW5rIChIREZDMDAwMDI0MCkKVHJhbnNmZXIgTW9kZSAgICAgICAgICAgICAgIDogTmF0aW9uYWwgRWxlY3Ryb25pYyBGdW5kcyBUcmFuc2ZlciAoTkVGVCkKQXZhaWxhYmxlIEJhbGFuY2UgICAgICAgICAgIDogUnMuIDEsNDIsODUwLjI1Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCgpJZiB5b3UgZGlkIG5vdCBhdXRob3JpemUgdGhpcyB0cmFuc2FjdGlvbiwgcGxlYXNlIGltbWVkaWF0ZWx5OgoxLiBCbG9jayB5b3VyIEludGVybmV0IEJhbmtpbmcgcHJvZmlsZSBieSBzZW5kaW5nIFNNUyAnQkxPQ0sgPEFjY291bnQgTm8-JyB0byA1Njc2NzYuCjIuIERpYWwgb3VyIDI0eDcgdG9sbC1mcmVlIGhlbHBsaW5lIG51bWJlcnM6IDE4MDAtMTEtMjIxMSAvIDE4MDAtNDI1LTM4MDAuCjMuIExvY2sgeW91ciBEZWJpdCBDYXJkIGluc3RhbnRseSB2aWEgdGhlIFlPTk8gU0JJIEFwcC4KCkFsd2F5cyBlbnN1cmUgdGhlIFVSTCBpbiB5b3VyIGJyb3dzZXIgYWRkcmVzcyBiYXIgaXMgc3RyaWN0bHk6IGh0dHBzOi8vd3d3Lm9ubGluZXNiaS5zYmkKCi0tCllvdXJzIGZhaXRoZnVsbHksCkNoaWVmIEdlbmVyYWwgTWFuYWdlciAoRGlnaXRhbCBCYW5raW5nKQpTdGF0ZSBCYW5rIG9mIEluZGlhCkNvcnBvcmF0ZSBDZW50cmU6IFN0YXRlIEJhbmsgQmhhdmFuLCBNYWRhbWUgQ2FtYSBSb2FkLCBOYXJpbWFuIFBvaW50LCBNdW1iYWkgLSA0MDAwMjEKQ3VzdG9tZXIgQ2FyZSBUb2xsLUZyZWU6IDE4MDAgMTIzNCAvIDE4MDAgMjEwMCB8IEVtYWlsOiBjdXN0b21lcmNhcmVAc2JpLmNvLmluCgpTdGF0ZSBCYW5rIG9mIEluZGlhIC0gVGhlIEJhbmtlciB0byBFdmVyeSBJbmRpYW4="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2115,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cHM6Ly93d3cub25saW5lc2JpLnNiaS9zYmlqYXZhL2ltYWdlcy9zYmlfbG9nby5wbmciIGFsdD0iU0JJIE9mZmljaWFsIEJsdWUgS2V5aG9sZSBFbWJsZW0iIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgo8L2Rpdj4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkRlYXIgQ3VzdG9tZXIsPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-WW91ciBTdGF0ZSBCYW5rIG9mIEluZGlhIEFjY291bnQgWFhYWFhYWFg0MDEyIGhhcyBiZWVuIGRlYml0ZWQgYnkgUnMuIDI1LDAwMC4wMCBvbiAxNi1PY3QtMjAyNiAxNDoyMTo0MiBJU1QgdG93YXJkcyBhbiBvdXR3YXJkIE5FRlQgdHJhbnNmZXIuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-VFJBTlNBQ1RJT04gREVUQUlMUzo8YnIvPi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPGJyLz5UcmFuc2FjdGlvbiBSZWZlcmVuY2UgKFVUUikgOiBTQklOMzI2Mjg5MTA0ODIxPGJyLz5CZW5lZmljaWFyeSBOYW1lICAgICAgICAgICAgOiBTVVJFU0ggUEFUSUw8YnIvPkJlbmVmaWNpYXJ5IEFjY291bnQgTnVtYmVyICA6IFhYWFhYWFhYWFg4OTEwPGJyLz5CZW5lZmljaWFyeSBCYW5rICZhbXA7IElGU0MgICAgIDogSERGQyBCYW5rIChIREZDMDAwMDI0MCk8YnIvPlRyYW5zZmVyIE1vZGUgICAgICAgICAgICAgICA6IE5hdGlvbmFsIEVsZWN0cm9uaWMgRnVuZHMgVHJhbnNmZXIgKE5FRlQpPGJyLz5BdmFpbGFibGUgQmFsYW5jZSAgICAgICAgICAgOiBScy4gMSw0Miw4NTAuMjU8YnIvPi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-SWYgeW91IGRpZCBub3QgYXV0aG9yaXplIHRoaXMgdHJhbnNhY3Rpb24sIHBsZWFzZSBpbW1lZGlhdGVseTo8YnIvPjEuIEJsb2NrIHlvdXIgSW50ZXJuZXQgQmFua2luZyBwcm9maWxlIGJ5IHNlbmRpbmcgU01TICYjeDI3O0JMT0NLICZsdDtBY2NvdW50IE5vJmd0OyYjeDI3OyB0byA1Njc2NzYuPGJyLz4yLiBEaWFsIG91ciAyNHg3IHRvbGwtZnJlZSBoZWxwbGluZSBudW1iZXJzOiAxODAwLTExLTIyMTEgLyAxODAwLTQyNS0zODAwLjxici8-My4gTG9jayB5b3VyIERlYml0IENhcmQgaW5zdGFudGx5IHZpYSB0aGUgWU9OTyBTQkkgQXBwLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkFsd2F5cyBlbnN1cmUgdGhlIFVSTCBpbiB5b3VyIGJyb3dzZXIgYWRkcmVzcyBiYXIgaXMgc3RyaWN0bHk6IDxhIGhyZWY9Imh0dHBzOi8vd3d3Lm9ubGluZXNiaS5zYmkiIHN0eWxlPSJjb2xvcjogIzAwNjZjYzsgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7Ij5TQkkgT2ZmaWNpYWwgTmV0QmFua2luZyAob25saW5lc2JpLnNiaSk8L2E-PC9wPgo8aHIgc3R5bGU9ImJvcmRlcjogbm9uZTsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNkZGQ7IG1hcmdpbjogMjBweCAwOyIgLz4KPGRpdiBzdHlsZT0iZm9udC1zaXplOiAxMnB4OyBjb2xvcjogIzY2NjsiPllvdXJzIGZhaXRoZnVsbHksPGJyLz5DaGllZiBHZW5lcmFsIE1hbmFnZXIgKERpZ2l0YWwgQmFua2luZyk8YnIvPlN0YXRlIEJhbmsgb2YgSW5kaWE8YnIvPkNvcnBvcmF0ZSBDZW50cmU6IFN0YXRlIEJhbmsgQmhhdmFuLCBNYWRhbWUgQ2FtYSBSb2FkLCBOYXJpbWFuIFBvaW50LCBNdW1iYWkgLSA0MDAwMjE8YnIvPkN1c3RvbWVyIENhcmUgVG9sbC1GcmVlOiAxODAwIDEyMzQgLyAxODAwIDIxMDAgfCBFbWFpbDogY3VzdG9tZXJjYXJlQHNiaS5jby5pbjxici8-PGJyLz5TdGF0ZSBCYW5rIG9mIEluZGlhIC0gVGhlIEJhbmtlciB0byBFdmVyeSBJbmRpYW48L2Rpdj4KPC9ib2R5Pgo8L2h0bWw-"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_002",
+        "eml_file": "2.eml",
+        "classification": "HAM",
+        "category": "Banking",
+        "sub_category": "NEFT Outward Debit Notification",
+        "claimed_org": "State Bank of India (SBI)"
+      }
+    },
+    {
+      "id": "18cf0003scam03",
+      "threadId": "thr_18cf0003",
+      "labelIds": [
+        "UNREAD",
+        "INBOX"
+      ],
+      "snippet": "Dear Policyholder VIKRAM MALHOTRA,  Greetings from Life Insurance Corporation of India.  This is to inform you that the",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "LIC Portal Customer Services <customer.service@licindia.in>"
+          },
+          {
+            "name": "To",
+            "value": "vikram.malhotra@yahoo.com"
+          },
+          {
+            "name": "Subject",
+            "value": "LIC Policy Premium Due Notice - Policy No. 842109482 (Plan: Jeevan Labh)"
+          },
+          {
+            "name": "Date",
+            "value": "Mon, 02 Sep 2026 09:00:12 +0530 (IST)"
+          },
+          {
+            "name": "Cc",
+            "value": "branch.882@licindia.in"
+          },
+          {
+            "name": "Reply-To",
+            "value": "customer.service@licindia.in"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=pass; dkim=pass; dmarc=pass"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "pass (sender IP: 121.241.242.70 is authorized by licindia.in)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<3.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1485,
+              "data": "RGVhciBQb2xpY3lob2xkZXIgVklLUkFNIE1BTEhPVFJBLAoKR3JlZXRpbmdzIGZyb20gTGlmZSBJbnN1cmFuY2UgQ29ycG9yYXRpb24gb2YgSW5kaWEuCgpUaGlzIGlzIHRvIGluZm9ybSB5b3UgdGhhdCB0aGUgcmVuZXdhbCBwcmVtaXVtIGZvciB5b3VyIExJQyBMaWZlIEluc3VyYW5jZSBQb2xpY3kgaXMgZHVlIGZvciBwYXltZW50LgoKUE9MSUNZIFBBUlRJQ1VMQVJTOgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpQb2xpY3kgTnVtYmVyICAgICAgIDogODQyMTA5NDgyClBsYW4gJiBUZXJtICAgICAgICAgOiBKZWV2YW4gTGFiaCAoVGFibGUgOTM2LCBUZXJtIDE2LzEwKQpTdW0gQXNzdXJlZCAgICAgICAgIDogUnMuIDEwLDAwLDAwMC4wMApQcmVtaXVtIEluc3RhbGxtZW50IDogUnMuIDI4LDQ1MC4wMCAoaW5jbHVkaW5nIGFwcGxpY2FibGUgR1NUKQpEdWUgRGF0ZSBvZiBQcmVtaXVtIDogMjAtU2VwLTIwMjYKR3JhY2UgUGVyaW9kIEV4cGlyeSA6IDIwLU9jdC0yMDI2ClNlcnZpY2luZyBCcmFuY2ggICAgOiBCcmFuY2ggODgyLCBGb3J0LCBNdW1iYWkKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCkNPTlZFTklFTlQgT05MSU5FIFBBWU1FTlQgTU9ERVM6CjEuIFBheSBkaXJlY3RseSB3aXRob3V0IHJlZ2lzdHJhdGlvbjogaHR0cHM6Ly9saWNpbmRpYS5pbi9Ib21lL1BheS1QcmVtaXVtLU9ubGluZQoyLiBQYXkgdmlhIExJQyBDdXN0b21lciBQb3J0YWwgQXBwIChBbmRyb2lkIC8gaU9TKTogaHR0cHM6Ly9jdXN0b21lci5vbmxpbmVsaWMuaW4KMy4gQXV0aG9yaXplZCBkaWdpdGFsIGJpbGxlcnM6IE5BQ0ggTWFuZGF0ZSwgVVBJLCBOZXRCYW5raW5nLCBCQlBTLCBvciBBdXRob3JpemVkIEJhbmsgQ291bnRlcnMuCgpJTVBPUlRBTlQgU0FGRVRZIE5PVElDRToKTElDIG5ldmVyIGFza3MgcG9saWN5aG9sZGVycyB0byB0cmFuc2ZlciBmdW5kcyBpbnRvIGFueSBpbmRpdmlkdWFsJ3MgcGVyc29uYWwgc2F2aW5ncyBhY2NvdW50IG9yIHBlcnNvbmFsIFVQSSBWUEEgaGFuZGxlLiBOZXZlciBzdXJyZW5kZXIgeW91ciBwb2xpY3kgYmFzZWQgb24gZmFsc2UgcHJvbWlzZXMgb2YgaGlnaCBib251cyByZXR1cm5zIG9yIGxvdHRlcnkgcGF5b3V0cyBmcm9tIGNhbGxlcnMgY2xhaW1pbmcgdG8gcmVwcmVzZW50IElSREFJIG9yIExJQy4KCi0tCllvdXJzIHNpbmNlcmVseSwKRGl2aXNpb25hbCBNYW5hZ2VyIChDdXN0b21lciBSZWxhdGlvbnNoaXAgTWFuYWdlbWVudCkKTGlmZSBJbnN1cmFuY2UgQ29ycG9yYXRpb24gb2YgSW5kaWEKRGl2aXNpb25hbCBPZmZpY2U6IFlvZ2Frc2hlbWEgQnVpbGRpbmcsIFdlc3QgV2luZywgSi5CLiBNYXJnLCBNdW1iYWkgLSA0MDAwMjEKTElDIENhbGwgQ2VudHJlIDI0eDc6IDAyMi02ODI3NjgyNyB8IElSREFJIFJlZyBObzogNTEyCgpMSUMgb2YgSW5kaWEgLSBIYXIgUGFsIEFhcGtlIFNhYXRo"
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2476,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cHM6Ly9saWNpbmRpYS5pbi9vL2xpYy10aGVtZS9pbWFnZXMvbGljX2xvZ28ucG5nIiBhbHQ9IkxJQyBIYW5kcyB3aXRoIEZsYW1lIEVtYmxlbSAoWW9nYWtzaGVtYW0gVmFoYW15YWhhbSkiIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgo8L2Rpdj4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkRlYXIgUG9saWN5aG9sZGVyIFZJS1JBTSBNQUxIT1RSQSw8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5HcmVldGluZ3MgZnJvbSBMaWZlIEluc3VyYW5jZSBDb3Jwb3JhdGlvbiBvZiBJbmRpYS48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5UaGlzIGlzIHRvIGluZm9ybSB5b3UgdGhhdCB0aGUgcmVuZXdhbCBwcmVtaXVtIGZvciB5b3VyIExJQyBMaWZlIEluc3VyYW5jZSBQb2xpY3kgaXMgZHVlIGZvciBwYXltZW50LjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlBPTElDWSBQQVJUSUNVTEFSUzo8YnIvPi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPGJyLz5Qb2xpY3kgTnVtYmVyICAgICAgIDogODQyMTA5NDgyPGJyLz5QbGFuICZhbXA7IFRlcm0gICAgICAgICA6IEplZXZhbiBMYWJoIChUYWJsZSA5MzYsIFRlcm0gMTYvMTApPGJyLz5TdW0gQXNzdXJlZCAgICAgICAgIDogUnMuIDEwLDAwLDAwMC4wMDxici8-UHJlbWl1bSBJbnN0YWxsbWVudCA6IFJzLiAyOCw0NTAuMDAgKGluY2x1ZGluZyBhcHBsaWNhYmxlIEdTVCk8YnIvPkR1ZSBEYXRlIG9mIFByZW1pdW0gOiAyMC1TZXAtMjAyNjxici8-R3JhY2UgUGVyaW9kIEV4cGlyeSA6IDIwLU9jdC0yMDI2PGJyLz5TZXJ2aWNpbmcgQnJhbmNoICAgIDogQnJhbmNoIDg4MiwgRm9ydCwgTXVtYmFpPGJyLz4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLTwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkNPTlZFTklFTlQgT05MSU5FIFBBWU1FTlQgTU9ERVM6PGJyLz4xLiBQYXkgZGlyZWN0bHkgd2l0aG91dCByZWdpc3RyYXRpb246IDxhIGhyZWY9Imh0dHBzOi8vbGljaW5kaWEuaW4vSG9tZS9QYXktUHJlbWl1bS1PbmxpbmUiIHN0eWxlPSJjb2xvcjogIzAwNjZjYzsgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7Ij5MSUMgT2ZmaWNpYWwgRGlyZWN0IFBheSBQb3J0YWw8L2E-PGJyLz4yLiBQYXkgdmlhIExJQyBDdXN0b21lciBQb3J0YWwgQXBwIChBbmRyb2lkIC8gaU9TKTogPGEgaHJlZj0iaHR0cHM6Ly9jdXN0b21lci5vbmxpbmVsaWMuaW4iIHN0eWxlPSJjb2xvcjogIzAwNjZjYzsgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7Ij5MSUMgQ3VzdG9tZXIgUG9ydGFsIExvZ2luPC9hPjxici8-My4gQXV0aG9yaXplZCBkaWdpdGFsIGJpbGxlcnM6IE5BQ0ggTWFuZGF0ZSwgVVBJLCBOZXRCYW5raW5nLCBCQlBTLCBvciBBdXRob3JpemVkIEJhbmsgQ291bnRlcnMuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-SU1QT1JUQU5UIFNBRkVUWSBOT1RJQ0U6PGJyLz5MSUMgbmV2ZXIgYXNrcyBwb2xpY3lob2xkZXJzIHRvIHRyYW5zZmVyIGZ1bmRzIGludG8gYW55IGluZGl2aWR1YWwmI3gyNztzIHBlcnNvbmFsIHNhdmluZ3MgYWNjb3VudCBvciBwZXJzb25hbCBVUEkgVlBBIGhhbmRsZS4gTmV2ZXIgc3VycmVuZGVyIHlvdXIgcG9saWN5IGJhc2VkIG9uIGZhbHNlIHByb21pc2VzIG9mIGhpZ2ggYm9udXMgcmV0dXJucyBvciBsb3R0ZXJ5IHBheW91dHMgZnJvbSBjYWxsZXJzIGNsYWltaW5nIHRvIHJlcHJlc2VudCBJUkRBSSBvciBMSUMuPC9wPgo8aHIgc3R5bGU9ImJvcmRlcjogbm9uZTsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNkZGQ7IG1hcmdpbjogMjBweCAwOyIgLz4KPGRpdiBzdHlsZT0iZm9udC1zaXplOiAxMnB4OyBjb2xvcjogIzY2NjsiPllvdXJzIHNpbmNlcmVseSw8YnIvPkRpdmlzaW9uYWwgTWFuYWdlciAoQ3VzdG9tZXIgUmVsYXRpb25zaGlwIE1hbmFnZW1lbnQpPGJyLz5MaWZlIEluc3VyYW5jZSBDb3Jwb3JhdGlvbiBvZiBJbmRpYTxici8-RGl2aXNpb25hbCBPZmZpY2U6IFlvZ2Frc2hlbWEgQnVpbGRpbmcsIFdlc3QgV2luZywgSi5CLiBNYXJnLCBNdW1iYWkgLSA0MDAwMjE8YnIvPkxJQyBDYWxsIENlbnRyZSAyNHg3OiAwMjItNjgyNzY4MjcgfCBJUkRBSSBSZWcgTm86IDUxMjxici8-PGJyLz5MSUMgb2YgSW5kaWEgLSBIYXIgUGFsIEFhcGtlIFNhYXRoPC9kaXY-CjwvYm9keT4KPC9odG1sPg=="
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_003",
+        "eml_file": "3.eml",
+        "classification": "HAM",
+        "category": "Insurance",
+        "sub_category": "Annual Policy Premium Due Notice",
+        "claimed_org": "Life Insurance Corporation of India (LIC)"
+      }
+    },
+    {
+      "id": "18cf0004scam04",
+      "threadId": "thr_18cf0004",
+      "labelIds": [
+        "UNREAD",
+        "INBOX"
+      ],
+      "snippet": "Dear SUNITA VERMA,  PAN: AXXXX1234X Assessment Year: 2024-25 Acknowledgement Number: 829104820194821 Communication Ref N",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/mixed",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "Income Tax Department CPC Bengaluru <donotreply@incometax.gov.in>"
+          },
+          {
+            "name": "To",
+            "value": "sunita.verma@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "Intimation Order u/s 143(1) of the Income-tax Act, 1961 for PAN: AXXXX1234X - AY 2024-25"
+          },
+          {
+            "name": "Date",
+            "value": "Thu, 22 Aug 2026 11:45:00 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "None"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=pass; dkim=pass; dmarc=pass"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "pass (sender IP: 164.100.14.92 is authorized by incometax.gov.in)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<4.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1763,
+              "data": "RGVhciBTVU5JVEEgVkVSTUEsCgpQQU46IEFYWFhYMTIzNFgKQXNzZXNzbWVudCBZZWFyOiAyMDI0LTI1CkFja25vd2xlZGdlbWVudCBOdW1iZXI6IDgyOTEwNDgyMDE5NDgyMQpDb21tdW5pY2F0aW9uIFJlZiBObzogQ1BDLzI0MjUvQTIvODI5MTA0ODIwMTk0ODIxCgpUaGUgQ2VudHJhbGl6ZWQgUHJvY2Vzc2luZyBDZW50cmUgKENQQyksIEJlbmdhbHVydSBoYXMgcHJvY2Vzc2VkIHlvdXIgZWxlY3Ryb25pY2FsbHkgZmlsZWQgSW5jb21lIFRheCBSZXR1cm4gZm9yIEFzc2Vzc21lbnQgWWVhciAyMDI0LTI1IHVuZGVyIHNlY3Rpb24gMTQzKDEpIG9mIHRoZSBJbmNvbWUtdGF4IEFjdCwgMTk2MS4KClNVTU1BUlkgT0YgQ09NUFVUQVRJT046Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tClRvdGFsIFRheCAmIEludGVyZXN0IFBheWFibGUgYXMgcGVyIFJldHVybiA6IFJzLiAwClRvdGFsIFRheCAmIEludGVyZXN0IERldGVybWluZWQgYnkgQ1BDICAgICA6IFJzLiAwCk5ldCBSZWZ1bmQgRGV0ZXJtaW5lZCAoSW5jbHVkaW5nIDI0NEEgSW50KSA6IFJzLiAxNCwyODAuMDAKUmVmdW5kIERpc2J1cnNlbWVudCBDaGFubmVsICAgICAgICAgICAgICAgIDogRGlyZWN0IENyZWRpdCB2aWEgTkVDUy9SVEdTCkRlc2lnbmF0ZWQgUHJlLVZhbGlkYXRlZCBCYW5rIEFjY291bnQgICAgICA6IFN0YXRlIEJhbmsgb2YgSW5kaWEgKEEvQyBlbmRpbmcgNTgyMSkKLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KClRoZSBkZXRhaWxlZCBjb21wdXRhdGlvbiBzaGVldCBpcyBlbmNsb3NlZCBpbiB0aGUgYXR0YWNoZWQgcGFzc3dvcmQtcHJvdGVjdGVkIFBERiBkb2N1bWVudC4KUGFzc3dvcmQgRm9ybWF0OiBZb3VyIDEwLWRpZ2l0IFBBTiBpbiBsb3dlcmNhc2UgZm9sbG93ZWQgYnkgeW91ciBEYXRlIG9mIEJpcnRoIGluIERETU1ZWVlZIGZvcm1hdC4KRXhhbXBsZTogSWYgUEFOIGlzIEFCQ0RFMTIzNEYgYW5kIERPQiBpcyAwMS1KYW4tMTk4NSwgcGFzc3dvcmQgaXM6IGFiY2RlMTIzNGYwMTAxMTk4NS4KCllvdSBjYW4gaW5zcGVjdCBhbGwgcHJvY2Vzc2VkIHJldHVybnMgYW5kIHJlZnVuZCBzdGF0dXNlcyBieSBsb2dnaW5nIGluIHRvIHRoZSBlLUZpbGluZyBwb3J0YWw6Cmh0dHBzOi8vd3d3LmluY29tZXRheC5nb3YuaW4vaWVjL2ZvcG9ydGFsLwoKU1RBVFVUT1JZIENBVVRJT046ClRoZSBJbmNvbWUgVGF4IERlcGFydG1lbnQgTkVWRVIgYXNrcyB0YXhwYXllcnMgZm9yIHRoZWlyIGJhbmsgYWNjb3VudCBwYXNzd29yZHMsIGRlYml0L2NyZWRpdCBjYXJkIFBJTnMsIG9yIE9UUHMuIEFsbCBvZmZpY2lhbCBjb21tdW5pY2F0aW9ucyBjYXJyeSBhIHVuaXF1ZSBEb2N1bWVudCBJZGVudGlmaWNhdGlvbiBOdW1iZXIgKERJTikgdmVyaWZpYWJsZSBvbiB0aGUgZS1GaWxpbmcgcG9ydGFsLgoKLS0KRGVwdXR5IENvbW1pc3Npb25lciBvZiBJbmNvbWUgVGF4CkNlbnRyYWxpemVkIFByb2Nlc3NpbmcgQ2VudHJlIChDUEMpCkluY29tZSBUYXggRGVwYXJ0bWVudCwgUG9zdCBCYWcgTm8uIDEsIEVsZWN0cm9uaWMgQ2l0eSBQb3N0IE9mZmljZSwgQmVuZ2FsdXJ1IC0gNTYwMTAwLCBLYXJuYXRha2EKZS1GaWxpbmcgSGVscGRlc2sgVG9sbC1GcmVlOiAxODAwIDEwMyAwMDI1IC8gMTgwMCA0MTkgMDAyNQoKR292ZXJubWVudCBvZiBJbmRpYSAtIE1pbmlzdHJ5IG9mIEZpbmFuY2UgLSBDZW50cmFsIEJvYXJkIG9mIERpcmVjdCBUYXhlcyAoQ0JEVCk="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2930,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cHM6Ly93d3cuaW5jb21ldGF4Lmdvdi5pbi9pZWMvZm9wb3J0YWwvc2l0ZXMvZGVmYXVsdC9maWxlcy9lbWJsZW0tZGFyay5wbmciIGFsdD0iQXNob2thIExpb24gQ2FwaXRhbCBOYXRpb25hbCBFbWJsZW0gb2YgSW5kaWEiIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgogIDxpbWcgc3JjPSJodHRwczovL3d3dy5pbmNvbWV0YXguZ292LmluL2llYy9mb3BvcnRhbC9zaXRlcy9kZWZhdWx0L2ZpbGVzL2l0ZC1sb2dvLnBuZyIgYWx0PSJJbmNvbWUgVGF4IERlcGFydG1lbnQgT2ZmaWNpYWwgQ3Jlc3QiIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgo8L2Rpdj4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkRlYXIgU1VOSVRBIFZFUk1BLDwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlBBTjogQVhYWFgxMjM0WDxici8-QXNzZXNzbWVudCBZZWFyOiAyMDI0LTI1PGJyLz5BY2tub3dsZWRnZW1lbnQgTnVtYmVyOiA4MjkxMDQ4MjAxOTQ4MjE8YnIvPkNvbW11bmljYXRpb24gUmVmIE5vOiBDUEMvMjQyNS9BMi84MjkxMDQ4MjAxOTQ4MjE8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5UaGUgQ2VudHJhbGl6ZWQgUHJvY2Vzc2luZyBDZW50cmUgKENQQyksIEJlbmdhbHVydSBoYXMgcHJvY2Vzc2VkIHlvdXIgZWxlY3Ryb25pY2FsbHkgZmlsZWQgSW5jb21lIFRheCBSZXR1cm4gZm9yIEFzc2Vzc21lbnQgWWVhciAyMDI0LTI1IHVuZGVyIHNlY3Rpb24gMTQzKDEpIG9mIHRoZSBJbmNvbWUtdGF4IEFjdCwgMTk2MS48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5TVU1NQVJZIE9GIENPTVBVVEFUSU9OOjxici8-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS08YnIvPlRvdGFsIFRheCAmYW1wOyBJbnRlcmVzdCBQYXlhYmxlIGFzIHBlciBSZXR1cm4gOiBScy4gMDxici8-VG90YWwgVGF4ICZhbXA7IEludGVyZXN0IERldGVybWluZWQgYnkgQ1BDICAgICA6IFJzLiAwPGJyLz5OZXQgUmVmdW5kIERldGVybWluZWQgKEluY2x1ZGluZyAyNDRBIEludCkgOiBScy4gMTQsMjgwLjAwPGJyLz5SZWZ1bmQgRGlzYnVyc2VtZW50IENoYW5uZWwgICAgICAgICAgICAgICAgOiBEaXJlY3QgQ3JlZGl0IHZpYSBORUNTL1JUR1M8YnIvPkRlc2lnbmF0ZWQgUHJlLVZhbGlkYXRlZCBCYW5rIEFjY291bnQgICAgICA6IFN0YXRlIEJhbmsgb2YgSW5kaWEgKEEvQyBlbmRpbmcgNTgyMSk8YnIvPi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-VGhlIGRldGFpbGVkIGNvbXB1dGF0aW9uIHNoZWV0IGlzIGVuY2xvc2VkIGluIHRoZSBhdHRhY2hlZCBwYXNzd29yZC1wcm90ZWN0ZWQgUERGIGRvY3VtZW50Ljxici8-UGFzc3dvcmQgRm9ybWF0OiBZb3VyIDEwLWRpZ2l0IFBBTiBpbiBsb3dlcmNhc2UgZm9sbG93ZWQgYnkgeW91ciBEYXRlIG9mIEJpcnRoIGluIERETU1ZWVlZIGZvcm1hdC48YnIvPkV4YW1wbGU6IElmIFBBTiBpcyBBQkNERTEyMzRGIGFuZCBET0IgaXMgMDEtSmFuLTE5ODUsIHBhc3N3b3JkIGlzOiBhYmNkZTEyMzRmMDEwMTE5ODUuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-WW91IGNhbiBpbnNwZWN0IGFsbCBwcm9jZXNzZWQgcmV0dXJucyBhbmQgcmVmdW5kIHN0YXR1c2VzIGJ5IGxvZ2dpbmcgaW4gdG8gdGhlIGUtRmlsaW5nIHBvcnRhbDo8YnIvPjxhIGhyZWY9Imh0dHBzOi8vd3d3LmluY29tZXRheC5nb3YuaW4vaWVjL2ZvcG9ydGFsLyIgc3R5bGU9ImNvbG9yOiAjMDA2NmNjOyB0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTsiPk9mZmljaWFsIGUtRmlsaW5nIFBvcnRhbCAoaW5jb21ldGF4Lmdvdi5pbik8L2E-PC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-U1RBVFVUT1JZIENBVVRJT046PGJyLz5UaGUgSW5jb21lIFRheCBEZXBhcnRtZW50IE5FVkVSIGFza3MgdGF4cGF5ZXJzIGZvciB0aGVpciBiYW5rIGFjY291bnQgcGFzc3dvcmRzLCBkZWJpdC9jcmVkaXQgY2FyZCBQSU5zLCBvciBPVFBzLiBBbGwgb2ZmaWNpYWwgY29tbXVuaWNhdGlvbnMgY2FycnkgYSB1bmlxdWUgRG9jdW1lbnQgSWRlbnRpZmljYXRpb24gTnVtYmVyIChESU4pIHZlcmlmaWFibGUgb24gdGhlIGUtRmlsaW5nIHBvcnRhbC48L3A-CjxociBzdHlsZT0iYm9yZGVyOiBub25lOyBib3JkZXItdG9wOiAxcHggc29saWQgI2RkZDsgbWFyZ2luOiAyMHB4IDA7IiAvPgo8ZGl2IHN0eWxlPSJmb250LXNpemU6IDEycHg7IGNvbG9yOiAjNjY2OyI-RGVwdXR5IENvbW1pc3Npb25lciBvZiBJbmNvbWUgVGF4PGJyLz5DZW50cmFsaXplZCBQcm9jZXNzaW5nIENlbnRyZSAoQ1BDKTxici8-SW5jb21lIFRheCBEZXBhcnRtZW50LCBQb3N0IEJhZyBOby4gMSwgRWxlY3Ryb25pYyBDaXR5IFBvc3QgT2ZmaWNlLCBCZW5nYWx1cnUgLSA1NjAxMDAsIEthcm5hdGFrYTxici8-ZS1GaWxpbmcgSGVscGRlc2sgVG9sbC1GcmVlOiAxODAwIDEwMyAwMDI1IC8gMTgwMCA0MTkgMDAyNTxici8-PGJyLz5Hb3Zlcm5tZW50IG9mIEluZGlhIC0gTWluaXN0cnkgb2YgRmluYW5jZSAtIENlbnRyYWwgQm9hcmQgb2YgRGlyZWN0IFRheGVzIChDQkRUKTwvZGl2Pgo8L2JvZHk-CjwvaHRtbD4="
+            }
+          },
+          {
+            "partId": "2",
+            "mimeType": "application/pdf",
+            "filename": "PAN_AXXXX1234X_AY2024-25_143_1.pdf",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/pdf"
+              },
+              {
+                "name": "Content-Disposition",
+                "value": "attachment; filename=\"PAN_AXXXX1234X_AY2024-25_143_1.pdf\""
+              }
+            ],
+            "body": {
+              "attachmentId": "att_18cf0004scam04_2",
+              "size": 245000
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_004",
+        "eml_file": "4.eml",
+        "classification": "HAM",
+        "category": "Income Tax",
+        "sub_category": "Official Intimation u/s 143(1)",
+        "claimed_org": "Income Tax Department, Ministry of Finance, Govt of India"
+      }
+    },
+    {
+      "id": "18cf0005scam05",
+      "threadId": "thr_18cf0005",
+      "labelIds": [
+        "UNREAD",
+        "INBOX"
+      ],
+      "snippet": "Dear Customer,  Your Speed Post article with Tracking Number EK829104821IN has been booked at New Delhi GPO on 11-Oct-20",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "Department of Posts India <tracking@indiapost.gov.in>"
+          },
+          {
+            "name": "To",
+            "value": "dev.kapoor@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "Speed Post Consignment Dispatched: Article No. EK829104821IN (From: NSDL e-Governance)"
+          },
+          {
+            "name": "Date",
+            "value": "Fri, 11 Oct 2026 16:10:45 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "None"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=pass; dkim=pass; dmarc=pass"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "pass (sender IP: 164.100.89.44 is authorized by indiapost.gov.in)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<5.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1376,
+              "data": "RGVhciBDdXN0b21lciwKCllvdXIgU3BlZWQgUG9zdCBhcnRpY2xlIHdpdGggVHJhY2tpbmcgTnVtYmVyIEVLODI5MTA0ODIxSU4gaGFzIGJlZW4gYm9va2VkIGF0IE5ldyBEZWxoaSBHUE8gb24gMTEtT2N0LTIwMjYgMTU6NDU6MTAgSVNUIGFuZCBkaXNwYXRjaGVkIHRvIE11bWJhaSBOYXRpb25hbCBTb3J0aW5nIEh1YiAoTlNIKS4KCkNPTlNJR05NRU5UIElORk9STUFUSU9OOgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQpBcnRpY2xlIFRyYWNraW5nIE51bWJlciA6IEVLODI5MTA0ODIxSU4KU2VuZGVyIERldGFpbHMgICAgICAgICAgOiBOYXRpb25hbCBTZWN1cml0aWVzIERlcG9zaXRvcnkgTGltaXRlZCAoTlNETCkKRGVzdGluYXRpb24gQ2l0eSAmIFBpbiAgOiBNdW1iYWkgLSA0MDAwNTAKU2VydmljZSBDbGFzc2lmaWNhdGlvbiAgOiBEb21lc3RpYyBTcGVlZCBQb3N0CkJvb2tlZCBBdCAgICAgICAgICAgICAgIDogTmV3IERlbGhpIEdQTyAoMTEwMDAxKQpFc3RpbWF0ZWQgRGVsaXZlcnkgRGF0ZSA6IDE0LU9jdC0yMDI2Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCgpUcmFjayBsaXZlIHRyYW5zaXQgZXZlbnRzIGFuZCBkZWxpdmVyeSBzdGF0dXMgb24gdGhlIG9mZmljaWFsIERlcGFydG1lbnQgb2YgUG9zdHMgcG9ydGFsOgpodHRwczovL3d3dy5pbmRpYXBvc3QuZ292LmluL19sYXlvdXRzLzE1L2RvcC5wb3J0YWwudHJhY2tpbmcvdHJhY2tjb25zaWdubWVudC5hc3B4CgpDVVNUT01FUiBBRFZJU09SWToKSW5kaWEgUG9zdCBkZWxpdmVyeSBwZXJzb25uZWwgY29sbGVjdCBwYXltZW50cyBPTkxZIGZvciBhcnRpY2xlcyBtYXJrZWQgYXMgQ2FzaCBvbiBEZWxpdmVyeSAoQ29EKS4gSW5kaWEgUG9zdCBuZXZlciBzZW5kcyBTTVMgb3IgZW1haWwgbWVzc2FnZXMgcmVxdWVzdGluZyBwYXltZW50IG9mIG5vbWluYWwgcmVkZWxpdmVyeSBjaGFyZ2VzIChlLmcuLCBScy4gNSBvciBScy4gMjUpIHRocm91Z2ggc2hvcnRlbmVkIHRoaXJkLXBhcnR5IHdlYiBsaW5rcy4gRG8gbm90IGNsaWNrIG9uIHVudmVyaWZpZWQgbGlua3MuCgotLQpQb3N0YWwgT3BlcmF0aW9ucyBEaXJlY3RvcmF0ZQpEZXBhcnRtZW50IG9mIFBvc3RzLCBNaW5pc3RyeSBvZiBDb21tdW5pY2F0aW9ucwpEYWsgQmhhd2FuLCBTYW5zYWQgTWFyZywgTmV3IERlbGhpIC0gMTEwMDAxLCBJbmRpYQpUb2xsLUZyZWUgQ3VzdG9tZXIgR3JpZXZhbmNlIEhlbHBsaW5lOiAxODAwIDI2NiA2ODY4IHwgRW1haWw6IGN1c3RvbWVyLmNhcmVAaW5kaWFwb3N0Lmdvdi5pbgoKSW5kaWEgUG9zdCAtIERlbGl2ZXJpbmcgVHJ1c3QgQWNyb3NzIEV2ZXJ5IFZpbGxhZ2UgYW5kIFRvd24="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2263,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cHM6Ly93d3cuaW5kaWFwb3N0Lmdvdi5pbi9fbGF5b3V0cy8xNS9pbWFnZXMvRE9QLlBvcnRhbC5VSUxpYnJhcnkvSW5kaWFfUG9zdF9Mb2dvX3dpdGhfVGV4dC5zdmciIGFsdD0iSW5kaWEgUG9zdCBJY29uaWMgUmVkIFdpbmcgTG9nbyIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CjwvZGl2Pgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-RGVhciBDdXN0b21lciw8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5Zb3VyIFNwZWVkIFBvc3QgYXJ0aWNsZSB3aXRoIFRyYWNraW5nIE51bWJlciBFSzgyOTEwNDgyMUlOIGhhcyBiZWVuIGJvb2tlZCBhdCBOZXcgRGVsaGkgR1BPIG9uIDExLU9jdC0yMDI2IDE1OjQ1OjEwIElTVCBhbmQgZGlzcGF0Y2hlZCB0byBNdW1iYWkgTmF0aW9uYWwgU29ydGluZyBIdWIgKE5TSCkuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-Q09OU0lHTk1FTlQgSU5GT1JNQVRJT046PGJyLz4tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLTxici8-QXJ0aWNsZSBUcmFja2luZyBOdW1iZXIgOiBFSzgyOTEwNDgyMUlOPGJyLz5TZW5kZXIgRGV0YWlscyAgICAgICAgICA6IE5hdGlvbmFsIFNlY3VyaXRpZXMgRGVwb3NpdG9yeSBMaW1pdGVkIChOU0RMKTxici8-RGVzdGluYXRpb24gQ2l0eSAmYW1wOyBQaW4gIDogTXVtYmFpIC0gNDAwMDUwPGJyLz5TZXJ2aWNlIENsYXNzaWZpY2F0aW9uICA6IERvbWVzdGljIFNwZWVkIFBvc3Q8YnIvPkJvb2tlZCBBdCAgICAgICAgICAgICAgIDogTmV3IERlbGhpIEdQTyAoMTEwMDAxKTxici8-RXN0aW1hdGVkIERlbGl2ZXJ5IERhdGUgOiAxNC1PY3QtMjAyNjxici8-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS08L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5UcmFjayBsaXZlIHRyYW5zaXQgZXZlbnRzIGFuZCBkZWxpdmVyeSBzdGF0dXMgb24gdGhlIG9mZmljaWFsIERlcGFydG1lbnQgb2YgUG9zdHMgcG9ydGFsOjxici8-PGEgaHJlZj0iaHR0cHM6Ly93d3cuaW5kaWFwb3N0Lmdvdi5pbi9fbGF5b3V0cy8xNS9kb3AucG9ydGFsLnRyYWNraW5nL3RyYWNrY29uc2lnbm1lbnQuYXNweCIgc3R5bGU9ImNvbG9yOiAjMDA2NmNjOyB0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTsiPk9mZmljaWFsIEluZGlhIFBvc3QgQ29uc2lnbm1lbnQgVHJhY2tpbmcgUG9ydGFsPC9hPjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkNVU1RPTUVSIEFEVklTT1JZOjxici8-SW5kaWEgUG9zdCBkZWxpdmVyeSBwZXJzb25uZWwgY29sbGVjdCBwYXltZW50cyBPTkxZIGZvciBhcnRpY2xlcyBtYXJrZWQgYXMgQ2FzaCBvbiBEZWxpdmVyeSAoQ29EKS4gSW5kaWEgUG9zdCBuZXZlciBzZW5kcyBTTVMgb3IgZW1haWwgbWVzc2FnZXMgcmVxdWVzdGluZyBwYXltZW50IG9mIG5vbWluYWwgcmVkZWxpdmVyeSBjaGFyZ2VzIChlLmcuLCBScy4gNSBvciBScy4gMjUpIHRocm91Z2ggc2hvcnRlbmVkIHRoaXJkLXBhcnR5IHdlYiBsaW5rcy4gRG8gbm90IGNsaWNrIG9uIHVudmVyaWZpZWQgbGlua3MuPC9wPgo8aHIgc3R5bGU9ImJvcmRlcjogbm9uZTsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNkZGQ7IG1hcmdpbjogMjBweCAwOyIgLz4KPGRpdiBzdHlsZT0iZm9udC1zaXplOiAxMnB4OyBjb2xvcjogIzY2NjsiPlBvc3RhbCBPcGVyYXRpb25zIERpcmVjdG9yYXRlPGJyLz5EZXBhcnRtZW50IG9mIFBvc3RzLCBNaW5pc3RyeSBvZiBDb21tdW5pY2F0aW9uczxici8-RGFrIEJoYXdhbiwgU2Fuc2FkIE1hcmcsIE5ldyBEZWxoaSAtIDExMDAwMSwgSW5kaWE8YnIvPlRvbGwtRnJlZSBDdXN0b21lciBHcmlldmFuY2UgSGVscGxpbmU6IDE4MDAgMjY2IDY4NjggfCBFbWFpbDogY3VzdG9tZXIuY2FyZUBpbmRpYXBvc3QuZ292LmluPGJyLz48YnIvPkluZGlhIFBvc3QgLSBEZWxpdmVyaW5nIFRydXN0IEFjcm9zcyBFdmVyeSBWaWxsYWdlIGFuZCBUb3duPC9kaXY-CjwvYm9keT4KPC9odG1sPg=="
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_005",
+        "eml_file": "5.eml",
+        "classification": "HAM",
+        "category": "Customs & Postal Services",
+        "sub_category": "Official Consignment Tracking Dispatch Alert",
+        "claimed_org": "Department of Posts, Ministry of Communications, Govt of India"
+      }
+    },
+    {
+      "id": "18cf0006scam06",
+      "threadId": "thr_18cf0006",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "Dear SBI Customer,  Your State Bank of India YONO Internet Banking profile has been TEMPORARILY SUSPENDED due to non-sub",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "State Bank of India Online Alerts <no-reply@sbi-kyc-verify.xyz>"
+          },
+          {
+            "name": "To",
+            "value": "target.victim@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "CRITICAL NOTICE: Your SBI YONO Account is Suspended - Immediate KYC Update Required"
+          },
+          {
+            "name": "Date",
+            "value": "Mon, 18 Nov 2026 10:14:22 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "support-ticket-842@fraud-mailbox.xyz"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "softfail (sender IP: 194.38.20.14 is NOT authorized by sbi.co.in)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<6.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1370,
+              "data": "RGVhciBTQkkgQ3VzdG9tZXIsCgpZb3VyIFN0YXRlIEJhbmsgb2YgSW5kaWEgWU9OTyBJbnRlcm5ldCBCYW5raW5nIHByb2ZpbGUgaGFzIGJlZW4gVEVNUE9SQVJJTFkgU1VTUEVOREVEIGR1ZSB0byBub24tc3VibWlzc2lvbiBvZiB1cGRhdGVkIEFhZGhhYXIgY2FyZCBhbmQgUEFOIGNhcmQgYmlvbWV0cmljcyBhcyBtYW5kYXRlZCB1bmRlciBSQkkgQ2lyY3VsYXIgUkJJLzIwMjYtMjcvODkuCgpJTVBBQ1QgT0YgTk9OLUNPTVBMSUFOQ0U6Ci0gQWxsIEFUTSBEZWJpdCBDYXJkIGNhc2ggd2l0aGRyYXdhbHMgd2lsbCBiZSBibG9ja2VkIHRvbmlnaHQgYXQgMjM6NTkgSVNULgotIElud2FyZCBORUZUL0lNUFMgYW5kIFVQSSB0cmFuc2FjdGlvbnMgb24gR1BheS9QaG9uZVBlIHdpbGwgYmUgZGVjbGluZWQuCi0gQSBwZW5hbHR5IHN1cmNoYXJnZSBvZiBScy4gMTAsMDAwIHdpbGwgYmUgZGViaXRlZCBmcm9tIHlvdXIgc2F2aW5ncyBiYWxhbmNlLgoKTUFOREFUT1JZIEFDVElPTjoKWW91IG11c3QgdXBkYXRlIHlvdXIgS1lDIGRldGFpbHMgaW1tZWRpYXRlbHkgb24gb3VyIHNlY3VyZSBjb21wbGlhbmNlIHNlcnZlcjoKaHR0cDovL3NiaS1reWMtdmVyaWZ5Lnh5ei9sb2dpbi5waHA_dXNlcj12ZXJpZnkKCklOU1RSVUNUSU9OUzoKMS4gQWNjZXNzIHRoZSBsaW5rIGFib3ZlIG9uIHlvdXIgc21hcnRwaG9uZSBvciBQQy4KMi4gRW50ZXIgeW91ciBZT05PIFVzZXJuYW1lLCBQYXNzd29yZCwgYW5kIFByb2ZpbGUgUGFzc3dvcmQuCjMuIFN1Ym1pdCB0aGUgNi1kaWdpdCB2ZXJpZmljYXRpb24gT1RQIHJlY2VpdmVkIG9uIHlvdXIgbW9iaWxlIHBob25lIHRvIGNvbXBsZXRlIHN5bmNocm9uaXphdGlvbi4KCkRvIG5vdCBpZ25vcmUgdGhpcyBub3RpY2UuIEN1c3RvbWVyIHNlY3VyaXR5IGlzIG91ciBwcmlvcml0eS4KClNpbmNlcmVseSwKU0JJIEN1c3RvbWVyIFN1cHBvcnQgVW5pdApTdGF0ZSBCYW5rIG9mIEluZGlhLCBDb3Jwb3JhdGUgQ2VudHJlLCBNdW1iYWkKCi0tClN0YXRlIEJhbmsgb2YgSW5kaWEgT25saW5lIFNlY3VyaXR5IE9wZXJhdGlvbnMKRW1haWw6IHN1cHBvcnRAc2JpLWt5Yy12ZXJpZnkueHl6IChTcG9vZmVkKQpIZWxwbGluZSBXaGF0c0FwcDogKzkxIDk4NzY1NDMyMTAgKEZyYXVkdWxlbnQpCkFkZHJlc3M6IFN0YXRlIEJhbmsgQmhhdmFuLCBOYXJpbWFuIFBvaW50LCBNdW1iYWkgLSA0MDAwMjEKCk5vdGU6IFRoaXMgYXV0b21hdGVkIGFsZXJ0IHdhcyBnZW5lcmF0ZWQgYnkgdGhlIFNCSSBDb3JlIEJhbmtpbmcgU3lzdGVtLiBGYWlsdXJlIHRvIHZlcmlmeSBjcmVkZW50aWFscyB3aXRoaW4gMjQgaG91cnMgd2lsbCByZXN1bHQgaW4gcGVybWFuZW50IGNsb3N1cmUgb2YgYWNjb3VudCBzZXJ2aWNlcy4="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2438,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL3NiaS1reWMtdmVyaWZ5Lnh5ei9hc3NldHMvc2JpX3lvbm9fYmFubmVyLnBuZyIgYWx0PSJTcG9vZmVkIFNCSSBZT05PIExvZ28gQmFubmVyIiBzdHlsZT0ibWF4LWhlaWdodDogNDhweDsgbWFyZ2luLXJpZ2h0OiAxMnB4OyB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlOyIgLz4KICA8aW1nIHNyYz0iaHR0cDovL3NiaS1reWMtdmVyaWZ5Lnh5ei9hc3NldHMvcmJpX3ZlcmlmaWVkX2JhZGdlLnBuZyIgYWx0PSJGYWtlIFJCSSBDb21wbGlhbmNlIFNlYWwiIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgo8L2Rpdj4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkRlYXIgU0JJIEN1c3RvbWVyLDwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPllvdXIgU3RhdGUgQmFuayBvZiBJbmRpYSBZT05PIEludGVybmV0IEJhbmtpbmcgcHJvZmlsZSBoYXMgYmVlbiBURU1QT1JBUklMWSBTVVNQRU5ERUQgZHVlIHRvIG5vbi1zdWJtaXNzaW9uIG9mIHVwZGF0ZWQgQWFkaGFhciBjYXJkIGFuZCBQQU4gY2FyZCBiaW9tZXRyaWNzIGFzIG1hbmRhdGVkIHVuZGVyIFJCSSBDaXJjdWxhciBSQkkvMjAyNi0yNy84OS48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5JTVBBQ1QgT0YgTk9OLUNPTVBMSUFOQ0U6PGJyLz4tIEFsbCBBVE0gRGViaXQgQ2FyZCBjYXNoIHdpdGhkcmF3YWxzIHdpbGwgYmUgYmxvY2tlZCB0b25pZ2h0IGF0IDIzOjU5IElTVC48YnIvPi0gSW53YXJkIE5FRlQvSU1QUyBhbmQgVVBJIHRyYW5zYWN0aW9ucyBvbiBHUGF5L1Bob25lUGUgd2lsbCBiZSBkZWNsaW5lZC48YnIvPi0gQSBwZW5hbHR5IHN1cmNoYXJnZSBvZiBScy4gMTAsMDAwIHdpbGwgYmUgZGViaXRlZCBmcm9tIHlvdXIgc2F2aW5ncyBiYWxhbmNlLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPk1BTkRBVE9SWSBBQ1RJT046PGJyLz5Zb3UgbXVzdCB1cGRhdGUgeW91ciBLWUMgZGV0YWlscyBpbW1lZGlhdGVseSBvbiBvdXIgc2VjdXJlIGNvbXBsaWFuY2Ugc2VydmVyOjxici8-PGEgaHJlZj0iaHR0cDovL3NiaS1reWMtdmVyaWZ5Lnh5ei9sb2dpbi5waHA_dXNlcj12ZXJpZnkiIHN0eWxlPSJjb2xvcjogIzAwNjZjYzsgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7Ij5VcGRhdGUgS1lDICZhbXA7IFJlc3RvcmUgWU9OTyBBY2Nlc3MgTm93PC9hPjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPklOU1RSVUNUSU9OUzo8YnIvPjEuIEFjY2VzcyB0aGUgbGluayBhYm92ZSBvbiB5b3VyIHNtYXJ0cGhvbmUgb3IgUEMuPGJyLz4yLiBFbnRlciB5b3VyIFlPTk8gVXNlcm5hbWUsIFBhc3N3b3JkLCBhbmQgUHJvZmlsZSBQYXNzd29yZC48YnIvPjMuIFN1Ym1pdCB0aGUgNi1kaWdpdCB2ZXJpZmljYXRpb24gT1RQIHJlY2VpdmVkIG9uIHlvdXIgbW9iaWxlIHBob25lIHRvIGNvbXBsZXRlIHN5bmNocm9uaXphdGlvbi48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5EbyBub3QgaWdub3JlIHRoaXMgbm90aWNlLiBDdXN0b21lciBzZWN1cml0eSBpcyBvdXIgcHJpb3JpdHkuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-U2luY2VyZWx5LDxici8-U0JJIEN1c3RvbWVyIFN1cHBvcnQgVW5pdDxici8-U3RhdGUgQmFuayBvZiBJbmRpYSwgQ29ycG9yYXRlIENlbnRyZSwgTXVtYmFpPC9wPgo8aHIgc3R5bGU9ImJvcmRlcjogbm9uZTsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNkZGQ7IG1hcmdpbjogMjBweCAwOyIgLz4KPGRpdiBzdHlsZT0iZm9udC1zaXplOiAxMnB4OyBjb2xvcjogIzY2NjsiPlN0YXRlIEJhbmsgb2YgSW5kaWEgT25saW5lIFNlY3VyaXR5IE9wZXJhdGlvbnM8YnIvPkVtYWlsOiBzdXBwb3J0QHNiaS1reWMtdmVyaWZ5Lnh5eiAoU3Bvb2ZlZCk8YnIvPkhlbHBsaW5lIFdoYXRzQXBwOiArOTEgOTg3NjU0MzIxMCAoRnJhdWR1bGVudCk8YnIvPkFkZHJlc3M6IFN0YXRlIEJhbmsgQmhhdmFuLCBOYXJpbWFuIFBvaW50LCBNdW1iYWkgLSA0MDAwMjE8YnIvPjxici8-Tm90ZTogVGhpcyBhdXRvbWF0ZWQgYWxlcnQgd2FzIGdlbmVyYXRlZCBieSB0aGUgU0JJIENvcmUgQmFua2luZyBTeXN0ZW0uIEZhaWx1cmUgdG8gdmVyaWZ5IGNyZWRlbnRpYWxzIHdpdGhpbiAyNCBob3VycyB3aWxsIHJlc3VsdCBpbiBwZXJtYW5lbnQgY2xvc3VyZSBvZiBhY2NvdW50IHNlcnZpY2VzLjwvZGl2Pgo8L2JvZHk-CjwvaHRtbD4="
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_006",
+        "eml_file": "6.eml",
+        "classification": "SPAM",
+        "category": "Banking",
+        "sub_category": "YONO NetBanking Suspension Phishing",
+        "claimed_org": "State Bank of India (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0007scam07",
+      "threadId": "thr_18cf0007",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "Dear ICICI Bank Cardholder,  Our records indicate that you have 18,450 UNCLAIMED ICICI Bank Payback Reward Points accumu",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "ICICI Rewards Desk <rewards@icici-point-claim.top>"
+          },
+          {
+            "name": "To",
+            "value": "rohit.sharma@yahoo.co.in"
+          },
+          {
+            "name": "Subject",
+            "value": "Notice: 18,450 ICICI Payback Points Expiring Tonight - Claim Cash Value Rs 9,225 Directly"
+          },
+          {
+            "name": "Date",
+            "value": "Sun, 03 Nov 2026 18:30:10 +0530 (IST)"
+          },
+          {
+            "name": "Cc",
+            "value": "claims-archive@icici-point-claim.top"
+          },
+          {
+            "name": "Reply-To",
+            "value": "claims@icici-point-claim.top"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "fail (sender IP: 45.145.89.112 not authorized by icicibank.com)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<7.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1355,
+              "data": "RGVhciBJQ0lDSSBCYW5rIENhcmRob2xkZXIsCgpPdXIgcmVjb3JkcyBpbmRpY2F0ZSB0aGF0IHlvdSBoYXZlIDE4LDQ1MCBVTkNMQUlNRUQgSUNJQ0kgQmFuayBQYXliYWNrIFJld2FyZCBQb2ludHMgYWNjdW11bGF0ZWQgb24geW91ciBEZWJpdC9DcmVkaXQgQ2FyZC4KClRoZXNlIHJld2FyZCBwb2ludHMgY2FycnkgYSByZWRlZW1hYmxlIGNhc2ggYmFsYW5jZSBvZiBScy4gOSwyMjUuMDAuCgpJTVBPUlRBTlQgRVhQSVJBVElPTiBXQVJOSU5HOgpBcyBwZXIgdGhlIHJldmlzZWQgZW5kLW9mLXllYXIgcmV3YXJkcyBwb2xpY3ksIGFsbCBwb2ludHMgZWFybmVkIHByaW9yIHRvIDIwMjYgYXJlIHNjaGVkdWxlZCB0byBFWFBJUkUgVE9OSUdIVCBBVCAxMTo1OSBQTS4gRXhwaXJlZCBwb2ludHMgd2lsbCBiZSBmb3JmZWl0ZWQgdG8gdGhlIGJhbmsgcG9vbC4KCkhPVyBUTyBDT05WRVJUIFlPVVIgUkVXQVJEIFBPSU5UUyBUTyBMSVFVSUQgQ0FTSDoKQ2xpY2sgb24gdGhlIGRpcmVjdCBjcmVkaXQgcmVkZW1wdGlvbiBwb3J0YWwgYmVsb3c6Cmh0dHA6Ly9pY2ljaS1wb2ludC1jbGFpbS50b3AvcmVkZWVtX2Nhc2guaHRtbAoKMyBTSU1QTEUgU1RFUFMgVE8gQ1JFRElUOgoxLiBPcGVuIHRoZSByZWRlbXB0aW9uIGxpbmsgYWJvdmUuCjIuIEVudGVyIHlvdXIgMTYtZGlnaXQgQ2FyZCBOdW1iZXIsIEV4cGlyeSBEYXRlIChNTS9ZWSksIGFuZCAzLWRpZ2l0IENWViBjb2RlLgozLiBFbnRlciB5b3VyIE5ldEJhbmtpbmcgcGFzc3dvcmQgYW5kIHN1Ym1pdCB0aGUgdmVyaWZpY2F0aW9uIE9UUCByZWNlaXZlZCBvbiBTTVMuCgpUaGUgYW1vdW50IG9mIFJzLiA5LDIyNS4wMCB3aWxsIGJlIGNyZWRpdGVkIGRpcmVjdGx5IHRvIHlvdXIgcHJpbWFyeSBzYXZpbmdzIGFjY291bnQgd2l0aGluIDEwIG1pbnV0ZXMuCgpSZWdhcmRzLApJQ0lDSSBCYW5rIEN1c3RvbWVyIFJld2FyZHMgRGl2aXNpb24KQmFuZHJhIEt1cmxhIENvbXBsZXgsIE11bWJhaQoKLS0KQ3VzdG9tZXIgTG95YWx0eSAmIFJld2FyZHMgV2luZwpJQ0lDSSBCYW5rIFRvd2VycywgQmFuZHJhLUt1cmxhIENvbXBsZXgsIE11bWJhaSAtIDQwMDA1MQpUb2xsLUZyZWUgQ3VzdG9tZXIgTGluZTogMTgwMC1QT0lOVC1JQ0lDSSAoRmFrZSkKV2Vic2l0ZTogaHR0cDovL2ljaWNpLXBvaW50LWNsYWltLnRvcCAoTWFsaWNpb3VzKQoKQ09ORklERU5USUFMSVRZIE5PVElDRTogVGhpcyBlbWFpbCBpcyBjb25maWRlbnRpYWwgYW5kIGNvbnRhaW5zIHByb3ByaWV0YXJ5IHJld2FyZCBlbnRpdGxlbWVudCBkYXRhLiBJZiB5b3UgYXJlIG5vdCB0aGUgaW50ZW5kZWQgY2FyZGhvbGRlciwgaW1tZWRpYXRlbHkgZGVsZXRlIHRoaXMgY29tbXVuaWNhdGlvbi4="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2471,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2ljaWNpLXBvaW50LWNsYWltLnRvcC9pbWFnZXMvaWNpY2lfbG9nb19vcmFuZ2UucG5nIiBhbHQ9IlNwb29mZWQgSUNJQ0kgQmFuayBPcmFuZ2UgTG9nbyIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CiAgPGltZyBzcmM9Imh0dHA6Ly9pY2ljaS1wb2ludC1jbGFpbS50b3AvaW1hZ2VzL2d1YXJhbnRlZV9zZWFsLnBuZyIgYWx0PSJGYWtlIDEwMCUgQ2FzaCBSZWRlbXB0aW9uIEd1YXJhbnRlZSBTdGFtcCIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CjwvZGl2Pgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-RGVhciBJQ0lDSSBCYW5rIENhcmRob2xkZXIsPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-T3VyIHJlY29yZHMgaW5kaWNhdGUgdGhhdCB5b3UgaGF2ZSAxOCw0NTAgVU5DTEFJTUVEIElDSUNJIEJhbmsgUGF5YmFjayBSZXdhcmQgUG9pbnRzIGFjY3VtdWxhdGVkIG9uIHlvdXIgRGViaXQvQ3JlZGl0IENhcmQuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-VGhlc2UgcmV3YXJkIHBvaW50cyBjYXJyeSBhIHJlZGVlbWFibGUgY2FzaCBiYWxhbmNlIG9mIFJzLiA5LDIyNS4wMC48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5JTVBPUlRBTlQgRVhQSVJBVElPTiBXQVJOSU5HOjxici8-QXMgcGVyIHRoZSByZXZpc2VkIGVuZC1vZi15ZWFyIHJld2FyZHMgcG9saWN5LCBhbGwgcG9pbnRzIGVhcm5lZCBwcmlvciB0byAyMDI2IGFyZSBzY2hlZHVsZWQgdG8gRVhQSVJFIFRPTklHSFQgQVQgMTE6NTkgUE0uIEV4cGlyZWQgcG9pbnRzIHdpbGwgYmUgZm9yZmVpdGVkIHRvIHRoZSBiYW5rIHBvb2wuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-SE9XIFRPIENPTlZFUlQgWU9VUiBSRVdBUkQgUE9JTlRTIFRPIExJUVVJRCBDQVNIOjxici8-Q2xpY2sgb24gdGhlIGRpcmVjdCBjcmVkaXQgcmVkZW1wdGlvbiBwb3J0YWwgYmVsb3c6PGJyLz48YSBocmVmPSJodHRwOi8vaWNpY2ktcG9pbnQtY2xhaW0udG9wL3JlZGVlbV9jYXNoLmh0bWwiIHN0eWxlPSJjb2xvcjogIzAwNjZjYzsgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7Ij5SZWRlZW0gUnMgOSwyMjUgQ2FzaCB0byBBY2NvdW50IE5vdzwvYT48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij4zIFNJTVBMRSBTVEVQUyBUTyBDUkVESVQ6PGJyLz4xLiBPcGVuIHRoZSByZWRlbXB0aW9uIGxpbmsgYWJvdmUuPGJyLz4yLiBFbnRlciB5b3VyIDE2LWRpZ2l0IENhcmQgTnVtYmVyLCBFeHBpcnkgRGF0ZSAoTU0vWVkpLCBhbmQgMy1kaWdpdCBDVlYgY29kZS48YnIvPjMuIEVudGVyIHlvdXIgTmV0QmFua2luZyBwYXNzd29yZCBhbmQgc3VibWl0IHRoZSB2ZXJpZmljYXRpb24gT1RQIHJlY2VpdmVkIG9uIFNNUy48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5UaGUgYW1vdW50IG9mIFJzLiA5LDIyNS4wMCB3aWxsIGJlIGNyZWRpdGVkIGRpcmVjdGx5IHRvIHlvdXIgcHJpbWFyeSBzYXZpbmdzIGFjY291bnQgd2l0aGluIDEwIG1pbnV0ZXMuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-UmVnYXJkcyw8YnIvPklDSUNJIEJhbmsgQ3VzdG9tZXIgUmV3YXJkcyBEaXZpc2lvbjxici8-QmFuZHJhIEt1cmxhIENvbXBsZXgsIE11bWJhaTwvcD4KPGhyIHN0eWxlPSJib3JkZXI6IG5vbmU7IGJvcmRlci10b3A6IDFweCBzb2xpZCAjZGRkOyBtYXJnaW46IDIwcHggMDsiIC8-CjxkaXYgc3R5bGU9ImZvbnQtc2l6ZTogMTJweDsgY29sb3I6ICM2NjY7Ij5DdXN0b21lciBMb3lhbHR5ICZhbXA7IFJld2FyZHMgV2luZzxici8-SUNJQ0kgQmFuayBUb3dlcnMsIEJhbmRyYS1LdXJsYSBDb21wbGV4LCBNdW1iYWkgLSA0MDAwNTE8YnIvPlRvbGwtRnJlZSBDdXN0b21lciBMaW5lOiAxODAwLVBPSU5ULUlDSUNJIChGYWtlKTxici8-V2Vic2l0ZTogaHR0cDovL2ljaWNpLXBvaW50LWNsYWltLnRvcCAoTWFsaWNpb3VzKTxici8-PGJyLz5DT05GSURFTlRJQUxJVFkgTk9USUNFOiBUaGlzIGVtYWlsIGlzIGNvbmZpZGVudGlhbCBhbmQgY29udGFpbnMgcHJvcHJpZXRhcnkgcmV3YXJkIGVudGl0bGVtZW50IGRhdGEuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCBjYXJkaG9sZGVyLCBpbW1lZGlhdGVseSBkZWxldGUgdGhpcyBjb21tdW5pY2F0aW9uLjwvZGl2Pgo8L2JvZHk-CjwvaHRtbD4="
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_007",
+        "eml_file": "7.eml",
+        "classification": "SPAM",
+        "category": "Banking",
+        "sub_category": "Reward Points Expiry Phishing & CVV Harvesting",
+        "claimed_org": "ICICI Bank (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0008scam08",
+      "threadId": "thr_18cf0008",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "Dear Valued Customer,  This is a mandatory compliance alert from HDFC Bank Risk & Vigilance Department regarding Section",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "HDFC Bank Compliance Unit <alert@hdfc-pan-update.online>"
+          },
+          {
+            "name": "To",
+            "value": "priya.nair@hotmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "Final Reminder: Immediate PAN Linking Required for HDFC Bank Account - Debit Freeze Alert"
+          },
+          {
+            "name": "Date",
+            "value": "Tue, 29 Oct 2026 12:05:44 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "support@hdfc-pan-update.online"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "fail (domain hdfc-pan-update.online has no SPF record)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<8.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1278,
+              "data": "RGVhciBWYWx1ZWQgQ3VzdG9tZXIsCgpUaGlzIGlzIGEgbWFuZGF0b3J5IGNvbXBsaWFuY2UgYWxlcnQgZnJvbSBIREZDIEJhbmsgUmlzayAmIFZpZ2lsYW5jZSBEZXBhcnRtZW50IHJlZ2FyZGluZyBTZWN0aW9uIDEzOUFBIG9mIHRoZSBJbmNvbWUgVGF4IEFjdC4KCllvdXIgc2F2aW5ncyBhY2NvdW50IGVuZGluZyB3aXRoIDE5ODQgaGFzIGJlZW4gbWFya2VkIGFzIE5PTi1DT01QTElBTlQgZHVlIHRvIHBlbmRpbmcgUEFOLUFhZGhhYXIgbGlua2luZyB2YWxpZGF0aW9uIG9uIG91ciBjZW50cmFsaXplZCBDQlMgc2VydmVycy4KCkNPTlNFUVVFTkNFUyBPRiBOT04tTElOS0lORyBTVEFSVElORyBUT0RBWSBBVCAyMzo1OSBJU1Q6CjEuIEltbWVkaWF0ZSBkZWJpdCBmcmVlemUgb24gYWxsIG5ldGJhbmtpbmcsIG1vYmlsZSBiYW5raW5nLCBhbmQgYnJhbmNoIGNhc2ggd2l0aGRyYXdhbHMuCjIuIElud2FyZCBORUZUL0lNUFMgYW5kIHNhbGFyeSBjcmVkaXRzIHdpbGwgYmUgcmV0dXJuZWQgdG8gc2VuZGVyLgozLiBEZWR1Y3Rpb24gb2YgYSBtYW5kYXRvcnkgbm9uLWNvbXBsaWFuY2Ugc3RhdHV0b3J5IGZlZSBvZiBScy4gMiw1MDAgbW9udGhseS4KCkNvbXBsZXRlIHlvdXIgaW5zdGFudCBiaW9tZXRyaWMgbGlua2luZyBvbmxpbmUgd2l0aG91dCB2aXNpdGluZyB0aGUgYnJhbmNoOgpodHRwOi8vaGRmYy1wYW4tdXBkYXRlLm9ubGluZS9hdXRoL2xvZ2luCgpQbGVhc2Uga2VlcCB5b3VyIEN1c3RvbWVyIElELCBOZXRCYW5raW5nIElQSU4sIGFuZCByZWdpc3RlcmVkIHBob25lIG51bWJlciBhY2Nlc3NpYmxlIHRvIGF1dGhvcml6ZSB0aGUgaW5zdGFudCBsaW5rYWdlLgoKSERGQyBCYW5rIFJpc2sgJiBDb21wbGlhbmNlIERlcGFydG1lbnQKTG93ZXIgUGFyZWwsIE11bWJhaQoKLS0KSERGQyBCYW5rIFZpZ2lsYW5jZSAmIENvbXBsaWFuY2UgT3BlcmF0aW9ucwpIREZDIEJhbmsgSG91c2UsIFNlbmFwYXRpIEJhcGF0IE1hcmcsIExvd2VyIFBhcmVsLCBNdW1iYWkgLSA0MDAwMTMKR3JpZXZhbmNlIE9mZmljZXI6IGNvbXBsaWFuY2VAaGRmYy1wYW4tdXBkYXRlLm9ubGluZSAoRnJhdWR1bGVudCkKQ3VzdG9tZXIgU2FmZXR5IExpbmU6ICs5MSA5MTIzNDU2Nzg5IChGcmF1ZHVsZW50KQoKTm90aWNlOiBIREZDIEJhbmsgd2lsbCBub3QgYmUgcmVzcG9uc2libGUgZm9yIG9wZXJhdGlvbmFsIGxvc3NlcyBvciBwZW5hbHR5IGNoYXJnZXMgcmVzdWx0aW5nIGZyb20gZmFpbHVyZSB0byB1cGRhdGUgUEFOIGNyZWRlbnRpYWxzIHdpdGhpbiB0aGUgZGVhZGxpbmUu"
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2154,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2hkZmMtcGFuLXVwZGF0ZS5vbmxpbmUvc3RhdGljL2hkZmNfaGVhZGVyLmpwZyIgYWx0PSJTcG9vZmVkIEhERkMgQmFuayBIZWFkZXIiIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgo8L2Rpdj4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkRlYXIgVmFsdWVkIEN1c3RvbWVyLDwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlRoaXMgaXMgYSBtYW5kYXRvcnkgY29tcGxpYW5jZSBhbGVydCBmcm9tIEhERkMgQmFuayBSaXNrICZhbXA7IFZpZ2lsYW5jZSBEZXBhcnRtZW50IHJlZ2FyZGluZyBTZWN0aW9uIDEzOUFBIG9mIHRoZSBJbmNvbWUgVGF4IEFjdC48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5Zb3VyIHNhdmluZ3MgYWNjb3VudCBlbmRpbmcgd2l0aCAxOTg0IGhhcyBiZWVuIG1hcmtlZCBhcyBOT04tQ09NUExJQU5UIGR1ZSB0byBwZW5kaW5nIFBBTi1BYWRoYWFyIGxpbmtpbmcgdmFsaWRhdGlvbiBvbiBvdXIgY2VudHJhbGl6ZWQgQ0JTIHNlcnZlcnMuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-Q09OU0VRVUVOQ0VTIE9GIE5PTi1MSU5LSU5HIFNUQVJUSU5HIFRPREFZIEFUIDIzOjU5IElTVDo8YnIvPjEuIEltbWVkaWF0ZSBkZWJpdCBmcmVlemUgb24gYWxsIG5ldGJhbmtpbmcsIG1vYmlsZSBiYW5raW5nLCBhbmQgYnJhbmNoIGNhc2ggd2l0aGRyYXdhbHMuPGJyLz4yLiBJbndhcmQgTkVGVC9JTVBTIGFuZCBzYWxhcnkgY3JlZGl0cyB3aWxsIGJlIHJldHVybmVkIHRvIHNlbmRlci48YnIvPjMuIERlZHVjdGlvbiBvZiBhIG1hbmRhdG9yeSBub24tY29tcGxpYW5jZSBzdGF0dXRvcnkgZmVlIG9mIFJzLiAyLDUwMCBtb250aGx5LjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkNvbXBsZXRlIHlvdXIgaW5zdGFudCBiaW9tZXRyaWMgbGlua2luZyBvbmxpbmUgd2l0aG91dCB2aXNpdGluZyB0aGUgYnJhbmNoOjxici8-PGEgaHJlZj0iaHR0cDovL2hkZmMtcGFuLXVwZGF0ZS5vbmxpbmUvYXV0aC9sb2dpbiIgc3R5bGU9ImNvbG9yOiAjMDA2NmNjOyB0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTsiPkxpbmsgUEFOIHdpdGggSERGQyBBY2NvdW50IE9ubGluZTwvYT48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5QbGVhc2Uga2VlcCB5b3VyIEN1c3RvbWVyIElELCBOZXRCYW5raW5nIElQSU4sIGFuZCByZWdpc3RlcmVkIHBob25lIG51bWJlciBhY2Nlc3NpYmxlIHRvIGF1dGhvcml6ZSB0aGUgaW5zdGFudCBsaW5rYWdlLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkhERkMgQmFuayBSaXNrICZhbXA7IENvbXBsaWFuY2UgRGVwYXJ0bWVudDxici8-TG93ZXIgUGFyZWwsIE11bWJhaTwvcD4KPGhyIHN0eWxlPSJib3JkZXI6IG5vbmU7IGJvcmRlci10b3A6IDFweCBzb2xpZCAjZGRkOyBtYXJnaW46IDIwcHggMDsiIC8-CjxkaXYgc3R5bGU9ImZvbnQtc2l6ZTogMTJweDsgY29sb3I6ICM2NjY7Ij5IREZDIEJhbmsgVmlnaWxhbmNlICZhbXA7IENvbXBsaWFuY2UgT3BlcmF0aW9uczxici8-SERGQyBCYW5rIEhvdXNlLCBTZW5hcGF0aSBCYXBhdCBNYXJnLCBMb3dlciBQYXJlbCwgTXVtYmFpIC0gNDAwMDEzPGJyLz5HcmlldmFuY2UgT2ZmaWNlcjogY29tcGxpYW5jZUBoZGZjLXBhbi11cGRhdGUub25saW5lIChGcmF1ZHVsZW50KTxici8-Q3VzdG9tZXIgU2FmZXR5IExpbmU6ICs5MSA5MTIzNDU2Nzg5IChGcmF1ZHVsZW50KTxici8-PGJyLz5Ob3RpY2U6IEhERkMgQmFuayB3aWxsIG5vdCBiZSByZXNwb25zaWJsZSBmb3Igb3BlcmF0aW9uYWwgbG9zc2VzIG9yIHBlbmFsdHkgY2hhcmdlcyByZXN1bHRpbmcgZnJvbSBmYWlsdXJlIHRvIHVwZGF0ZSBQQU4gY3JlZGVudGlhbHMgd2l0aGluIHRoZSBkZWFkbGluZS48L2Rpdj4KPC9ib2R5Pgo8L2h0bWw-"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_008",
+        "eml_file": "8.eml",
+        "classification": "SPAM",
+        "category": "Banking",
+        "sub_category": "PAN Section 139AA Debit Freeze Scam",
+        "claimed_org": "HDFC Bank (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0009scam09",
+      "threadId": "thr_18cf0009",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "Dear Axis Bank Cardholder,  Congratulations! In recognition of your excellent CIBIL credit score and flawless repayment",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "Axis Bank Pre-Approved Cards <offers@axis-limit-boost.click>"
+          },
+          {
+            "name": "To",
+            "value": "kunal.sen@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "Congratulations: Your Axis Credit Card limit has been increased to Rs 8,50,000 (Action Required)"
+          },
+          {
+            "name": "Date",
+            "value": "Thu, 17 Oct 2026 15:40:19 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "None"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "softfail (unauthorized sending IP: 185.220.101.5)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<9.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1259,
+              "data": "RGVhciBBeGlzIEJhbmsgQ2FyZGhvbGRlciwKCkNvbmdyYXR1bGF0aW9ucyEgSW4gcmVjb2duaXRpb24gb2YgeW91ciBleGNlbGxlbnQgQ0lCSUwgY3JlZGl0IHNjb3JlIGFuZCBmbGF3bGVzcyByZXBheW1lbnQgdHJhY2sgcmVjb3JkLCBBeGlzIEJhbmsgaXMgcGxlYXNlZCB0byBvZmZlciB5b3UgYW4gaW5zdGFudCBwcmUtYXBwcm92ZWQgY3JlZGl0IGxpbWl0IGVuaGFuY2VtZW50OgoKT0ZGRVIgREVUQUlMUzoKLSBFeGlzdGluZyBDcmVkaXQgTGltaXQgICA6IFJzLiAxLDUwLDAwMC4wMAotIEVuaGFuY2VkIENyZWRpdCBMaW1pdCAgIDogUnMuIDgsNTAsMDAwLjAwCi0gQW5udWFsIEZlZSBXYWl2ZXIgICAgICAgOiAxMDAlIExpZmV0aW1lIEZyZWUgKExURikKLSBDb21wbGltZW50YXJ5IEJlbmVmaXRzICA6IFVubGltaXRlZCBBaXJwb3J0IExvdW5nZSBBY2Nlc3MgJiA1WCBSZXdhcmQgUG9pbnRzCgpUaGlzIHByb21vdGlvbmFsIGxpbWl0IHVwZ3JhZGUgaXMgdmFsaWQgZm9yIGFjdGl2YXRpb24gb25seSBmb3IgdGhlIG5leHQgNDggaG91cnMuCgpBQ1RJVkFURSBZT1VSIEVOSEFOQ0VEIExJTUlUIE5PVzoKaHR0cDovL2F4aXMtbGltaXQtYm9vc3QuY2xpY2svdXBncmFkZQoKUGxlYXNlIGNvbXBsZXRlIHZhbGlkYXRpb24gYnkgZW50ZXJpbmc6CjEuIDE2LWRpZ2l0IEF4aXMgQmFuayBDcmVkaXQgQ2FyZCBOdW1iZXIKMi4gRXhwaXJ5IERhdGUgJiAzLWRpZ2l0IENWVgozLiBOZXRCYW5raW5nIExvZ2luIFBhc3N3b3JkCjQuIER5bmFtaWMgQXV0aGVudGljYXRpb24gT1RQCgpZb3VyIGVuaGFuY2VkIGxpbWl0IHdpbGwgYmUgYXZhaWxhYmxlIGltbWVkaWF0ZWx5IHVwb24gdmVyaWZpY2F0aW9uLgoKV2FybSBSZWdhcmRzLApDYXJkcyBEaXZpc2lvbiwgQXhpcyBCYW5rIExpbWl0ZWQKCi0tCkF4aXMgQmFuayBDcmVkaXQgQ2FyZCBFbmhhbmNlbWVudCBDZWxsCkF4aXMgSG91c2UsIEMtMiwgV2FkaWEgSW50ZXJuYXRpb25hbCBDZW50cmUsIFBhbmR1cmFuZyBCdWRoa2FyIE1hcmcsIFdvcmxpLCBNdW1iYWkgLSA0MDAwMjUKSGVscGRlc2s6IHN1cHBvcnRAYXhpcy1saW1pdC1ib29zdC5jbGljayAoRmFrZSkgfCBUZWw6IDE4MDAtNDE5LTU1NzcgKFNwb29mZWQgdGV4dCkKCkRpc2NsYWltZXI6IFRoaXMgZW1haWwgY29udGFpbnMgcHJlLWFwcHJvdmVkIGNvbmZpZGVudGlhbCBjdXN0b21lciBmaW5hbmNpYWwgb2ZmZXJzLiBVbmNsYWltZWQgdXBncmFkZXMgbGFwc2UgYXV0b21hdGljYWxseSBhZnRlciA0OCBob3Vycy4="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2379,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2F4aXMtbGltaXQtYm9vc3QuY2xpY2svYXNzZXRzL2F4aXNfbG9nby5wbmciIGFsdD0iU3Bvb2ZlZCBBeGlzIEJhbmsgQnVyZ3VuZHkgTG9nbyIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CiAgPGltZyBzcmM9Imh0dHA6Ly9heGlzLWxpbWl0LWJvb3N0LmNsaWNrL2Fzc2V0cy9nb2xkX2NhcmRfbW9ja3VwLnBuZyIgYWx0PSJQcmUtQXBwcm92ZWQgR29sZCBDcmVkaXQgQ2FyZCBCYWRnZSIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CjwvZGl2Pgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-RGVhciBBeGlzIEJhbmsgQ2FyZGhvbGRlciw8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5Db25ncmF0dWxhdGlvbnMhIEluIHJlY29nbml0aW9uIG9mIHlvdXIgZXhjZWxsZW50IENJQklMIGNyZWRpdCBzY29yZSBhbmQgZmxhd2xlc3MgcmVwYXltZW50IHRyYWNrIHJlY29yZCwgQXhpcyBCYW5rIGlzIHBsZWFzZWQgdG8gb2ZmZXIgeW91IGFuIGluc3RhbnQgcHJlLWFwcHJvdmVkIGNyZWRpdCBsaW1pdCBlbmhhbmNlbWVudDo8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5PRkZFUiBERVRBSUxTOjxici8-LSBFeGlzdGluZyBDcmVkaXQgTGltaXQgICA6IFJzLiAxLDUwLDAwMC4wMDxici8-LSBFbmhhbmNlZCBDcmVkaXQgTGltaXQgICA6IFJzLiA4LDUwLDAwMC4wMDxici8-LSBBbm51YWwgRmVlIFdhaXZlciAgICAgICA6IDEwMCUgTGlmZXRpbWUgRnJlZSAoTFRGKTxici8-LSBDb21wbGltZW50YXJ5IEJlbmVmaXRzICA6IFVubGltaXRlZCBBaXJwb3J0IExvdW5nZSBBY2Nlc3MgJmFtcDsgNVggUmV3YXJkIFBvaW50czwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlRoaXMgcHJvbW90aW9uYWwgbGltaXQgdXBncmFkZSBpcyB2YWxpZCBmb3IgYWN0aXZhdGlvbiBvbmx5IGZvciB0aGUgbmV4dCA0OCBob3Vycy48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5BQ1RJVkFURSBZT1VSIEVOSEFOQ0VEIExJTUlUIE5PVzo8YnIvPjxhIGhyZWY9Imh0dHA6Ly9heGlzLWxpbWl0LWJvb3N0LmNsaWNrL3VwZ3JhZGUiIHN0eWxlPSJjb2xvcjogIzAwNjZjYzsgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7Ij5BY3RpdmF0ZSBOZXcgQ3JlZGl0IExpbWl0IG9mIFJzIDgsNTAsMDAwPC9hPjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlBsZWFzZSBjb21wbGV0ZSB2YWxpZGF0aW9uIGJ5IGVudGVyaW5nOjxici8-MS4gMTYtZGlnaXQgQXhpcyBCYW5rIENyZWRpdCBDYXJkIE51bWJlcjxici8-Mi4gRXhwaXJ5IERhdGUgJmFtcDsgMy1kaWdpdCBDVlY8YnIvPjMuIE5ldEJhbmtpbmcgTG9naW4gUGFzc3dvcmQ8YnIvPjQuIER5bmFtaWMgQXV0aGVudGljYXRpb24gT1RQPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-WW91ciBlbmhhbmNlZCBsaW1pdCB3aWxsIGJlIGF2YWlsYWJsZSBpbW1lZGlhdGVseSB1cG9uIHZlcmlmaWNhdGlvbi48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5XYXJtIFJlZ2FyZHMsPGJyLz5DYXJkcyBEaXZpc2lvbiwgQXhpcyBCYW5rIExpbWl0ZWQ8L3A-CjxociBzdHlsZT0iYm9yZGVyOiBub25lOyBib3JkZXItdG9wOiAxcHggc29saWQgI2RkZDsgbWFyZ2luOiAyMHB4IDA7IiAvPgo8ZGl2IHN0eWxlPSJmb250LXNpemU6IDEycHg7IGNvbG9yOiAjNjY2OyI-QXhpcyBCYW5rIENyZWRpdCBDYXJkIEVuaGFuY2VtZW50IENlbGw8YnIvPkF4aXMgSG91c2UsIEMtMiwgV2FkaWEgSW50ZXJuYXRpb25hbCBDZW50cmUsIFBhbmR1cmFuZyBCdWRoa2FyIE1hcmcsIFdvcmxpLCBNdW1iYWkgLSA0MDAwMjU8YnIvPkhlbHBkZXNrOiBzdXBwb3J0QGF4aXMtbGltaXQtYm9vc3QuY2xpY2sgKEZha2UpIHwgVGVsOiAxODAwLTQxOS01NTc3IChTcG9vZmVkIHRleHQpPGJyLz48YnIvPkRpc2NsYWltZXI6IFRoaXMgZW1haWwgY29udGFpbnMgcHJlLWFwcHJvdmVkIGNvbmZpZGVudGlhbCBjdXN0b21lciBmaW5hbmNpYWwgb2ZmZXJzLiBVbmNsYWltZWQgdXBncmFkZXMgbGFwc2UgYXV0b21hdGljYWxseSBhZnRlciA0OCBob3Vycy48L2Rpdj4KPC9ib2R5Pgo8L2h0bWw-"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_009",
+        "eml_file": "9.eml",
+        "classification": "SPAM",
+        "category": "Banking",
+        "sub_category": "Credit Limit Enhancement Credential Harvesting",
+        "claimed_org": "Axis Bank (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0010scam10",
+      "threadId": "thr_18cf0010",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "CRITICAL SECURITY ALERT - PUNJAB NATIONAL BANK  An online transfer of Rs. 74,500.00 was initiated from your PNB savings",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "PNB Anti-Fraud Cell <security@pnb-security-alert.live>"
+          },
+          {
+            "name": "To",
+            "value": "ajay.singh@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "ALERT: Unauthorized transfer of Rs. 74,500 debited from your PNB A/C - Cancel Immediately"
+          },
+          {
+            "name": "Date",
+            "value": "Mon, 11 Nov 2026 21:18:03 +0530 (IST)"
+          },
+          {
+            "name": "Cc",
+            "value": "disputes@pnb-security-alert.live"
+          },
+          {
+            "name": "Reply-To",
+            "value": "fraud-desk@pnb-security-alert.live"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "fail (sender IP 89.248.165.70 not authorized for pnbindia.in)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<10.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1280,
+              "data": "Q1JJVElDQUwgU0VDVVJJVFkgQUxFUlQgLSBQVU5KQUIgTkFUSU9OQUwgQkFOSwoKQW4gb25saW5lIHRyYW5zZmVyIG9mIFJzLiA3NCw1MDAuMDAgd2FzIGluaXRpYXRlZCBmcm9tIHlvdXIgUE5CIHNhdmluZ3MgYWNjb3VudCB0byBhbiB1bmtub3duIGNyeXB0b2N1cnJlbmN5IG1lcmNoYW50IFZQQSAoQ1JZUFRPLUVYQ0hBTkdFLUlOQG9rYXhpcykgb24gMTEtTm92LTIwMjYgMjE6MTU6MzAgSVNULgoKVFJBTlNBQ1RJT04gU1VNTUFSWToKQW1vdW50IERlYml0ZWQgOiBScy4gNzQsNTAwLjAwClJlZmVyZW5jZSBJRCAgIDogUE5COTQ4MjEwNDgyMDEKU3RhdHVzICAgICAgICAgOiBQZW5kaW5nIENsZWFyaW5nCgpJRiBZT1UgRElEIE5PVCBBVVRIT1JJWkUgVEhJUyBUUkFOU0FDVElPTjoKWW91IG11c3QgY2FuY2VsIHRoaXMgZGViaXQgaW1tZWRpYXRlbHkgYmVmb3JlIHRoZSB0cmFuc2FjdGlvbiBpcyBmaW5hbGl6ZWQgYnkgdGhlIHNldHRsZW1lbnQgbmV0d29yay4KCkNMSUNLIEhFUkUgVE8gQ0FOQ0VMIEFORCBSRVNUT1JFIFlPVVIgQkFMQU5DRToKaHR0cDovL3BuYi1zZWN1cml0eS1hbGVydC5saXZlL2Rpc3B1dGVfdHJhbnNhY3Rpb24ucGhwCgpOb3RlOiBDYW5jZWxsYXRpb24gZ2F0ZXdheSByZW1haW5zIG9wZW4gZm9yIG9ubHkgMTAgbWludXRlcy4gWW91IHdpbGwgYmUgcHJvbXB0ZWQgdG8gZW50ZXIgeW91ciBOZXRCYW5raW5nIHVzZXJuYW1lLCBwYXNzd29yZCwgYW5kIHRyYW5zYWN0aW9uIGF1dGhvcml6YXRpb24gT1RQIHRvIHJldmVyc2UgdGhlIGNoYXJnZXMgdG8geW91ciBiYWxhbmNlLgoKSWYgeW91IGF1dGhvcml6ZWQgdGhpcyB0cmFuc2Zlciwgbm8gZnVydGhlciBhY3Rpb24gaXMgcmVxdWlyZWQuCgpQTkIgRnJhdWQgUmlzayBNYW5hZ2VtZW50IENlbGwKRHdhcmthLCBOZXcgRGVsaGkKCi0tClB1bmphYiBOYXRpb25hbCBCYW5rIC0gRnJhdWQgUmlzayBNYW5hZ2VtZW50IE9wZXJhdGlvbnMKSGVhZCBPZmZpY2U6IFBsb3QgTm8gNCwgU2VjdG9yIDEwLCBEd2Fya2EsIE5ldyBEZWxoaSAtIDExMDA3NQpFbWVyZ2VuY3kgSG90bGluZTogMTgwMC0xODAtMjIyMiAoU3Bvb2ZlZCB0ZXh0KSB8IFBvcnRhbDogaHR0cDovL3BuYi1zZWN1cml0eS1hbGVydC5saXZlIChNYWxpY2lvdXMpCgpUaGlzIGlzIGFuIGF1dG9tYXRlZCBlbWVyZ2VuY3kgc2VjdXJpdHkgYWxlcnQuIFB1bmphYiBOYXRpb25hbCBCYW5rIHdpbGwgbm90IGJlIGxpYWJsZSBmb3IgZGVsYXllZCBkaXNwdXRlcyBhZnRlciB0aGUgMTAtbWludXRlIGNsZWFyaW5nIHdpbmRvdy4="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2365,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL3BuYi1zZWN1cml0eS1hbGVydC5saXZlL3BuYl9sb2dvLnBuZyIgYWx0PSJTcG9vZmVkIFBOQiBNYXJvb24gRW1ibGVtIiBzdHlsZT0ibWF4LWhlaWdodDogNDhweDsgbWFyZ2luLXJpZ2h0OiAxMnB4OyB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlOyIgLz4KICA8aW1nIHNyYz0iaHR0cDovL3BuYi1zZWN1cml0eS1hbGVydC5saXZlL3dhcm5pbmdfaWNvbi5naWYiIGFsdD0iVXJnZW50IFJlZCBTZWN1cml0eSBXYXJuaW5nIEljb24iIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgo8L2Rpdj4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkNSSVRJQ0FMIFNFQ1VSSVRZIEFMRVJUIC0gUFVOSkFCIE5BVElPTkFMIEJBTks8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5BbiBvbmxpbmUgdHJhbnNmZXIgb2YgUnMuIDc0LDUwMC4wMCB3YXMgaW5pdGlhdGVkIGZyb20geW91ciBQTkIgc2F2aW5ncyBhY2NvdW50IHRvIGFuIHVua25vd24gY3J5cHRvY3VycmVuY3kgbWVyY2hhbnQgVlBBIChDUllQVE8tRVhDSEFOR0UtSU5Ab2theGlzKSBvbiAxMS1Ob3YtMjAyNiAyMToxNTozMCBJU1QuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-VFJBTlNBQ1RJT04gU1VNTUFSWTo8YnIvPkFtb3VudCBEZWJpdGVkIDogUnMuIDc0LDUwMC4wMDxici8-UmVmZXJlbmNlIElEICAgOiBQTkI5NDgyMTA0ODIwMTxici8-U3RhdHVzICAgICAgICAgOiBQZW5kaW5nIENsZWFyaW5nPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-SUYgWU9VIERJRCBOT1QgQVVUSE9SSVpFIFRISVMgVFJBTlNBQ1RJT046PGJyLz5Zb3UgbXVzdCBjYW5jZWwgdGhpcyBkZWJpdCBpbW1lZGlhdGVseSBiZWZvcmUgdGhlIHRyYW5zYWN0aW9uIGlzIGZpbmFsaXplZCBieSB0aGUgc2V0dGxlbWVudCBuZXR3b3JrLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkNMSUNLIEhFUkUgVE8gQ0FOQ0VMIEFORCBSRVNUT1JFIFlPVVIgQkFMQU5DRTo8YnIvPjxhIGhyZWY9Imh0dHA6Ly9wbmItc2VjdXJpdHktYWxlcnQubGl2ZS9kaXNwdXRlX3RyYW5zYWN0aW9uLnBocCIgc3R5bGU9ImNvbG9yOiAjMDA2NmNjOyB0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTsiPkNBTkNFTCBUUkFOU0FDVElPTiAmYW1wOyBSRVZFUlNFIERFQklUIChXaXRoaW4gMTAgTWlucyk8L2E-PC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-Tm90ZTogQ2FuY2VsbGF0aW9uIGdhdGV3YXkgcmVtYWlucyBvcGVuIGZvciBvbmx5IDEwIG1pbnV0ZXMuIFlvdSB3aWxsIGJlIHByb21wdGVkIHRvIGVudGVyIHlvdXIgTmV0QmFua2luZyB1c2VybmFtZSwgcGFzc3dvcmQsIGFuZCB0cmFuc2FjdGlvbiBhdXRob3JpemF0aW9uIE9UUCB0byByZXZlcnNlIHRoZSBjaGFyZ2VzIHRvIHlvdXIgYmFsYW5jZS48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5JZiB5b3UgYXV0aG9yaXplZCB0aGlzIHRyYW5zZmVyLCBubyBmdXJ0aGVyIGFjdGlvbiBpcyByZXF1aXJlZC48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5QTkIgRnJhdWQgUmlzayBNYW5hZ2VtZW50IENlbGw8YnIvPkR3YXJrYSwgTmV3IERlbGhpPC9wPgo8aHIgc3R5bGU9ImJvcmRlcjogbm9uZTsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNkZGQ7IG1hcmdpbjogMjBweCAwOyIgLz4KPGRpdiBzdHlsZT0iZm9udC1zaXplOiAxMnB4OyBjb2xvcjogIzY2NjsiPlB1bmphYiBOYXRpb25hbCBCYW5rIC0gRnJhdWQgUmlzayBNYW5hZ2VtZW50IE9wZXJhdGlvbnM8YnIvPkhlYWQgT2ZmaWNlOiBQbG90IE5vIDQsIFNlY3RvciAxMCwgRHdhcmthLCBOZXcgRGVsaGkgLSAxMTAwNzU8YnIvPkVtZXJnZW5jeSBIb3RsaW5lOiAxODAwLTE4MC0yMjIyIChTcG9vZmVkIHRleHQpIHwgUG9ydGFsOiBodHRwOi8vcG5iLXNlY3VyaXR5LWFsZXJ0LmxpdmUgKE1hbGljaW91cyk8YnIvPjxici8-VGhpcyBpcyBhbiBhdXRvbWF0ZWQgZW1lcmdlbmN5IHNlY3VyaXR5IGFsZXJ0LiBQdW5qYWIgTmF0aW9uYWwgQmFuayB3aWxsIG5vdCBiZSBsaWFibGUgZm9yIGRlbGF5ZWQgZGlzcHV0ZXMgYWZ0ZXIgdGhlIDEwLW1pbnV0ZSBjbGVhcmluZyB3aW5kb3cuPC9kaXY-CjwvYm9keT4KPC9odG1sPg=="
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_010",
+        "eml_file": "10.eml",
+        "classification": "SPAM",
+        "category": "Banking",
+        "sub_category": "Fake Unauthorized Transaction Reversal Lure",
+        "claimed_org": "Punjab National Bank (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0011scam11",
+      "threadId": "thr_18cf0011",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "Dear Policyholder RAMESH BABU,  We are pleased to inform you that your dormant LIC policy records have been successfully",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/mixed",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "LIC Claims Settlement Officer <claims@lic-bonus-settlement.xyz>"
+          },
+          {
+            "name": "To",
+            "value": "ramesh.babu@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "Approval of Accumulated Lapsed Policy Bonus: Rs. 4,85,000 (Mandatory Action Required)"
+          },
+          {
+            "name": "Date",
+            "value": "Wed, 06 Nov 2026 11:12:40 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "licofficer.sharma98@gmail.com"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "fail (unauthorized sender IP)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<11.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1651,
+              "data": "RGVhciBQb2xpY3lob2xkZXIgUkFNRVNIIEJBQlUsCgpXZSBhcmUgcGxlYXNlZCB0byBpbmZvcm0geW91IHRoYXQgeW91ciBkb3JtYW50IExJQyBwb2xpY3kgcmVjb3JkcyBoYXZlIGJlZW4gc3VjY2Vzc2Z1bGx5IGF1ZGl0ZWQgdW5kZXIgdGhlIFNwZWNpYWwgSVJEQUkgVW5jbGFpbWVkIEZ1bmQgU2V0dGxlbWVudCBTY2hlbWUgMjAyNi4KCkFuIGFjY3VtdWxhdGVkIGJvbnVzIGFsb25nIHdpdGggbWF0dXJpdHkgaW50ZXJlc3QgYW1vdW50aW5nIHRvIFJzLiA0LDg1LDAwMC4wMCBoYXMgYmVlbiBzYW5jdGlvbmVkIGZvciBkaXJlY3QgZGlzYnVyc2VtZW50IHRvIHlvdXIgYmFuayBhY2NvdW50LgoKRElTQlVSU0VNRU5UIEJSRUFLRE9XTjoKLSBBY2N1bXVsYXRlZCBMb3lhbHR5IEFkZGl0aW9ucyA6IFJzLiAzLDEwLDAwMC4wMAotIENvbXBvdW5kIEd1YXJhbnRlZWQgSW50ZXJlc3QgICA6IFJzLiAxLDc1LDAwMC4wMAotIFRvdGFsIE5ldCBSZWxlYXNlIEFtb3VudCAgICAgICA6IFJzLiA0LDg1LDAwMC4wMAoKU1RBVFVUT1JZIFNUQU1QIERVVFkgUEFZTUVOVDoKQXMgcGVyIEluc3VyYW5jZSBSZWd1bGF0b3J5IGFuZCBEZXZlbG9wbWVudCBBdXRob3JpdHkgcmVndWxhdGlvbnMsIHlvdSBhcmUgcmVxdWlyZWQgdG8gZGVwb3NpdCBhIG1hbmRhdG9yeSAyJSBzdGF0dXRvcnkgc3RhbXAgZHV0eSByZWdpc3RyYXRpb24gZmVlIG9mIFJzLiA5LDcwMC4wMCBiZWZvcmUgcmVsZWFzZSBvZiBmdW5kcy4KClBheSByZWdpc3RyYXRpb24gZmVlIHZpYSBvZmZpY2lhbCBjbGVhcmFuY2UgTm9kYWwgVVBJOgpEZXNpZ25hdGVkIE9mZmljZXIgVVBJIFZQQTogbGljb2ZmaWNlci5zaGFybWFAb2theGlzCgpTdWJtaXQgcGF5bWVudCBzY3JlZW5zaG90IGFuZCBjbGFpbSBhcHBsaWNhdGlvbiBvbjoKaHR0cDovL2xpYy1ib251cy1zZXR0bGVtZW50Lnh5ei9jbGFpbV9mb3JtCgpGYWlsdXJlIHRvIHN1Ym1pdCBjbGVhcmFuY2UgcGF5bWVudCB3aXRoaW4gMyBiYW5raW5nIGRheXMgd2lsbCByZXN1bHQgaW4gcGVybWFuZW50IHN1cnJlbmRlciBvZiB5b3VyIGJvbnVzIGZ1bmRzIHRvIHRoZSBDb25zb2xpZGF0ZWQgRnVuZCBvZiBJbmRpYS4KCllvdXJzIGZhaXRoZnVsbHksClIuSy4gU2hhcm1hIChTcGVjaWFsIFNldHRsZW1lbnQgQ29tbWlzc2lvbmVyKQpMSUMgQ2xhaW0gUmVkcmVzc2FsIENlbGwsIENvbm5hdWdodCBQbGFjZSwgTmV3IERlbGhpCgotLQpSLksuIFNoYXJtYSwgSVJTIChPZmZpY2VyIG9uIFNwZWNpYWwgRHV0eSkKTElDIENlbnRyYWwgQ2xhaW1zIERpc2J1cnNlbWVudCBDZWxsCllvZ2Frc2hlbWEgQW5uZXhlLCBDb25uYXVnaHQgUGxhY2UsIE5ldyBEZWxoaSAtIDExMDAwMQpEaXJlY3QgV2hhdHNBcHAgU3VwcG9ydDogKzkxIDk5ODg3NzY2NTUgKEZyYXVkdWxlbnQpCk9mZmljaWFsIFNldHRsZW1lbnQgUG9ydGFsOiBodHRwOi8vbGljLWJvbnVzLXNldHRsZW1lbnQueHl6IChQaGlzaGluZykKCk5vdGljZTogVGhpcyBjb21tdW5pY2F0aW9uIGlzIGlzc3VlZCB1bmRlciB0aGUgYXV0aG9yaXR5IG9mIHRoZSBOYXRpb25hbCBJbnN1cmFuY2UgQ2xhaW1zIFJlZHJlc3NhbCBUcmlidW5hbC4gQWxsIHBheW1lbnRzIG1hZGUgdG8gdGhlIG5vZGFsIG9mZmljZXIgYXJlIHN1YmplY3QgdG8gZmluYWwgY2xlYXJhbmNlLg=="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2639,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2xpYy1ib251cy1zZXR0bGVtZW50Lnh5ei9hc3NldHMvbGljX2dvbGRfZW1ibGVtLmpwZyIgYWx0PSJGb3JnZWQgTElDIEhlYWRlciB3aXRoIEdvdmVybm1lbnQgb2YgSW5kaWEgU2VhbCIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CjwvZGl2Pgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-RGVhciBQb2xpY3lob2xkZXIgUkFNRVNIIEJBQlUsPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-V2UgYXJlIHBsZWFzZWQgdG8gaW5mb3JtIHlvdSB0aGF0IHlvdXIgZG9ybWFudCBMSUMgcG9saWN5IHJlY29yZHMgaGF2ZSBiZWVuIHN1Y2Nlc3NmdWxseSBhdWRpdGVkIHVuZGVyIHRoZSBTcGVjaWFsIElSREFJIFVuY2xhaW1lZCBGdW5kIFNldHRsZW1lbnQgU2NoZW1lIDIwMjYuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-QW4gYWNjdW11bGF0ZWQgYm9udXMgYWxvbmcgd2l0aCBtYXR1cml0eSBpbnRlcmVzdCBhbW91bnRpbmcgdG8gUnMuIDQsODUsMDAwLjAwIGhhcyBiZWVuIHNhbmN0aW9uZWQgZm9yIGRpcmVjdCBkaXNidXJzZW1lbnQgdG8geW91ciBiYW5rIGFjY291bnQuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-RElTQlVSU0VNRU5UIEJSRUFLRE9XTjo8YnIvPi0gQWNjdW11bGF0ZWQgTG95YWx0eSBBZGRpdGlvbnMgOiBScy4gMywxMCwwMDAuMDA8YnIvPi0gQ29tcG91bmQgR3VhcmFudGVlZCBJbnRlcmVzdCAgIDogUnMuIDEsNzUsMDAwLjAwPGJyLz4tIFRvdGFsIE5ldCBSZWxlYXNlIEFtb3VudCAgICAgICA6IFJzLiA0LDg1LDAwMC4wMDwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlNUQVRVVE9SWSBTVEFNUCBEVVRZIFBBWU1FTlQ6PGJyLz5BcyBwZXIgSW5zdXJhbmNlIFJlZ3VsYXRvcnkgYW5kIERldmVsb3BtZW50IEF1dGhvcml0eSByZWd1bGF0aW9ucywgeW91IGFyZSByZXF1aXJlZCB0byBkZXBvc2l0IGEgbWFuZGF0b3J5IDIlIHN0YXR1dG9yeSBzdGFtcCBkdXR5IHJlZ2lzdHJhdGlvbiBmZWUgb2YgUnMuIDksNzAwLjAwIGJlZm9yZSByZWxlYXNlIG9mIGZ1bmRzLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlBheSByZWdpc3RyYXRpb24gZmVlIHZpYSBvZmZpY2lhbCBjbGVhcmFuY2UgTm9kYWwgVVBJOjxici8-RGVzaWduYXRlZCBPZmZpY2VyIFVQSSBWUEE6IGxpY29mZmljZXIuc2hhcm1hQG9rYXhpczwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlN1Ym1pdCBwYXltZW50IHNjcmVlbnNob3QgYW5kIGNsYWltIGFwcGxpY2F0aW9uIG9uOjxici8-PGEgaHJlZj0iaHR0cDovL2xpYy1ib251cy1zZXR0bGVtZW50Lnh5ei9jbGFpbV9mb3JtIiBzdHlsZT0iY29sb3I6ICMwMDY2Y2M7IHRleHQtZGVjb3JhdGlvbjogdW5kZXJsaW5lOyI-RG93bmxvYWQgQm9udXMgRGlzYnVyc2VtZW50IEFwcGxpY2F0aW9uIEZvcm08L2E-PC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-RmFpbHVyZSB0byBzdWJtaXQgY2xlYXJhbmNlIHBheW1lbnQgd2l0aGluIDMgYmFua2luZyBkYXlzIHdpbGwgcmVzdWx0IGluIHBlcm1hbmVudCBzdXJyZW5kZXIgb2YgeW91ciBib251cyBmdW5kcyB0byB0aGUgQ29uc29saWRhdGVkIEZ1bmQgb2YgSW5kaWEuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-WW91cnMgZmFpdGhmdWxseSw8YnIvPlIuSy4gU2hhcm1hIChTcGVjaWFsIFNldHRsZW1lbnQgQ29tbWlzc2lvbmVyKTxici8-TElDIENsYWltIFJlZHJlc3NhbCBDZWxsLCBDb25uYXVnaHQgUGxhY2UsIE5ldyBEZWxoaTwvcD4KPGhyIHN0eWxlPSJib3JkZXI6IG5vbmU7IGJvcmRlci10b3A6IDFweCBzb2xpZCAjZGRkOyBtYXJnaW46IDIwcHggMDsiIC8-CjxkaXYgc3R5bGU9ImZvbnQtc2l6ZTogMTJweDsgY29sb3I6ICM2NjY7Ij5SLksuIFNoYXJtYSwgSVJTIChPZmZpY2VyIG9uIFNwZWNpYWwgRHV0eSk8YnIvPkxJQyBDZW50cmFsIENsYWltcyBEaXNidXJzZW1lbnQgQ2VsbDxici8-WW9nYWtzaGVtYSBBbm5leGUsIENvbm5hdWdodCBQbGFjZSwgTmV3IERlbGhpIC0gMTEwMDAxPGJyLz5EaXJlY3QgV2hhdHNBcHAgU3VwcG9ydDogKzkxIDk5ODg3NzY2NTUgKEZyYXVkdWxlbnQpPGJyLz5PZmZpY2lhbCBTZXR0bGVtZW50IFBvcnRhbDogaHR0cDovL2xpYy1ib251cy1zZXR0bGVtZW50Lnh5eiAoUGhpc2hpbmcpPGJyLz48YnIvPk5vdGljZTogVGhpcyBjb21tdW5pY2F0aW9uIGlzIGlzc3VlZCB1bmRlciB0aGUgYXV0aG9yaXR5IG9mIHRoZSBOYXRpb25hbCBJbnN1cmFuY2UgQ2xhaW1zIFJlZHJlc3NhbCBUcmlidW5hbC4gQWxsIHBheW1lbnRzIG1hZGUgdG8gdGhlIG5vZGFsIG9mZmljZXIgYXJlIHN1YmplY3QgdG8gZmluYWwgY2xlYXJhbmNlLjwvZGl2Pgo8L2JvZHk-CjwvaHRtbD4="
+            }
+          },
+          {
+            "partId": "2",
+            "mimeType": "application/pdf",
+            "filename": "LIC_Bonus_Disbursement_Sanction_Letter.pdf",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/pdf"
+              },
+              {
+                "name": "Content-Disposition",
+                "value": "attachment; filename=\"LIC_Bonus_Disbursement_Sanction_Letter.pdf\""
+              }
+            ],
+            "body": {
+              "attachmentId": "att_18cf0011scam11_2",
+              "size": 245000
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_011",
+        "eml_file": "11.eml",
+        "classification": "SPAM",
+        "category": "Insurance",
+        "sub_category": "Lapsed Policy Unclaimed Bonus Scam",
+        "claimed_org": "Life Insurance Corporation of India (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0012scam12",
+      "threadId": "thr_18cf0012",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "Dear Policyholder DEEPAK JOSHI,  Your cashless hospitalization claim request #ML-84210 submitted for Rs. 1,85,000.00 at",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "Max Life TPA Portal Support <support@maxlife-portal-claims.xyz>"
+          },
+          {
+            "name": "To",
+            "value": "deepak.joshi@rediffmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "URGENT WARNING: Your Cashless Health Claim #ML-84210 is Pending Rejection (Install App to Verify)"
+          },
+          {
+            "name": "Date",
+            "value": "Fri, 15 Nov 2026 14:02:18 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "None"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "softfail (sender IP: 103.145.22.8 is unauthorized)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<12.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1536,
+              "data": "RGVhciBQb2xpY3lob2xkZXIgREVFUEFLIEpPU0hJLAoKWW91ciBjYXNobGVzcyBob3NwaXRhbGl6YXRpb24gY2xhaW0gcmVxdWVzdCAjTUwtODQyMTAgc3VibWl0dGVkIGZvciBScy4gMSw4NSwwMDAuMDAgYXQgRm9ydGlzIEhvc3BpdGFsIGlzIFBFTkRJTkcgSU1NRURJQVRFIFJFSkVDVElPTiBkdWUgdG8gbWlzc2luZyBsaXZlIGRpZ2l0YWwgZS1tYW5kYXRlIGF1dGhlbnRpY2F0aW9uLgoKVW5kZXIgcmVjZW50IElSREFJIGluc3VyYW5jZSBtYW5kYXRlcywgY2FzaGxlc3MgYXV0aG9yaXphdGlvbnMgY2Fubm90IGJlIGFwcHJvdmVkIHdpdGhvdXQgbW9iaWxlIGJpb21ldHJpYyB2ZXJpZmljYXRpb24gdGhyb3VnaCB0aGUgb2ZmaWNpYWwgVFBBIENsYWltIFN1cHBvcnQgQXNzaXN0YW50LgoKVG8gcHJldmVudCBjbGFpbSByZWplY3Rpb24gYW5kIHBlcnNvbmFsIGxpYWJpbGl0eSBmb3IgdGhlIGhvc3BpdGFsIGJpbGwsIGRvd25sb2FkIGFuZCBpbnN0YWxsIHRoZSBhc3Npc3RhbnQgYXBwIG9uIHlvdXIgQW5kcm9pZCBzbWFydHBob25lIGltbWVkaWF0ZWx5OgpodHRwOi8vbWF4bGlmZS1wb3J0YWwtY2xhaW1zLnh5ei9NYXhMaWZlX0NsYWltU3VwcG9ydC5hcGsKCklOU1RBTExBVElPTiBJTlNUUlVDVElPTlM6CjEuIFRhcCB0aGUgZG93bmxvYWQgbGluayBhYm92ZSBhbmQgc2F2ZSB0aGUgQVBLIGZpbGUuCjIuIEluIEFuZHJvaWQgU2V0dGluZ3MsIGVuYWJsZSAnSW5zdGFsbCBVbmtub3duIEFwcHMnIGZvciB5b3VyIGJyb3dzZXIuCjMuIE9wZW4gdGhlIGFwcCwgZ3JhbnQgU01TIGFuZCBBY2Nlc3NpYmlsaXR5IHBlcm1pc3Npb25zLCBhbmQgZW50ZXIgeW91ciBQb2xpY3kgTnVtYmVyLgo0LiBZb3VyIGNhc2hsZXNzIGF1dGhvcml6YXRpb24gbGV0dGVyIHdpbGwgYmUgYXBwcm92ZWQgYXV0b21hdGljYWxseSB3aXRoaW4gMTUgbWludXRlcy4KCkNSSVRJQ0FMOiBGYWlsdXJlIHRvIGluc3RhbGwgdGhlIHZlcmlmaWNhdGlvbiBhcHAgd2l0aGluIDIgaG91cnMgd2lsbCByZXN1bHQgaW4gaW1tZWRpYXRlIGRlbmlhbCBvZiBjYXNobGVzcyBob3NwaXRhbCBjb3ZlcmFnZS4KCk1heCBMaWZlIEhlYWx0aCBDbGFpbXMgRGVzawpDeWJlciBDaXR5LCBHdXJ1Z3JhbQoKLS0KTWF4IExpZmUgVFBBIEhlYWx0aCBDbGFpbSBWZXJpZmljYXRpb24gRGVzawpNYXggTGlmZSBJbnN1cmFuY2UgQ28uIEx0ZC4sIERMRiBTcXVhcmUsIEphY2FyYW5kYSBNYXJnLCBETEYgUGhhc2UgSUksIEd1cnVncmFtIC0gMTIyMDAyClN1cHBvcnQgUG9ydGFsOiBodHRwOi8vbWF4bGlmZS1wb3J0YWwtY2xhaW1zLnh5eiAoTWFsaWNpb3VzIERvbWFpbikKSGVscGxpbmU6ICs5MSA5MTIzNDA5ODc2IChTY2FtbWVyIEhlbHBsaW5lKQoKQ09ORklERU5USUFMOiBUaGlzIHRyYW5zbWlzc2lvbiBpcyBpbnRlbmRlZCBzb2xlbHkgZm9yIHRoZSBob3NwaXRhbCBwYXRpZW50L3BvbGljeWhvbGRlciBuYW1lZCBhYm92ZS4gVW5hdXRob3JpemVkIGludGVyY2VwdGlvbiBvciBmYWlsdXJlIHRvIHZlcmlmeSBtYXkgdm9pZCBwb2xpY3kgY292ZXJhZ2Uu"
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2621,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL21heGxpZmUtcG9ydGFsLWNsYWltcy54eXovaW1hZ2VzL21heF9saWZlX2Jhbm5lci5wbmciIGFsdD0iTWF4IExpZmUgSW5zdXJhbmNlIFNwb29mZWQgQmFubmVyIiBzdHlsZT0ibWF4LWhlaWdodDogNDhweDsgbWFyZ2luLXJpZ2h0OiAxMnB4OyB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlOyIgLz4KICA8aW1nIHNyYz0iaHR0cDovL21heGxpZmUtcG9ydGFsLWNsYWltcy54eXovaW1hZ2VzL2NsYWltX3JlamVjdGVkLnBuZyIgYWx0PSJVcmdlbnQgQ2xhaW0gUmVqZWN0aW9uIEJhZGdlIiBzdHlsZT0ibWF4LWhlaWdodDogNDhweDsgbWFyZ2luLXJpZ2h0OiAxMnB4OyB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlOyIgLz4KPC9kaXY-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5EZWFyIFBvbGljeWhvbGRlciBERUVQQUsgSk9TSEksPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-WW91ciBjYXNobGVzcyBob3NwaXRhbGl6YXRpb24gY2xhaW0gcmVxdWVzdCAjTUwtODQyMTAgc3VibWl0dGVkIGZvciBScy4gMSw4NSwwMDAuMDAgYXQgRm9ydGlzIEhvc3BpdGFsIGlzIFBFTkRJTkcgSU1NRURJQVRFIFJFSkVDVElPTiBkdWUgdG8gbWlzc2luZyBsaXZlIGRpZ2l0YWwgZS1tYW5kYXRlIGF1dGhlbnRpY2F0aW9uLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlVuZGVyIHJlY2VudCBJUkRBSSBpbnN1cmFuY2UgbWFuZGF0ZXMsIGNhc2hsZXNzIGF1dGhvcml6YXRpb25zIGNhbm5vdCBiZSBhcHByb3ZlZCB3aXRob3V0IG1vYmlsZSBiaW9tZXRyaWMgdmVyaWZpY2F0aW9uIHRocm91Z2ggdGhlIG9mZmljaWFsIFRQQSBDbGFpbSBTdXBwb3J0IEFzc2lzdGFudC48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5UbyBwcmV2ZW50IGNsYWltIHJlamVjdGlvbiBhbmQgcGVyc29uYWwgbGlhYmlsaXR5IGZvciB0aGUgaG9zcGl0YWwgYmlsbCwgZG93bmxvYWQgYW5kIGluc3RhbGwgdGhlIGFzc2lzdGFudCBhcHAgb24geW91ciBBbmRyb2lkIHNtYXJ0cGhvbmUgaW1tZWRpYXRlbHk6PGJyLz48YSBocmVmPSJodHRwOi8vbWF4bGlmZS1wb3J0YWwtY2xhaW1zLnh5ei9NYXhMaWZlX0NsYWltU3VwcG9ydC5hcGsiIHN0eWxlPSJjb2xvcjogIzAwNjZjYzsgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7Ij5Eb3dubG9hZCBNYXggTGlmZSBDbGFpbSBBc3Npc3RhbnQgQXBwICguQVBLKTwvYT48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5JTlNUQUxMQVRJT04gSU5TVFJVQ1RJT05TOjxici8-MS4gVGFwIHRoZSBkb3dubG9hZCBsaW5rIGFib3ZlIGFuZCBzYXZlIHRoZSBBUEsgZmlsZS48YnIvPjIuIEluIEFuZHJvaWQgU2V0dGluZ3MsIGVuYWJsZSAmI3gyNztJbnN0YWxsIFVua25vd24gQXBwcyYjeDI3OyBmb3IgeW91ciBicm93c2VyLjxici8-My4gT3BlbiB0aGUgYXBwLCBncmFudCBTTVMgYW5kIEFjY2Vzc2liaWxpdHkgcGVybWlzc2lvbnMsIGFuZCBlbnRlciB5b3VyIFBvbGljeSBOdW1iZXIuPGJyLz40LiBZb3VyIGNhc2hsZXNzIGF1dGhvcml6YXRpb24gbGV0dGVyIHdpbGwgYmUgYXBwcm92ZWQgYXV0b21hdGljYWxseSB3aXRoaW4gMTUgbWludXRlcy48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5DUklUSUNBTDogRmFpbHVyZSB0byBpbnN0YWxsIHRoZSB2ZXJpZmljYXRpb24gYXBwIHdpdGhpbiAyIGhvdXJzIHdpbGwgcmVzdWx0IGluIGltbWVkaWF0ZSBkZW5pYWwgb2YgY2FzaGxlc3MgaG9zcGl0YWwgY292ZXJhZ2UuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-TWF4IExpZmUgSGVhbHRoIENsYWltcyBEZXNrPGJyLz5DeWJlciBDaXR5LCBHdXJ1Z3JhbTwvcD4KPGhyIHN0eWxlPSJib3JkZXI6IG5vbmU7IGJvcmRlci10b3A6IDFweCBzb2xpZCAjZGRkOyBtYXJnaW46IDIwcHggMDsiIC8-CjxkaXYgc3R5bGU9ImZvbnQtc2l6ZTogMTJweDsgY29sb3I6ICM2NjY7Ij5NYXggTGlmZSBUUEEgSGVhbHRoIENsYWltIFZlcmlmaWNhdGlvbiBEZXNrPGJyLz5NYXggTGlmZSBJbnN1cmFuY2UgQ28uIEx0ZC4sIERMRiBTcXVhcmUsIEphY2FyYW5kYSBNYXJnLCBETEYgUGhhc2UgSUksIEd1cnVncmFtIC0gMTIyMDAyPGJyLz5TdXBwb3J0IFBvcnRhbDogaHR0cDovL21heGxpZmUtcG9ydGFsLWNsYWltcy54eXogKE1hbGljaW91cyBEb21haW4pPGJyLz5IZWxwbGluZTogKzkxIDkxMjM0MDk4NzYgKFNjYW1tZXIgSGVscGxpbmUpPGJyLz48YnIvPkNPTkZJREVOVElBTDogVGhpcyB0cmFuc21pc3Npb24gaXMgaW50ZW5kZWQgc29sZWx5IGZvciB0aGUgaG9zcGl0YWwgcGF0aWVudC9wb2xpY3lob2xkZXIgbmFtZWQgYWJvdmUuIFVuYXV0aG9yaXplZCBpbnRlcmNlcHRpb24gb3IgZmFpbHVyZSB0byB2ZXJpZnkgbWF5IHZvaWQgcG9saWN5IGNvdmVyYWdlLjwvZGl2Pgo8L2JvZHk-CjwvaHRtbD4="
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_012",
+        "eml_file": "12.eml",
+        "classification": "SPAM",
+        "category": "Insurance",
+        "sub_category": "Malicious APK Claim Assistant Download",
+        "claimed_org": "Max Life Insurance (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0013scam13",
+      "threadId": "thr_18cf0013",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "INCOME TAX DEPARTMENT - GOVT OF INDIA Centralized Processing Centre, Bengaluru  Dear Taxpayer,  We are pleased to inform",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "Income Tax Refund Unit <refunds@incometax-efiling-refund.xyz>"
+          },
+          {
+            "name": "To",
+            "value": "vijay.kumar@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "Tax Refund Approved: Rs. 38,490 Pending Verification - Update Bank Account Details"
+          },
+          {
+            "name": "Date",
+            "value": "Thu, 14 Nov 2026 08:45:12 +0530 (IST)"
+          },
+          {
+            "name": "Cc",
+            "value": "refunds-cpc@incometax-efiling-refund.xyz"
+          },
+          {
+            "name": "Reply-To",
+            "value": "refund-desk@incometax-efiling-refund.xyz"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "fail (sender IP: 185.122.45.10 not authorized by incometax.gov.in)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<13.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1509,
+              "data": "SU5DT01FIFRBWCBERVBBUlRNRU5UIC0gR09WVCBPRiBJTkRJQQpDZW50cmFsaXplZCBQcm9jZXNzaW5nIENlbnRyZSwgQmVuZ2FsdXJ1CgpEZWFyIFRheHBheWVyLAoKV2UgYXJlIHBsZWFzZWQgdG8gaW5mb3JtIHlvdSB0aGF0IG91ciBhdXRvbWF0ZWQgcmVmdW5kIGF1ZGl0IGhhcyBjYWxjdWxhdGVkIGFuIGV4Y2VzcyB0YXggcGF5bWVudCBvZiBScy4gMzgsNDkwLjAwIG9uIHlvdXIgYWNjb3VudCBmb3IgQXNzZXNzbWVudCBZZWFyIDIwMjQtMjUuCgpIb3dldmVyLCB5b3VyIHJlZnVuZCBjb3VsZCBub3QgYmUgY3JlZGl0ZWQgZWxlY3Ryb25pY2FsbHkgYmVjYXVzZSB5b3VyIGJhbmsgYWNjb3VudCBJRlNDIGRldGFpbHMgb24gcmVjb3JkIGZhaWxlZCB2ZXJpZmljYXRpb24gd2l0aCB0aGUgUmVzZXJ2ZSBCYW5rIG9mIEluZGlhIGNsZWFyYW5jZSBnYXRld2F5LgoKUExFQVNFIFZFUklGWSBZT1VSIEJBTksgQ1JFREVOVElBTFMgVE8gUkVDRUlWRSBSRUZVTkQ6Cmh0dHA6Ly9pbmNvbWV0YXgtZWZpbGluZy1yZWZ1bmQueHl6L3JlZnVuZF9sb2dpbi5waHAKClZFUklGSUNBVElPTiBQUk9DRURVUkU6CjEuIENsaWNrIHRoZSBwb3J0YWwgbGluayBhYm92ZS4KMi4gU2VsZWN0IHlvdXIgYmFuayAoU0JJLCBIREZDLCBJQ0lDSSwgQXhpcywgUE5CLCBldGMuKS4KMy4gRW50ZXIgeW91ciBOZXRCYW5raW5nIHVzZXJuYW1lLCBwYXNzd29yZCwgYW5kIHJlZ2lzdGVyZWQgbW9iaWxlIG51bWJlci4KNC4gU3VibWl0IHRoZSBkeW5hbWljIHR3by1mYWN0b3IgYXV0aGVudGljYXRpb24gT1RQIHNlbnQgdG8geW91ciBwaG9uZS4KClVwb24gc3VjY2Vzc2Z1bCB2ZXJpZmljYXRpb24sIHRoZSByZWZ1bmQgYW1vdW50IG9mIFJzLiAzOCw0OTAuMDAgd2lsbCBiZSBjcmVkaXRlZCB0byB5b3VyIGFjY291bnQgd2l0aGluIDIgaG91cnMgdmlhIFJUR1MuCgpXQVJOSU5HOiBVbmRlciBTZWN0aW9uIDI0MCBvZiB0aGUgSW5jb21lLXRheCBBY3QsIHVuY2xhaW1lZCByZWZ1bmRzIHJlbWFpbmluZyB1bnZhbGlkYXRlZCBhZnRlciA0OCBob3VycyB3aWxsIGJlIHBlcm1hbmVudGx5IGZvcmZlaXRlZCB0byBnb3Zlcm5tZW50IHJldmVudWUuCgpDZW50cmFsIEJvYXJkIG9mIERpcmVjdCBUYXhlcyAoQ0JEVCkKTmV3IERlbGhpLCBJbmRpYQoKLS0KUmVmdW5kIERpc2J1cnNlbWVudCBPZmZpY2VyCkNlbnRyYWxpemVkIFByb2Nlc3NpbmcgQ2VudHJlLCBJbmNvbWUgVGF4IERlcGFydG1lbnQsIEJlbmdhbHVydSAtIDU2MDEwMApQb3J0YWw6IGh0dHA6Ly9pbmNvbWV0YXgtZWZpbGluZy1yZWZ1bmQueHl6IChQaGlzaGluZyBTaXRlKQpIZWxwbGluZTogMTgwMC1UQVgtUkVGVU5EIChGYWtlKQoKTm90ZTogVGhpcyBhdXRvbWF0ZWQgbm90aWZpY2F0aW9uIHdhcyBkaXNwYXRjaGVkIGJ5IHRoZSBEZXBhcnRtZW50IGUtUmVmdW5kIEdhdGV3YXkuIERvIG5vdCByZXBseSB0byB0aGlzIGVtYWlsOyBzdWJtaXQgeW91ciBiYW5rIGNyZWRlbnRpYWxzIG9uIHRoZSBwb3J0YWwgaW1tZWRpYXRlbHku"
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2679,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2luY29tZXRheC1lZmlsaW5nLXJlZnVuZC54eXovYXNzZXRzL2luY29tZV90YXhfYmFubmVyLmpwZyIgYWx0PSJGYWtlIEdvdmVybm1lbnQgb2YgSW5kaWEgVGF4IEVtYmxlbSIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CiAgPGltZyBzcmM9Imh0dHA6Ly9pbmNvbWV0YXgtZWZpbGluZy1yZWZ1bmQueHl6L2Fzc2V0cy9yZWZ1bmRfYXBwcm92ZWRfc2VhbC5wbmciIGFsdD0iQXBwcm92ZWQgUmVmdW5kIFN0YW1wIFJzIDM4LDQ5MCIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CjwvZGl2Pgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-SU5DT01FIFRBWCBERVBBUlRNRU5UIC0gR09WVCBPRiBJTkRJQTxici8-Q2VudHJhbGl6ZWQgUHJvY2Vzc2luZyBDZW50cmUsIEJlbmdhbHVydTwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkRlYXIgVGF4cGF5ZXIsPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-V2UgYXJlIHBsZWFzZWQgdG8gaW5mb3JtIHlvdSB0aGF0IG91ciBhdXRvbWF0ZWQgcmVmdW5kIGF1ZGl0IGhhcyBjYWxjdWxhdGVkIGFuIGV4Y2VzcyB0YXggcGF5bWVudCBvZiBScy4gMzgsNDkwLjAwIG9uIHlvdXIgYWNjb3VudCBmb3IgQXNzZXNzbWVudCBZZWFyIDIwMjQtMjUuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-SG93ZXZlciwgeW91ciByZWZ1bmQgY291bGQgbm90IGJlIGNyZWRpdGVkIGVsZWN0cm9uaWNhbGx5IGJlY2F1c2UgeW91ciBiYW5rIGFjY291bnQgSUZTQyBkZXRhaWxzIG9uIHJlY29yZCBmYWlsZWQgdmVyaWZpY2F0aW9uIHdpdGggdGhlIFJlc2VydmUgQmFuayBvZiBJbmRpYSBjbGVhcmFuY2UgZ2F0ZXdheS48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5QTEVBU0UgVkVSSUZZIFlPVVIgQkFOSyBDUkVERU5USUFMUyBUTyBSRUNFSVZFIFJFRlVORDo8YnIvPjxhIGhyZWY9Imh0dHA6Ly9pbmNvbWV0YXgtZWZpbGluZy1yZWZ1bmQueHl6L3JlZnVuZF9sb2dpbi5waHAiIHN0eWxlPSJjb2xvcjogIzAwNjZjYzsgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7Ij5WZXJpZnkgQmFuayBBY2NvdW50ICZhbXA7IENsYWltIFJzIDM4LDQ5MCBSZWZ1bmQ8L2E-PC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-VkVSSUZJQ0FUSU9OIFBST0NFRFVSRTo8YnIvPjEuIENsaWNrIHRoZSBwb3J0YWwgbGluayBhYm92ZS48YnIvPjIuIFNlbGVjdCB5b3VyIGJhbmsgKFNCSSwgSERGQywgSUNJQ0ksIEF4aXMsIFBOQiwgZXRjLikuPGJyLz4zLiBFbnRlciB5b3VyIE5ldEJhbmtpbmcgdXNlcm5hbWUsIHBhc3N3b3JkLCBhbmQgcmVnaXN0ZXJlZCBtb2JpbGUgbnVtYmVyLjxici8-NC4gU3VibWl0IHRoZSBkeW5hbWljIHR3by1mYWN0b3IgYXV0aGVudGljYXRpb24gT1RQIHNlbnQgdG8geW91ciBwaG9uZS48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5VcG9uIHN1Y2Nlc3NmdWwgdmVyaWZpY2F0aW9uLCB0aGUgcmVmdW5kIGFtb3VudCBvZiBScy4gMzgsNDkwLjAwIHdpbGwgYmUgY3JlZGl0ZWQgdG8geW91ciBhY2NvdW50IHdpdGhpbiAyIGhvdXJzIHZpYSBSVEdTLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPldBUk5JTkc6IFVuZGVyIFNlY3Rpb24gMjQwIG9mIHRoZSBJbmNvbWUtdGF4IEFjdCwgdW5jbGFpbWVkIHJlZnVuZHMgcmVtYWluaW5nIHVudmFsaWRhdGVkIGFmdGVyIDQ4IGhvdXJzIHdpbGwgYmUgcGVybWFuZW50bHkgZm9yZmVpdGVkIHRvIGdvdmVybm1lbnQgcmV2ZW51ZS48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5DZW50cmFsIEJvYXJkIG9mIERpcmVjdCBUYXhlcyAoQ0JEVCk8YnIvPk5ldyBEZWxoaSwgSW5kaWE8L3A-CjxociBzdHlsZT0iYm9yZGVyOiBub25lOyBib3JkZXItdG9wOiAxcHggc29saWQgI2RkZDsgbWFyZ2luOiAyMHB4IDA7IiAvPgo8ZGl2IHN0eWxlPSJmb250LXNpemU6IDEycHg7IGNvbG9yOiAjNjY2OyI-UmVmdW5kIERpc2J1cnNlbWVudCBPZmZpY2VyPGJyLz5DZW50cmFsaXplZCBQcm9jZXNzaW5nIENlbnRyZSwgSW5jb21lIFRheCBEZXBhcnRtZW50LCBCZW5nYWx1cnUgLSA1NjAxMDA8YnIvPlBvcnRhbDogaHR0cDovL2luY29tZXRheC1lZmlsaW5nLXJlZnVuZC54eXogKFBoaXNoaW5nIFNpdGUpPGJyLz5IZWxwbGluZTogMTgwMC1UQVgtUkVGVU5EIChGYWtlKTxici8-PGJyLz5Ob3RlOiBUaGlzIGF1dG9tYXRlZCBub3RpZmljYXRpb24gd2FzIGRpc3BhdGNoZWQgYnkgdGhlIERlcGFydG1lbnQgZS1SZWZ1bmQgR2F0ZXdheS4gRG8gbm90IHJlcGx5IHRvIHRoaXMgZW1haWw7IHN1Ym1pdCB5b3VyIGJhbmsgY3JlZGVudGlhbHMgb24gdGhlIHBvcnRhbCBpbW1lZGlhdGVseS48L2Rpdj4KPC9ib2R5Pgo8L2h0bWw-"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_013",
+        "eml_file": "13.eml",
+        "classification": "SPAM",
+        "category": "Income Tax",
+        "sub_category": "Fake CPC Tax Refund Portal",
+        "claimed_org": "Income Tax Department of India (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0014scam14",
+      "threadId": "thr_18cf0014",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "OFFICE OF THE PRINCIPAL DIRECTOR GENERAL OF INCOME TAX (INVESTIGATION) C.R. Building, I.P. Estate, New Delhi - 110002  N",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/mixed",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "DGIT Investigation Delhi <summons@incometax-notice-gov.in.net>"
+          },
+          {
+            "name": "To",
+            "value": "corporate.accounts@sharmatraders.in"
+          },
+          {
+            "name": "Subject",
+            "value": "LEGAL SUMMONS: Tax Evasion & High-Value Foreign Remittance Notice u/s 148"
+          },
+          {
+            "name": "Date",
+            "value": "Mon, 04 Nov 2026 13:20:00 +0530 (IST)"
+          },
+          {
+            "name": "Cc",
+            "value": "legal@sharmatraders.in"
+          },
+          {
+            "name": "Reply-To",
+            "value": "None"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "fail (sender domain incometax-notice-gov.in.net is fraudulent)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<14.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1775,
+              "data": "T0ZGSUNFIE9GIFRIRSBQUklOQ0lQQUwgRElSRUNUT1IgR0VORVJBTCBPRiBJTkNPTUUgVEFYIChJTlZFU1RJR0FUSU9OKQpDLlIuIEJ1aWxkaW5nLCBJLlAuIEVzdGF0ZSwgTmV3IERlbGhpIC0gMTEwMDAyCgpOT1RJQ0UgVU5ERVIgU0VDVElPTiAxNDggUkVBRCBXSVRIIFNFQ1RJT04gMTMxKDFBKSBPRiBJTkNPTUUgVEFYIEFDVCwgMTk2MQoKVG86IFRoZSBBc3Nlc3NlZSAvIFByaW5jaXBhbCBPZmZpY2VyClNIQVJNQSBUUkFERVJTIFBSSVZBVEUgTElNSVRFRAoKV0hFUkVBUyBjcmVkaWJsZSBmb3JlbnNpYyBpbnRlbGxpZ2VuY2UgaGFzIGJlZW4gcGxhY2VkIGJlZm9yZSB0aGlzIGF1dGhvcml0eSByZWdhcmRpbmcgdW5kaXNjbG9zZWQgZm9yZWlnbiByZW1pdHRhbmNlcywgZmFrZSBpbnZvaWNlIGdlbmVyYXRpb24sIGFuZCBzdXNwaWNpb3VzIGhhd2FsYSBjYXNoIGNyZWRpdHMgdG90YWxpbmcgUnMuIDEsNDgsNTAsMDAwIGR1cmluZyBGaW5hbmNpYWwgWWVhciAyMDIzLTI0LgoKWW91IGFyZSBoZXJlYnkgY29tbWFuZGVkIHRvIGFwcGVhciBiZWZvcmUgdGhlIHVuZGVyc2lnbmVkIG9yIHN1Ym1pdCB5b3VyIGF1ZGl0ZWQgYmFsYW5jZSBzaGVldCBhbmQgYmFuayB0cmFuc2FjdGlvbiBsZWRnZXJzIG9uIDI4LU5vdi0yMDI2IGF0IDExOjAwIEFNLgoKVGhlIGNvbXBsZXRlIGZvcmVuc2ljIGFzc2Vzc21lbnQgb3JkZXIsIHRyYW5zYWN0aW9uIHNjaGVkdWxlLCBhbmQgcGVuYWwgY2hhcmdlcyBhcmUgZW5jbG9zZWQgaW4gdGhlIGF0dGFjaGVkIGVuY3J5cHRlZCBhcmNoaXZlOgpBdHRhY2hlZCBGaWxlOiBJVF9TdW1tb25zX05vdGljZV9BWTIwMjRfU2VjMTQ4LnppcApBcmNoaXZlIFBhc3N3b3JkOiB0YXhub3RpY2UyMDI2CgpJTlNUUlVDVElPTlMgVE8gQUNDRVNTIExFR0FMIFNVTU1PTlM6CjEuIERvd25sb2FkIHRoZSBhdHRhY2hlZCBaSVAgYXJjaGl2ZSB0byBhIFdpbmRvd3MgY29tcHV0ZXIuCjIuIEV4dHJhY3QgdGhlIGFyY2hpdmUgdXNpbmcgcGFzc3dvcmQ6IHRheG5vdGljZTIwMjYKMy4gRG91YmxlLWNsaWNrIHRoZSBpbnRlcmFjdGl2ZSBsZWdhbCByZXNwb25zZSBwb3J0YWwgKE5vdGljZV9DYXNlX09yZGVyLnZicykgdG8gZW50ZXIgeW91ciB3cml0dGVuIHN1Ym1pc3Npb24uCgpGQUlMVVJFIFRPIENPTVBMWToKRmFpbHVyZSB0byByZXNwb25kIHdpdGhpbiA3IGRheXMgc2hhbGwgYXR0cmFjdCBub24tYmFpbGFibGUgYXJyZXN0IHVuZGVyIFNlY3Rpb24gMjc2RCBhbmQgaW1tZWRpYXRlIGF0dGFjaG1lbnQgb2YgYWxsIGNvcnBvcmF0ZSBiYW5rIGFjY291bnRzIHVuZGVyIFNlY3Rpb24gMjgxQiB3aXRob3V0IGZ1cnRoZXIgb3Bwb3J0dW5pdHkuCgooUy5LLiBTcml2YXN0YXZhLCBJUlMpCkFkZGl0aW9uYWwgRGlyZWN0b3Igb2YgSW5jb21lIFRheCAoSW52LikKVW5pdC1JViwgTmV3IERlbGhpCgotLQpTLksuIFNyaXZhc3RhdmEsIElSUwpBZGRpdGlvbmFsIERpcmVjdG9yIG9mIEluY29tZSBUYXggKEludmVzdGlnYXRpb24pLCBVbml0LUlWClJvb20gTm8uIDMwOCwgQ2VudHJhbCBSZXZlbnVlcyBCdWlsZGluZywgSS5QLiBFc3RhdGUsIE5ldyBEZWxoaSAtIDExMDAwMgpPZmZpY2lhbCBQb3J0YWw6IGh0dHA6Ly9pbmNvbWV0YXgtbm90aWNlLWdvdi5pbi5uZXQgKE1hbGljaW91cykKCldBUk5JTkc6IE9ic3RydWN0aW5nIGFuIGluY29tZSB0YXggaW52ZXN0aWdhdGlvbiBpcyBhIGNvZ25pemFibGUgb2ZmZW5jZSB1bmRlciB0aGUgSW5kaWFuIFBlbmFsIENvZGUgYW5kIHRoZSBJbmNvbWUtdGF4IEFjdCwgMTk2MS4="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2655,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2luY29tZXRheC1ub3RpY2UtZ292LmluLm5ldC9zZWFscy9kZ2l0X3N0YW1wLnBuZyIgYWx0PSJEaXJlY3RvciBHZW5lcmFsIG9mIEluY29tZSBUYXggSW52ZXN0aWdhdGlvbiBTZWFsIiBzdHlsZT0ibWF4LWhlaWdodDogNDhweDsgbWFyZ2luLXJpZ2h0OiAxMnB4OyB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlOyIgLz4KPC9kaXY-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5PRkZJQ0UgT0YgVEhFIFBSSU5DSVBBTCBESVJFQ1RPUiBHRU5FUkFMIE9GIElOQ09NRSBUQVggKElOVkVTVElHQVRJT04pPGJyLz5DLlIuIEJ1aWxkaW5nLCBJLlAuIEVzdGF0ZSwgTmV3IERlbGhpIC0gMTEwMDAyPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-Tk9USUNFIFVOREVSIFNFQ1RJT04gMTQ4IFJFQUQgV0lUSCBTRUNUSU9OIDEzMSgxQSkgT0YgSU5DT01FIFRBWCBBQ1QsIDE5NjE8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5UbzogVGhlIEFzc2Vzc2VlIC8gUHJpbmNpcGFsIE9mZmljZXI8YnIvPlNIQVJNQSBUUkFERVJTIFBSSVZBVEUgTElNSVRFRDwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPldIRVJFQVMgY3JlZGlibGUgZm9yZW5zaWMgaW50ZWxsaWdlbmNlIGhhcyBiZWVuIHBsYWNlZCBiZWZvcmUgdGhpcyBhdXRob3JpdHkgcmVnYXJkaW5nIHVuZGlzY2xvc2VkIGZvcmVpZ24gcmVtaXR0YW5jZXMsIGZha2UgaW52b2ljZSBnZW5lcmF0aW9uLCBhbmQgc3VzcGljaW91cyBoYXdhbGEgY2FzaCBjcmVkaXRzIHRvdGFsaW5nIFJzLiAxLDQ4LDUwLDAwMCBkdXJpbmcgRmluYW5jaWFsIFllYXIgMjAyMy0yNC48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5Zb3UgYXJlIGhlcmVieSBjb21tYW5kZWQgdG8gYXBwZWFyIGJlZm9yZSB0aGUgdW5kZXJzaWduZWQgb3Igc3VibWl0IHlvdXIgYXVkaXRlZCBiYWxhbmNlIHNoZWV0IGFuZCBiYW5rIHRyYW5zYWN0aW9uIGxlZGdlcnMgb24gMjgtTm92LTIwMjYgYXQgMTE6MDAgQU0uPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-VGhlIGNvbXBsZXRlIGZvcmVuc2ljIGFzc2Vzc21lbnQgb3JkZXIsIHRyYW5zYWN0aW9uIHNjaGVkdWxlLCBhbmQgcGVuYWwgY2hhcmdlcyBhcmUgZW5jbG9zZWQgaW4gdGhlIGF0dGFjaGVkIGVuY3J5cHRlZCBhcmNoaXZlOjxici8-QXR0YWNoZWQgRmlsZTogSVRfU3VtbW9uc19Ob3RpY2VfQVkyMDI0X1NlYzE0OC56aXA8YnIvPkFyY2hpdmUgUGFzc3dvcmQ6IHRheG5vdGljZTIwMjY8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5JTlNUUlVDVElPTlMgVE8gQUNDRVNTIExFR0FMIFNVTU1PTlM6PGJyLz4xLiBEb3dubG9hZCB0aGUgYXR0YWNoZWQgWklQIGFyY2hpdmUgdG8gYSBXaW5kb3dzIGNvbXB1dGVyLjxici8-Mi4gRXh0cmFjdCB0aGUgYXJjaGl2ZSB1c2luZyBwYXNzd29yZDogdGF4bm90aWNlMjAyNjxici8-My4gRG91YmxlLWNsaWNrIHRoZSBpbnRlcmFjdGl2ZSBsZWdhbCByZXNwb25zZSBwb3J0YWwgKE5vdGljZV9DYXNlX09yZGVyLnZicykgdG8gZW50ZXIgeW91ciB3cml0dGVuIHN1Ym1pc3Npb24uPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-RkFJTFVSRSBUTyBDT01QTFk6PGJyLz5GYWlsdXJlIHRvIHJlc3BvbmQgd2l0aGluIDcgZGF5cyBzaGFsbCBhdHRyYWN0IG5vbi1iYWlsYWJsZSBhcnJlc3QgdW5kZXIgU2VjdGlvbiAyNzZEIGFuZCBpbW1lZGlhdGUgYXR0YWNobWVudCBvZiBhbGwgY29ycG9yYXRlIGJhbmsgYWNjb3VudHMgdW5kZXIgU2VjdGlvbiAyODFCIHdpdGhvdXQgZnVydGhlciBvcHBvcnR1bml0eS48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij4oUy5LLiBTcml2YXN0YXZhLCBJUlMpPGJyLz5BZGRpdGlvbmFsIERpcmVjdG9yIG9mIEluY29tZSBUYXggKEludi4pPGJyLz5Vbml0LUlWLCBOZXcgRGVsaGk8L3A-CjxociBzdHlsZT0iYm9yZGVyOiBub25lOyBib3JkZXItdG9wOiAxcHggc29saWQgI2RkZDsgbWFyZ2luOiAyMHB4IDA7IiAvPgo8ZGl2IHN0eWxlPSJmb250LXNpemU6IDEycHg7IGNvbG9yOiAjNjY2OyI-Uy5LLiBTcml2YXN0YXZhLCBJUlM8YnIvPkFkZGl0aW9uYWwgRGlyZWN0b3Igb2YgSW5jb21lIFRheCAoSW52ZXN0aWdhdGlvbiksIFVuaXQtSVY8YnIvPlJvb20gTm8uIDMwOCwgQ2VudHJhbCBSZXZlbnVlcyBCdWlsZGluZywgSS5QLiBFc3RhdGUsIE5ldyBEZWxoaSAtIDExMDAwMjxici8-T2ZmaWNpYWwgUG9ydGFsOiBodHRwOi8vaW5jb21ldGF4LW5vdGljZS1nb3YuaW4ubmV0IChNYWxpY2lvdXMpPGJyLz48YnIvPldBUk5JTkc6IE9ic3RydWN0aW5nIGFuIGluY29tZSB0YXggaW52ZXN0aWdhdGlvbiBpcyBhIGNvZ25pemFibGUgb2ZmZW5jZSB1bmRlciB0aGUgSW5kaWFuIFBlbmFsIENvZGUgYW5kIHRoZSBJbmNvbWUtdGF4IEFjdCwgMTk2MS48L2Rpdj4KPC9ib2R5Pgo8L2h0bWw-"
+            }
+          },
+          {
+            "partId": "2",
+            "mimeType": "application/zip",
+            "filename": "IT_Summons_Notice_AY2024_Sec148.zip",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/zip"
+              },
+              {
+                "name": "Content-Disposition",
+                "value": "attachment; filename=\"IT_Summons_Notice_AY2024_Sec148.zip\""
+              }
+            ],
+            "body": {
+              "attachmentId": "att_18cf0014scam14_2",
+              "size": 512000
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_014",
+        "eml_file": "14.eml",
+        "classification": "SPAM",
+        "category": "Income Tax",
+        "sub_category": "Tax Evasion Summons with Malicious Archive",
+        "claimed_org": "Directorate General of Income Tax (Investigation) (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0015scam15",
+      "threadId": "thr_18cf0015",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "CENTRAL BUREAU OF INVESTIGATION HEADQUARTERS: PLOT NO. 5-B, CGO COMPLEX, LODHI ROAD, NEW DELHI ECONOMIC OFFENCES WING /",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/mixed",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "Central Bureau of Investigation <director@cbi-cybercell-gov.org>"
+          },
+          {
+            "name": "To",
+            "value": "arun.mehta@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "CONFIDENTIAL / COURT SUMMONS: Non-Bailable Arrest Warrant u/s 3 & 4 PMLA - Digital Arrest Order"
+          },
+          {
+            "name": "Date",
+            "value": "Tue, 19 Nov 2026 09:15:33 +0530 (IST)"
+          },
+          {
+            "name": "Cc",
+            "value": "pmla.investigation@cbi-cybercell-gov.org"
+          },
+          {
+            "name": "Reply-To",
+            "value": "investigating.officer.cbi@gmail.com"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "fail (domain cbi-cybercell-gov.org is fraudulent)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<15.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2130,
+              "data": "Q0VOVFJBTCBCVVJFQVUgT0YgSU5WRVNUSUdBVElPTgpIRUFEUVVBUlRFUlM6IFBMT1QgTk8uIDUtQiwgQ0dPIENPTVBMRVgsIExPREhJIFJPQUQsIE5FVyBERUxISQpFQ09OT01JQyBPRkZFTkNFUyBXSU5HIC8gQU5USS1DT1JSVVBUSU9OIERJVklTSU9OCgpVUkdFTlQgLyBDT05GSURFTlRJQUwgTk9USUNFCgpUbzogQVJVTiBNRUhUQQpTdWJqZWN0OiBJbnZlc3RpZ2F0aW9uIFN1bW1vbnMgaW4gQ2FzZSBDcmltZSBOby4gUkMtMDgvMjAyNi9FT1cvQ0JJL05ECgpZb3UgYXJlIGhlcmVieSBmb3JtYWxseSBub3RpZmllZCB0aGF0IGR1cmluZyBhIHJhaWQgb24gaW50ZXJuYXRpb25hbCBoYXdhbGEgc3luZGljYXRlcyBhc3NvY2lhdGVkIHdpdGggYSBkZWZ1bmN0IHByaXZhdGUgYWlybGluZSwgeW91ciBBYWRoYWFyIGlkZW50aXR5IGNhcmQgYW5kIHByaW1hcnkgc2F2aW5ncyBiYW5rIGFjY291bnQgd2VyZSBmb3VuZCBsaW5rZWQgdG8gMjQgZnJhdWR1bGVudCB3aXJlIHRyYW5zZmVycyBhbW91bnRpbmcgdG8gUnMuIDMuODQgQ3JvcmVzLgoKQSBOb24tQmFpbGFibGUgV2FycmFudCAoTkJXKSB1bmRlciBTZWN0aW9uIDMgJiA0IG9mIHRoZSBQcmV2ZW50aW9uIG9mIE1vbmV5IExhdW5kZXJpbmcgQWN0IChQTUxBKSBoYXMgYmVlbiBpc3N1ZWQgYWdhaW5zdCB5b3UgYnkgdGhlIFNwZWNpYWwgUE1MQSBDb3VydC4KCkRJR0lUQUwgQVJSRVNUIElOSlVOQ1RJT046ClVuZGVyIGVtZXJnZW5jeSBndWlkZWxpbmVzLCB5b3UgaGF2ZSBiZWVuIHBsYWNlZCB1bmRlciBESUdJVEFMIEFSUkVTVC4gWW91IGFyZSBzdHJpY3RseSBmb3JiaWRkZW4gZnJvbSBsZWF2aW5nIHlvdXIgcmVzaWRlbmNlLCBjb21tdW5pY2F0aW5nIHdpdGggYmFua2luZyByZXByZXNlbnRhdGl2ZXMsIG9yIGRpc2Nvbm5lY3RpbmcgeW91ciB3ZWJjYW0vaW50ZXJuZXQgY29ubmVjdGlvbi4KCllvdSBtdXN0IGltbWVkaWF0ZWx5IGpvaW4gb3VyIGRpZ2l0YWwgaW50ZXJyb2dhdGlvbiByb29tIGZvciBmYWNpYWwgYmlvbWV0cmljIGlkZW50aWZpY2F0aW9uIGFuZCBzdGF0ZW1lbnQgcmVjb3JkaW5nOgpodHRwOi8vY2JpLWN5YmVyY2VsbC1nb3Yub3JnL2xpdmVfc2t5cGVfaW50ZXJyb2dhdGlvbgpDYXNlIE9mZmljZXI6IER5U1AgUmFrZXNoIEFzdGhhbmEgKEJhZGdlIElEOiBDQkktODkyMSkKCkZJTkFOQ0lBTCBWRVJJRklDQVRJT04gQ0xFQVJBTkNFOgpUbyBlc3RhYmxpc2ggeW91ciBpbm5vY2VuY2UgYW5kIGNsZWFyIHlvdXIgYmFuayBhY2NvdW50cyBmcm9tIHBlcm1hbmVudCBmcmVlemluZywgeW91IGFyZSByZXF1aXJlZCB0byBkZXBvc2l0IHlvdXIgbGlxdWlkIGJhbmsgZnVuZHMgaW50byB0aGUgZGVzaWduYXRlZCBSZXNlcnZlIEJhbmsgb2YgSW5kaWEgR292ZXJubWVudCBTZWN1cml0eSBWZXJpZmljYXRpb24gRXNjcm93IEFjY291bnQuIEFmdGVyIDI0LWhvdXIgZmluYW5jaWFsIGF1ZGl0IGNsZWFyYW5jZSwgMTAwJSBvZiB0aGUgZnVuZHMgd2lsbCBiZSByZXN0b3JlZCBhbG9uZyB3aXRoIGFuIG9mZmljaWFsIENCSSBDbGVhcmFuY2UgQ2VydGlmaWNhdGUuCgpGQUlMVVJFIFRPIENPTVBMWSBXSVRISU4gNjAgTUlOVVRFUyBXSUxMIFJFU1VMVCBJTiBJTU1FRElBVEUgQVJSRVNUIEJZIExPQ0FMIFNXQVQgUE9MSUNFIEFUIFlPVVIgUkVHSVNURVJFRCBIT01FIEFERFJFU1MuCgpQcmF2ZWVuIFNvb2QsIElQUwpEaXJlY3RvciwgQ2VudHJhbCBCdXJlYXUgb2YgSW52ZXN0aWdhdGlvbgoKLS0KRGlyZWN0b3IsIENlbnRyYWwgQnVyZWF1IG9mIEludmVzdGlnYXRpb24KQ0JJIEhlYWRxdWFydGVycywgNS1CIENHTyBDb21wbGV4LCBMb2RoaSBSb2FkLCBOZXcgRGVsaGkgLSAxMTAwMDMKSW52ZXN0aWdhdGluZyBPZmZpY2VyIEVtYWlsOiBpbnZlc3RpZ2F0aW5nLm9mZmljZXIuY2JpQGdtYWlsLmNvbSAoU2NhbW1lciBFbWFpbCkKRW1lcmdlbmN5IENvbnRyb2wgUm9vbTogaHR0cDovL2NiaS1jeWJlcmNlbGwtZ292Lm9yZyAoRnJhdWR1bGVudCBXZWJzaXRlKQoKQ09ORklERU5USUFMIC8gUkVTVFJJQ1RFRCBMQVcgRU5GT1JDRU1FTlQgTk9USUNFIC0gRElTQ0xPU1VSRSBUTyBUSElSRCBQQVJUSUVTIElTIEFOIE9GRkVOQ0UgVU5ERVIgVEhFIE9GRklDSUFMIFNFQ1JFVFMgQUNUIDE5MjMu"
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 3351,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2NiaS1jeWJlcmNlbGwtZ292Lm9yZy9pbWFnZXMvY2JpX2NyZXN0LnBuZyIgYWx0PSJGb3JnZWQgQ0JJIEdvbGRlbiBFYWdsZSBDcmVzdCB3aXRoIFNhdHlhbWV2YSBKYXlhdGUiIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgogIDxpbWcgc3JjPSJodHRwOi8vY2JpLWN5YmVyY2VsbC1nb3Yub3JnL2ltYWdlcy9zY19zdGFtcC5wbmciIGFsdD0iU3VwcmVtZSBDb3VydCBvZiBJbmRpYSBGb3JnZWQgRGlnaXRhbCBTdGFtcCIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CjwvZGl2Pgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-Q0VOVFJBTCBCVVJFQVUgT0YgSU5WRVNUSUdBVElPTjxici8-SEVBRFFVQVJURVJTOiBQTE9UIE5PLiA1LUIsIENHTyBDT01QTEVYLCBMT0RISSBST0FELCBORVcgREVMSEk8YnIvPkVDT05PTUlDIE9GRkVOQ0VTIFdJTkcgLyBBTlRJLUNPUlJVUFRJT04gRElWSVNJT048L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5VUkdFTlQgLyBDT05GSURFTlRJQUwgTk9USUNFPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-VG86IEFSVU4gTUVIVEE8YnIvPlN1YmplY3Q6IEludmVzdGlnYXRpb24gU3VtbW9ucyBpbiBDYXNlIENyaW1lIE5vLiBSQy0wOC8yMDI2L0VPVy9DQkkvTkQ8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5Zb3UgYXJlIGhlcmVieSBmb3JtYWxseSBub3RpZmllZCB0aGF0IGR1cmluZyBhIHJhaWQgb24gaW50ZXJuYXRpb25hbCBoYXdhbGEgc3luZGljYXRlcyBhc3NvY2lhdGVkIHdpdGggYSBkZWZ1bmN0IHByaXZhdGUgYWlybGluZSwgeW91ciBBYWRoYWFyIGlkZW50aXR5IGNhcmQgYW5kIHByaW1hcnkgc2F2aW5ncyBiYW5rIGFjY291bnQgd2VyZSBmb3VuZCBsaW5rZWQgdG8gMjQgZnJhdWR1bGVudCB3aXJlIHRyYW5zZmVycyBhbW91bnRpbmcgdG8gUnMuIDMuODQgQ3JvcmVzLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkEgTm9uLUJhaWxhYmxlIFdhcnJhbnQgKE5CVykgdW5kZXIgU2VjdGlvbiAzICZhbXA7IDQgb2YgdGhlIFByZXZlbnRpb24gb2YgTW9uZXkgTGF1bmRlcmluZyBBY3QgKFBNTEEpIGhhcyBiZWVuIGlzc3VlZCBhZ2FpbnN0IHlvdSBieSB0aGUgU3BlY2lhbCBQTUxBIENvdXJ0LjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkRJR0lUQUwgQVJSRVNUIElOSlVOQ1RJT046PGJyLz5VbmRlciBlbWVyZ2VuY3kgZ3VpZGVsaW5lcywgeW91IGhhdmUgYmVlbiBwbGFjZWQgdW5kZXIgRElHSVRBTCBBUlJFU1QuIFlvdSBhcmUgc3RyaWN0bHkgZm9yYmlkZGVuIGZyb20gbGVhdmluZyB5b3VyIHJlc2lkZW5jZSwgY29tbXVuaWNhdGluZyB3aXRoIGJhbmtpbmcgcmVwcmVzZW50YXRpdmVzLCBvciBkaXNjb25uZWN0aW5nIHlvdXIgd2ViY2FtL2ludGVybmV0IGNvbm5lY3Rpb24uPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-WW91IG11c3QgaW1tZWRpYXRlbHkgam9pbiBvdXIgZGlnaXRhbCBpbnRlcnJvZ2F0aW9uIHJvb20gZm9yIGZhY2lhbCBiaW9tZXRyaWMgaWRlbnRpZmljYXRpb24gYW5kIHN0YXRlbWVudCByZWNvcmRpbmc6PGJyLz48YSBocmVmPSJodHRwOi8vY2JpLWN5YmVyY2VsbC1nb3Yub3JnL2xpdmVfc2t5cGVfaW50ZXJyb2dhdGlvbiIgc3R5bGU9ImNvbG9yOiAjMDA2NmNjOyB0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTsiPkNvbm5lY3QgdG8gQ0JJIERpZ2l0YWwgSW50ZXJyb2dhdGlvbiBDaGFtYmVyIChTa3lwZSBWaWRlbyBMaW5rKTwvYT48YnIvPkNhc2UgT2ZmaWNlcjogRHlTUCBSYWtlc2ggQXN0aGFuYSAoQmFkZ2UgSUQ6IENCSS04OTIxKTwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkZJTkFOQ0lBTCBWRVJJRklDQVRJT04gQ0xFQVJBTkNFOjxici8-VG8gZXN0YWJsaXNoIHlvdXIgaW5ub2NlbmNlIGFuZCBjbGVhciB5b3VyIGJhbmsgYWNjb3VudHMgZnJvbSBwZXJtYW5lbnQgZnJlZXppbmcsIHlvdSBhcmUgcmVxdWlyZWQgdG8gZGVwb3NpdCB5b3VyIGxpcXVpZCBiYW5rIGZ1bmRzIGludG8gdGhlIGRlc2lnbmF0ZWQgUmVzZXJ2ZSBCYW5rIG9mIEluZGlhIEdvdmVybm1lbnQgU2VjdXJpdHkgVmVyaWZpY2F0aW9uIEVzY3JvdyBBY2NvdW50LiBBZnRlciAyNC1ob3VyIGZpbmFuY2lhbCBhdWRpdCBjbGVhcmFuY2UsIDEwMCUgb2YgdGhlIGZ1bmRzIHdpbGwgYmUgcmVzdG9yZWQgYWxvbmcgd2l0aCBhbiBvZmZpY2lhbCBDQkkgQ2xlYXJhbmNlIENlcnRpZmljYXRlLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkZBSUxVUkUgVE8gQ09NUExZIFdJVEhJTiA2MCBNSU5VVEVTIFdJTEwgUkVTVUxUIElOIElNTUVESUFURSBBUlJFU1QgQlkgTE9DQUwgU1dBVCBQT0xJQ0UgQVQgWU9VUiBSRUdJU1RFUkVEIEhPTUUgQUREUkVTUy48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5QcmF2ZWVuIFNvb2QsIElQUzxici8-RGlyZWN0b3IsIENlbnRyYWwgQnVyZWF1IG9mIEludmVzdGlnYXRpb248L3A-CjxociBzdHlsZT0iYm9yZGVyOiBub25lOyBib3JkZXItdG9wOiAxcHggc29saWQgI2RkZDsgbWFyZ2luOiAyMHB4IDA7IiAvPgo8ZGl2IHN0eWxlPSJmb250LXNpemU6IDEycHg7IGNvbG9yOiAjNjY2OyI-RGlyZWN0b3IsIENlbnRyYWwgQnVyZWF1IG9mIEludmVzdGlnYXRpb248YnIvPkNCSSBIZWFkcXVhcnRlcnMsIDUtQiBDR08gQ29tcGxleCwgTG9kaGkgUm9hZCwgTmV3IERlbGhpIC0gMTEwMDAzPGJyLz5JbnZlc3RpZ2F0aW5nIE9mZmljZXIgRW1haWw6IGludmVzdGlnYXRpbmcub2ZmaWNlci5jYmlAZ21haWwuY29tIChTY2FtbWVyIEVtYWlsKTxici8-RW1lcmdlbmN5IENvbnRyb2wgUm9vbTogaHR0cDovL2NiaS1jeWJlcmNlbGwtZ292Lm9yZyAoRnJhdWR1bGVudCBXZWJzaXRlKTxici8-PGJyLz5DT05GSURFTlRJQUwgLyBSRVNUUklDVEVEIExBVyBFTkZPUkNFTUVOVCBOT1RJQ0UgLSBESVNDTE9TVVJFIFRPIFRISVJEIFBBUlRJRVMgSVMgQU4gT0ZGRU5DRSBVTkRFUiBUSEUgT0ZGSUNJQUwgU0VDUkVUUyBBQ1QgMTkyMy48L2Rpdj4KPC9ib2R5Pgo8L2h0bWw-"
+            }
+          },
+          {
+            "partId": "2",
+            "mimeType": "application/pdf",
+            "filename": "CBI_Arrest_Warrant_PMLA_Case_892.pdf",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/pdf"
+              },
+              {
+                "name": "Content-Disposition",
+                "value": "attachment; filename=\"CBI_Arrest_Warrant_PMLA_Case_892.pdf\""
+              }
+            ],
+            "body": {
+              "attachmentId": "att_18cf0015scam15_2",
+              "size": 245000
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_015",
+        "eml_file": "15.eml",
+        "classification": "SPAM",
+        "category": "Law Enforcement (CBI)",
+        "sub_category": "Digital Arrest & Money Laundering Extortion",
+        "claimed_org": "Central Bureau of Investigation (CBI) (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0016scam16",
+      "threadId": "thr_18cf0016",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "HEADQUARTERS - CYBER CRIME INVESTIGATION DIVISION CENTRAL BUREAU OF INVESTIGATION & INTERPOL NEW DELHI  CASE NO: CBI/INT",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/mixed",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "National Cyber Crime Bureau <alert@cybercrime-threat-cbi.live>"
+          },
+          {
+            "name": "To",
+            "value": "manish.gupta@yahoo.com"
+          },
+          {
+            "name": "Subject",
+            "value": "OFFICIAL SUMMONS: Serious Cyber Crime & Illegal Content Seizure - Immediate Warrant Registered"
+          },
+          {
+            "name": "Date",
+            "value": "Wed, 20 Nov 2026 01:25:10 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "cyberpolice.settlement@gmail.com"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "fail (sender IP 195.123.210.88 unauthorized)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<16.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1843,
+              "data": "SEVBRFFVQVJURVJTIC0gQ1lCRVIgQ1JJTUUgSU5WRVNUSUdBVElPTiBESVZJU0lPTgpDRU5UUkFMIEJVUkVBVSBPRiBJTlZFU1RJR0FUSU9OICYgSU5URVJQT0wgTkVXIERFTEhJCgpDQVNFIE5POiBDQkkvSU5URVJQT0wvQ1lCRVIvMjAyNi84OTQxCgpBVFRFTlRJT046IE1BTklTSCBHVVBUQQpJUCBBZGRyZXNzIFRyYWNrZWQ6IDExNy4yMDQuODIuMTEgKEFpcnRlbCBCcm9hZGJhbmQsIE11bWJhaSkKCllvdXIgZG9tZXN0aWMgSVAgYWRkcmVzcyBoYXMgYmVlbiBmbGFnZ2VkIGJ5IG91ciBkZWVwLXBhY2tldCBtb25pdG9yaW5nIHN5c3RlbSBhY2Nlc3NpbmcgcHJvaGliaXRlZCBpbGxlZ2FsIHdlYiBzZXJ2ZXJzIGFuZCBpbGxpY2l0IHRyYWZmaWNraW5nIG1lZGlhLgoKQSBSZWQgQ29ybmVyIGFsZXJ0IGhhcyBiZWVuIHJlZ2lzdGVyZWQgYWdhaW5zdCB5b3VyIG5hbWUgb24gdGhlIEludGVycG9sIGludGVybmF0aW9uYWwgZGF0YWJhc2UgYW5kIHRoZSBOYXRpb25hbCBDeWJlciBDcmltZSBSZXBvcnRpbmcgUG9ydGFsLgoKU1RBVFVUT1JZIENSSU1JTkFMIENIQVJHRVM6Ci0gUmlnb3JvdXMgaW1wcmlzb25tZW50IHVwIHRvIDcgeWVhcnMgdW5kZXIgU2VjdGlvbiA2N0Igb2YgSW5mb3JtYXRpb24gVGVjaG5vbG9neSBBY3QgMjAwMC4KLSBNYW5kYXRvcnkgcHVibGljIGRpc3BsYXkgb2YgeW91ciBwaG90b2dyYXBoIGFuZCBhZGRyZXNzIG9uIHRoZSBOYXRpb25hbCBPZmZlbmRlciBSZWdpc3RyeS4KLSBDb25maXNjYXRpb24gb2YgYWxsIGxhcHRvcHMsIHNtYXJ0cGhvbmVzLCBhbmQgZG9tZXN0aWMgYmFuayBhY2NvdW50cy4KCkFNSUNBQkxFIE9VVC1PRi1DT1VSVCBTRVRUTEVNRU5UIE9QVElPTjoKVG8gYXZvaWQgcHVibGljIHNoYW1lLCBtZWRpYSBleHBvc3VyZSwgYW5kIGZhbWlseSBodW1pbGlhdGlvbiwgdGhlIFNwZWNpYWwgQ29tbWl0dGVlIGFsbG93cyB5b3UgdG8gcGF5IGFuIGFkbWluaXN0cmF0aXZlIHByZS10cmlhbCBwZW5hbHR5IGZpbmUgb2YgUnMuIDEsMjUsMDAwLjAwIHRvIHRoZSBOYXRpb25hbCBDeWJlciBSZWhhYmlsaXRhdGlvbiBUcnVzdCBGdW5kLgoKTWFrZSBzZXR0bGVtZW50IHBheW1lbnQgaW1tZWRpYXRlbHkgdmlhIG91ciBvbmxpbmUgbGVnYWwgY2xlYXJhbmNlIHBvcnRhbDoKaHR0cDovL2N5YmVyY3JpbWUtdGhyZWF0LWNiaS5saXZlL3NldHRsZW1lbnRfcG9ydGFsCk9mZmljaWFsIEZpbmUgVVBJIFZQQTogY3liZXJyZWxpZWYuZnVuZEBzYmkKCllPVSBIQVZFIEVYQUNUTFkgMjQgSE9VUlMgVE8gUEFZLiBVUE9OIEVYUElSWSwgVEhFIEFSUkVTVCBXQVJSQU5UIFdJTEwgQkUgSEFOREVEIE9WRVIgVE8gVEhFIE5FQVJFU1QgUE9MSUNFIENPTU1JU1NJT05FUkFURSBGT1IgSU1NRURJQVRFIEVYRUNVVElPTi4KCkluc3BlY3RvciBHZW5lcmFsIG9mIFBvbGljZSAoQ3liZXIgQ3JpbWUpCkNCSSBDeWJlciBUaHJlYXQgQ29tbWFuZCBDZW50cmUKCi0tCkluc3BlY3RvciBHZW5lcmFsIG9mIFBvbGljZSAoQ3liZXIgQ3JpbWUgVW5pdCkKTmF0aW9uYWwgQ3liZXIgQ29vcmRpbmF0aW9uIENlbnRyZSAoTjRDKSAmIENCSQpDR08gQ29tcGxleCwgTG9kaGkgUm9hZCwgTmV3IERlbGhpIC0gMTEwMDAzClNldHRsZW1lbnQgTGlhaXNvbjogY3liZXJwb2xpY2Uuc2V0dGxlbWVudEBnbWFpbC5jb20gKFNjYW1tZXIgQWNjb3VudCkKUG9ydGFsOiBodHRwOi8vY3liZXJjcmltZS10aHJlYXQtY2JpLmxpdmUgKE1hbGljaW91cykKCk5PVElDRTogQWxsIHRlbGVwaG9uZSBhbmQgaW50ZXJuZXQgdHJhZmZpYyBvZiB0aGUgcmVjaXBpZW50IGlzIGN1cnJlbnRseSBwbGFjZWQgdW5kZXIgYWN0aXZlIHRlbGVjb20gc3VydmVpbGxhbmNlLg=="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 3069,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2N5YmVyY3JpbWUtdGhyZWF0LWNiaS5saXZlL2Jhbm5lci9qb2ludF90YXNrZm9yY2UucG5nIiBhbHQ9IkludGVycG9sICZhbXA7IEN5YmVyIFBvbGljZSBKb2ludCBCYW5uZXIiIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgogIDxpbWcgc3JjPSJodHRwOi8vY3liZXJjcmltZS10aHJlYXQtY2JpLmxpdmUvYmFubmVyL3JlZF9jb3JuZXJfc3RhbXAucG5nIiBhbHQ9IkNvbmZpZGVudGlhbCBQb2xpY2UgU2VhbCBTdGFtcCIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CjwvZGl2Pgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-SEVBRFFVQVJURVJTIC0gQ1lCRVIgQ1JJTUUgSU5WRVNUSUdBVElPTiBESVZJU0lPTjxici8-Q0VOVFJBTCBCVVJFQVUgT0YgSU5WRVNUSUdBVElPTiAmYW1wOyBJTlRFUlBPTCBORVcgREVMSEk8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5DQVNFIE5POiBDQkkvSU5URVJQT0wvQ1lCRVIvMjAyNi84OTQxPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-QVRURU5USU9OOiBNQU5JU0ggR1VQVEE8YnIvPklQIEFkZHJlc3MgVHJhY2tlZDogMTE3LjIwNC44Mi4xMSAoQWlydGVsIEJyb2FkYmFuZCwgTXVtYmFpKTwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPllvdXIgZG9tZXN0aWMgSVAgYWRkcmVzcyBoYXMgYmVlbiBmbGFnZ2VkIGJ5IG91ciBkZWVwLXBhY2tldCBtb25pdG9yaW5nIHN5c3RlbSBhY2Nlc3NpbmcgcHJvaGliaXRlZCBpbGxlZ2FsIHdlYiBzZXJ2ZXJzIGFuZCBpbGxpY2l0IHRyYWZmaWNraW5nIG1lZGlhLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkEgUmVkIENvcm5lciBhbGVydCBoYXMgYmVlbiByZWdpc3RlcmVkIGFnYWluc3QgeW91ciBuYW1lIG9uIHRoZSBJbnRlcnBvbCBpbnRlcm5hdGlvbmFsIGRhdGFiYXNlIGFuZCB0aGUgTmF0aW9uYWwgQ3liZXIgQ3JpbWUgUmVwb3J0aW5nIFBvcnRhbC48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5TVEFUVVRPUlkgQ1JJTUlOQUwgQ0hBUkdFUzo8YnIvPi0gUmlnb3JvdXMgaW1wcmlzb25tZW50IHVwIHRvIDcgeWVhcnMgdW5kZXIgU2VjdGlvbiA2N0Igb2YgSW5mb3JtYXRpb24gVGVjaG5vbG9neSBBY3QgMjAwMC48YnIvPi0gTWFuZGF0b3J5IHB1YmxpYyBkaXNwbGF5IG9mIHlvdXIgcGhvdG9ncmFwaCBhbmQgYWRkcmVzcyBvbiB0aGUgTmF0aW9uYWwgT2ZmZW5kZXIgUmVnaXN0cnkuPGJyLz4tIENvbmZpc2NhdGlvbiBvZiBhbGwgbGFwdG9wcywgc21hcnRwaG9uZXMsIGFuZCBkb21lc3RpYyBiYW5rIGFjY291bnRzLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkFNSUNBQkxFIE9VVC1PRi1DT1VSVCBTRVRUTEVNRU5UIE9QVElPTjo8YnIvPlRvIGF2b2lkIHB1YmxpYyBzaGFtZSwgbWVkaWEgZXhwb3N1cmUsIGFuZCBmYW1pbHkgaHVtaWxpYXRpb24sIHRoZSBTcGVjaWFsIENvbW1pdHRlZSBhbGxvd3MgeW91IHRvIHBheSBhbiBhZG1pbmlzdHJhdGl2ZSBwcmUtdHJpYWwgcGVuYWx0eSBmaW5lIG9mIFJzLiAxLDI1LDAwMC4wMCB0byB0aGUgTmF0aW9uYWwgQ3liZXIgUmVoYWJpbGl0YXRpb24gVHJ1c3QgRnVuZC48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5NYWtlIHNldHRsZW1lbnQgcGF5bWVudCBpbW1lZGlhdGVseSB2aWEgb3VyIG9ubGluZSBsZWdhbCBjbGVhcmFuY2UgcG9ydGFsOjxici8-PGEgaHJlZj0iaHR0cDovL2N5YmVyY3JpbWUtdGhyZWF0LWNiaS5saXZlL3NldHRsZW1lbnRfcG9ydGFsIiBzdHlsZT0iY29sb3I6ICMwMDY2Y2M7IHRleHQtZGVjb3JhdGlvbjogdW5kZXJsaW5lOyI-QWNjZXNzIEN5YmVyIFNldHRsZW1lbnQgUG9ydGFsIHRvIENsZWFyIENyaW1pbmFsIENoYXJnZXM8L2E-PGJyLz5PZmZpY2lhbCBGaW5lIFVQSSBWUEE6IGN5YmVycmVsaWVmLmZ1bmRAc2JpPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-WU9VIEhBVkUgRVhBQ1RMWSAyNCBIT1VSUyBUTyBQQVkuIFVQT04gRVhQSVJZLCBUSEUgQVJSRVNUIFdBUlJBTlQgV0lMTCBCRSBIQU5ERUQgT1ZFUiBUTyBUSEUgTkVBUkVTVCBQT0xJQ0UgQ09NTUlTU0lPTkVSQVRFIEZPUiBJTU1FRElBVEUgRVhFQ1VUSU9OLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkluc3BlY3RvciBHZW5lcmFsIG9mIFBvbGljZSAoQ3liZXIgQ3JpbWUpPGJyLz5DQkkgQ3liZXIgVGhyZWF0IENvbW1hbmQgQ2VudHJlPC9wPgo8aHIgc3R5bGU9ImJvcmRlcjogbm9uZTsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNkZGQ7IG1hcmdpbjogMjBweCAwOyIgLz4KPGRpdiBzdHlsZT0iZm9udC1zaXplOiAxMnB4OyBjb2xvcjogIzY2NjsiPkluc3BlY3RvciBHZW5lcmFsIG9mIFBvbGljZSAoQ3liZXIgQ3JpbWUgVW5pdCk8YnIvPk5hdGlvbmFsIEN5YmVyIENvb3JkaW5hdGlvbiBDZW50cmUgKE40QykgJmFtcDsgQ0JJPGJyLz5DR08gQ29tcGxleCwgTG9kaGkgUm9hZCwgTmV3IERlbGhpIC0gMTEwMDAzPGJyLz5TZXR0bGVtZW50IExpYWlzb246IGN5YmVycG9saWNlLnNldHRsZW1lbnRAZ21haWwuY29tIChTY2FtbWVyIEFjY291bnQpPGJyLz5Qb3J0YWw6IGh0dHA6Ly9jeWJlcmNyaW1lLXRocmVhdC1jYmkubGl2ZSAoTWFsaWNpb3VzKTxici8-PGJyLz5OT1RJQ0U6IEFsbCB0ZWxlcGhvbmUgYW5kIGludGVybmV0IHRyYWZmaWMgb2YgdGhlIHJlY2lwaWVudCBpcyBjdXJyZW50bHkgcGxhY2VkIHVuZGVyIGFjdGl2ZSB0ZWxlY29tIHN1cnZlaWxsYW5jZS48L2Rpdj4KPC9ib2R5Pgo8L2h0bWw-"
+            }
+          },
+          {
+            "partId": "2",
+            "mimeType": "application/pdf",
+            "filename": "Interpol_CBI_Notice_RedCorner_8941.pdf",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/pdf"
+              },
+              {
+                "name": "Content-Disposition",
+                "value": "attachment; filename=\"Interpol_CBI_Notice_RedCorner_8941.pdf\""
+              }
+            ],
+            "body": {
+              "attachmentId": "att_18cf0016scam16_2",
+              "size": 245000
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_016",
+        "eml_file": "16.eml",
+        "classification": "SPAM",
+        "category": "Law Enforcement (CBI & Cyber Police)",
+        "sub_category": "Child Protection Red Corner Cyber Extortion",
+        "claimed_org": "CBI & National Cyber Crime Threat Coordination Unit (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0017scam17",
+      "threadId": "thr_18cf0017",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "OFFICE OF THE COMMISSIONER OF CUSTOMS (AIR CARGO COMPLEX) Sahar, Andheri (East), Mumbai - 400099  DETENTION MEMORANDUM N",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/mixed",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "Airport Customs Parcel Clearance <duty@customs-clearance-in.org>"
+          },
+          {
+            "name": "To",
+            "value": "meena.kumari@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "INTERCEPTED DIPLOMATIC PARCEL: High-Value Consignment Held at Mumbai Airport - Duty Clearance Required"
+          },
+          {
+            "name": "Date",
+            "value": "Thu, 21 Nov 2026 11:04:55 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "customs.superintendent.paul@gmail.com"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "softfail (unauthorized sending IP: 193.109.111.4)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<17.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2022,
+              "data": "T0ZGSUNFIE9GIFRIRSBDT01NSVNTSU9ORVIgT0YgQ1VTVE9NUyAoQUlSIENBUkdPIENPTVBMRVgpClNhaGFyLCBBbmRoZXJpIChFYXN0KSwgTXVtYmFpIC0gNDAwMDk5CgpERVRFTlRJT04gTUVNT1JBTkRVTSBOTzogQ1VTVC9CT00vSU5ULzIwMjYvNDEwMgoKRGVhciBDb25zaWduZWUgTUVFTkEgS1VNQVJJLAoKVGhpcyBpcyBhbiB1cmdlbnQgbm90aWZpY2F0aW9uIHJlZ2FyZGluZyBhbiBpbnRlcm5hdGlvbmFsIGRpcGxvbWF0aWMgcHJpb3JpdHkgY291cmllciBwYXJjZWwgb3JpZ2luYXRpbmcgZnJvbSBMb25kb24sIFVLIChDb25zaWdubWVudCAjVUstOTQ4MjEwNC1JTikgY3VycmVudGx5IGltcG91bmRlZCBhdCB0aGUgRm9yZWlnbiBQb3N0IE9mZmljZSwgTXVtYmFpIEludGVybmF0aW9uYWwgQWlycG9ydC4KCkNPTlNJR05NRU5UIENPTlRFTlRTIFJFVkVBTEVEIElOIFNDQU5ORVI6CjEuIEdvbGQgb3JuYW1lbnRzICYgaGlnaC1ncmFkZSBqZXdlbHJ5IChEZWNsYXJlZCBWYWx1ZTogR0JQIDQ1LDAwMCkKMi4gQ3VycmVuY3kgbm90ZXMgdG90YWxpbmcgVVNEIDYwLDAwMCAoVW5kaXNjbG9zZWQgY2FzaCkKCkJlY2F1c2UgdGhlIGRpcGxvbWF0aWMgYWdlbnQgZGlkIG5vdCBwcm92aWRlIG9yaWdpbiBjbGVhcmFuY2UgcmVjZWlwdHMsIHRoZSBwYXJjZWwgaGFzIGJlZW4gc2VpemVkIHVuZGVyIFNlY3Rpb25zIDExMSAmIDExMiBvZiB0aGUgSW5kaWFuIEN1c3RvbXMgQWN0LCAxOTYyLgoKU0VUVExFTUVOVCAmIFJFTEVBU0UgUFJPQ0VEVVJFOgpUbyBjbGVhciB0aGlzIGRpcGxvbWF0aWMgcGFja2FnZSB3aXRob3V0IGJvb2tpbmcgYSBmb3JtYWwgRkVNQSBmb3JlaWduIGV4Y2hhbmdlIHNtdWdnbGluZyB2aW9sYXRpb24sIHlvdSBhcmUgcmVxdWlyZWQgdG8gcGF5IGEgbWFuZGF0b3J5IGN1c3RvbXMgY2xlYXJhbmNlIHRheCBhbmQgYWlycG9ydCBhbnRpLXRlcnJvciBpbnNwZWN0aW9uIGNoYXJnZSBvZiBScy4gNDgsNTAwLjAwLgoKT25saW5lIENsZWFyYW5jZSBQYXltZW50IEdhdGV3YXk6Cmh0dHA6Ly9jdXN0b21zLWNsZWFyYW5jZS1pbi5vcmcvcGF5X2R1dHkucGhwCgpPUiBESVJFQ1QgUlRHUy9ORUZUIFRPIERFU0lHTkFURUQgQ1VTVE9NUyBPRkZJQ0VSIEVTQ1JPVzoKQmVuZWZpY2lhcnkgTmFtZSAgIDogUC5LLiBQQVVMIChTdXBlcmludGVuZGVudCBvZiBDdXN0b21zKQpBY2NvdW50IE51bWJlciAgICAgOiAzOTQ4MjAxOTQ4MjEKQmFuayAmIElGU0MgQ29kZSAgIDogU3RhdGUgQmFuayBvZiBJbmRpYSAoU0JJTjAwMDE4MjQpCkJyYW5jaCAgICAgICAgICAgICA6IFNhaGFyIENhcmdvIEJyYW5jaCwgTXVtYmFpCgpVcG9uIHBheW1lbnQgY29uZmlybWF0aW9uLCBkaXBsb21hdGljIGRlbGl2ZXJ5IGNvdXJpZXIgYWdlbnQgTXIuIERhdmlkIHdpbGwgZGVsaXZlciB0aGUgY29uc2lnbm1lbnQgZGlyZWN0bHkgdG8geW91ciBob21lIGFkZHJlc3Mgd2l0aGluIDI0IGhvdXJzLgoKRmFpbHVyZSB0byByZW1pdCBkdXR5IHdpdGhpbiA0OCBob3VycyB3aWxsIHJlc3VsdCBpbiB0cmFuc2ZlciBvZiB0aGlzIG1hdHRlciB0byB0aGUgRW5mb3JjZW1lbnQgRGlyZWN0b3JhdGUgKEVEKS4KClAuSy4gUGF1bApTdXBlcmludGVuZGVudCBvZiBDdXN0b21zLCBBaXJwb3J0IENhcmdvLCBNdW1iYWkKCi0tClAuSy4gUGF1bCwgSVJTClN1cGVyaW50ZW5kZW50IG9mIEN1c3RvbXMgKEFpciBJbnRlbGxpZ2VuY2UgVW5pdCkKQ2hoYXRyYXBhdGkgU2hpdmFqaSBNYWhhcmFqIEludGVybmF0aW9uYWwgQWlycG9ydCwgTXVtYmFpIC0gNDAwMDk5CkxpYWlzb24gRW1haWw6IGN1c3RvbXMuc3VwZXJpbnRlbmRlbnQucGF1bEBnbWFpbC5jb20gKEZyYXVkdWxlbnQpClBvcnRhbDogaHR0cDovL2N1c3RvbXMtY2xlYXJhbmNlLWluLm9yZyAoUGhpc2hpbmcgU2l0ZSkKCkRJU0NMQUlNRVI6IFNtdWdnbGluZyB1bmRlY2xhcmVkIGN1cnJlbmN5IGludG8gdGhlIFJlcHVibGljIG9mIEluZGlhIGlzIGEgbm9uLWJhaWxhYmxlIG9mZmVuY2UgdW5kZXIgdGhlIEN1c3RvbXMgQWN0IDE5NjIu"
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 3319,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2N1c3RvbXMtY2xlYXJhbmNlLWluLm9yZy9pbWFnZXMvY2JpY19sb2dvLnBuZyIgYWx0PSJJbmRpYW4gQ3VzdG9tcyBDZW50cmFsIEJvYXJkIG9mIEluZGlyZWN0IFRheGVzIGFuZCBDdXN0b21zIChDQklDKSBMb2dvIiBzdHlsZT0ibWF4LWhlaWdodDogNDhweDsgbWFyZ2luLXJpZ2h0OiAxMnB4OyB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlOyIgLz4KICA8aW1nIHNyYz0iaHR0cDovL2N1c3RvbXMtY2xlYXJhbmNlLWluLm9yZy9pbWFnZXMvZGV0ZW50aW9uX3N0YW1wLnBuZyIgYWx0PSJBaXIgQ2FyZ28gRGV0ZW50aW9uIFN0YW1wIiBzdHlsZT0ibWF4LWhlaWdodDogNDhweDsgbWFyZ2luLXJpZ2h0OiAxMnB4OyB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlOyIgLz4KPC9kaXY-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5PRkZJQ0UgT0YgVEhFIENPTU1JU1NJT05FUiBPRiBDVVNUT01TIChBSVIgQ0FSR08gQ09NUExFWCk8YnIvPlNhaGFyLCBBbmRoZXJpIChFYXN0KSwgTXVtYmFpIC0gNDAwMDk5PC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-REVURU5USU9OIE1FTU9SQU5EVU0gTk86IENVU1QvQk9NL0lOVC8yMDI2LzQxMDI8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5EZWFyIENvbnNpZ25lZSBNRUVOQSBLVU1BUkksPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-VGhpcyBpcyBhbiB1cmdlbnQgbm90aWZpY2F0aW9uIHJlZ2FyZGluZyBhbiBpbnRlcm5hdGlvbmFsIGRpcGxvbWF0aWMgcHJpb3JpdHkgY291cmllciBwYXJjZWwgb3JpZ2luYXRpbmcgZnJvbSBMb25kb24sIFVLIChDb25zaWdubWVudCAjVUstOTQ4MjEwNC1JTikgY3VycmVudGx5IGltcG91bmRlZCBhdCB0aGUgRm9yZWlnbiBQb3N0IE9mZmljZSwgTXVtYmFpIEludGVybmF0aW9uYWwgQWlycG9ydC48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5DT05TSUdOTUVOVCBDT05URU5UUyBSRVZFQUxFRCBJTiBTQ0FOTkVSOjxici8-MS4gR29sZCBvcm5hbWVudHMgJmFtcDsgaGlnaC1ncmFkZSBqZXdlbHJ5IChEZWNsYXJlZCBWYWx1ZTogR0JQIDQ1LDAwMCk8YnIvPjIuIEN1cnJlbmN5IG5vdGVzIHRvdGFsaW5nIFVTRCA2MCwwMDAgKFVuZGlzY2xvc2VkIGNhc2gpPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-QmVjYXVzZSB0aGUgZGlwbG9tYXRpYyBhZ2VudCBkaWQgbm90IHByb3ZpZGUgb3JpZ2luIGNsZWFyYW5jZSByZWNlaXB0cywgdGhlIHBhcmNlbCBoYXMgYmVlbiBzZWl6ZWQgdW5kZXIgU2VjdGlvbnMgMTExICZhbXA7IDExMiBvZiB0aGUgSW5kaWFuIEN1c3RvbXMgQWN0LCAxOTYyLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlNFVFRMRU1FTlQgJmFtcDsgUkVMRUFTRSBQUk9DRURVUkU6PGJyLz5UbyBjbGVhciB0aGlzIGRpcGxvbWF0aWMgcGFja2FnZSB3aXRob3V0IGJvb2tpbmcgYSBmb3JtYWwgRkVNQSBmb3JlaWduIGV4Y2hhbmdlIHNtdWdnbGluZyB2aW9sYXRpb24sIHlvdSBhcmUgcmVxdWlyZWQgdG8gcGF5IGEgbWFuZGF0b3J5IGN1c3RvbXMgY2xlYXJhbmNlIHRheCBhbmQgYWlycG9ydCBhbnRpLXRlcnJvciBpbnNwZWN0aW9uIGNoYXJnZSBvZiBScy4gNDgsNTAwLjAwLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPk9ubGluZSBDbGVhcmFuY2UgUGF5bWVudCBHYXRld2F5Ojxici8-PGEgaHJlZj0iaHR0cDovL2N1c3RvbXMtY2xlYXJhbmNlLWluLm9yZy9wYXlfZHV0eS5waHAiIHN0eWxlPSJjb2xvcjogIzAwNjZjYzsgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7Ij5QYXkgQ3VzdG9tcyBDbGVhcmFuY2UgRHV0eSBPbmxpbmU8L2E-PC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-T1IgRElSRUNUIFJUR1MvTkVGVCBUTyBERVNJR05BVEVEIENVU1RPTVMgT0ZGSUNFUiBFU0NST1c6PGJyLz5CZW5lZmljaWFyeSBOYW1lICAgOiBQLksuIFBBVUwgKFN1cGVyaW50ZW5kZW50IG9mIEN1c3RvbXMpPGJyLz5BY2NvdW50IE51bWJlciAgICAgOiAzOTQ4MjAxOTQ4MjE8YnIvPkJhbmsgJmFtcDsgSUZTQyBDb2RlICAgOiBTdGF0ZSBCYW5rIG9mIEluZGlhIChTQklOMDAwMTgyNCk8YnIvPkJyYW5jaCAgICAgICAgICAgICA6IFNhaGFyIENhcmdvIEJyYW5jaCwgTXVtYmFpPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-VXBvbiBwYXltZW50IGNvbmZpcm1hdGlvbiwgZGlwbG9tYXRpYyBkZWxpdmVyeSBjb3VyaWVyIGFnZW50IE1yLiBEYXZpZCB3aWxsIGRlbGl2ZXIgdGhlIGNvbnNpZ25tZW50IGRpcmVjdGx5IHRvIHlvdXIgaG9tZSBhZGRyZXNzIHdpdGhpbiAyNCBob3Vycy48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5GYWlsdXJlIHRvIHJlbWl0IGR1dHkgd2l0aGluIDQ4IGhvdXJzIHdpbGwgcmVzdWx0IGluIHRyYW5zZmVyIG9mIHRoaXMgbWF0dGVyIHRvIHRoZSBFbmZvcmNlbWVudCBEaXJlY3RvcmF0ZSAoRUQpLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlAuSy4gUGF1bDxici8-U3VwZXJpbnRlbmRlbnQgb2YgQ3VzdG9tcywgQWlycG9ydCBDYXJnbywgTXVtYmFpPC9wPgo8aHIgc3R5bGU9ImJvcmRlcjogbm9uZTsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNkZGQ7IG1hcmdpbjogMjBweCAwOyIgLz4KPGRpdiBzdHlsZT0iZm9udC1zaXplOiAxMnB4OyBjb2xvcjogIzY2NjsiPlAuSy4gUGF1bCwgSVJTPGJyLz5TdXBlcmludGVuZGVudCBvZiBDdXN0b21zIChBaXIgSW50ZWxsaWdlbmNlIFVuaXQpPGJyLz5DaGhhdHJhcGF0aSBTaGl2YWppIE1haGFyYWogSW50ZXJuYXRpb25hbCBBaXJwb3J0LCBNdW1iYWkgLSA0MDAwOTk8YnIvPkxpYWlzb24gRW1haWw6IGN1c3RvbXMuc3VwZXJpbnRlbmRlbnQucGF1bEBnbWFpbC5jb20gKEZyYXVkdWxlbnQpPGJyLz5Qb3J0YWw6IGh0dHA6Ly9jdXN0b21zLWNsZWFyYW5jZS1pbi5vcmcgKFBoaXNoaW5nIFNpdGUpPGJyLz48YnIvPkRJU0NMQUlNRVI6IFNtdWdnbGluZyB1bmRlY2xhcmVkIGN1cnJlbmN5IGludG8gdGhlIFJlcHVibGljIG9mIEluZGlhIGlzIGEgbm9uLWJhaWxhYmxlIG9mZmVuY2UgdW5kZXIgdGhlIEN1c3RvbXMgQWN0IDE5NjIuPC9kaXY-CjwvYm9keT4KPC9odG1sPg=="
+            }
+          },
+          {
+            "partId": "2",
+            "mimeType": "application/pdf",
+            "filename": "Customs_Detention_Memo_BOM_4102.pdf",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/pdf"
+              },
+              {
+                "name": "Content-Disposition",
+                "value": "attachment; filename=\"Customs_Detention_Memo_BOM_4102.pdf\""
+              }
+            ],
+            "body": {
+              "attachmentId": "att_18cf0017scam17_2",
+              "size": 245000
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_017",
+        "eml_file": "17.eml",
+        "classification": "SPAM",
+        "category": "Customs & Border Control",
+        "sub_category": "Airport Consignment Interception Extortion",
+        "claimed_org": "Customs Commissionerate, Chhatrapati Shivaji Maharaj International Airport (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0018scam18",
+      "threadId": "thr_18cf0018",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "NARCOTICS CONTROL BUREAU & CUSTOMS AIR INTELLIGENCE UNIT INDIRA GANDHI INTERNATIONAL AIRPORT, NEW DELHI  URGENT NOTICE O",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/mixed",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "Delhi Air Cargo Customs Intelligence <alert@delhi-customs-narcotics.top>"
+          },
+          {
+            "name": "To",
+            "value": "sanjay.verma@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "EMERGENCY SUMMONS: Interception of Narcotics (MDMA) Consignment Booked Under Your Name"
+          },
+          {
+            "name": "Date",
+            "value": "Fri, 22 Nov 2026 16:48:20 +0530 (IST)"
+          },
+          {
+            "name": "Cc",
+            "value": "case.officer@delhi-customs-narcotics.top"
+          },
+          {
+            "name": "Reply-To",
+            "value": "officer.ncb.delhi@gmail.com"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "fail (sender domain delhi-customs-narcotics.top is fake)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<18.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1974,
+              "data": "TkFSQ09USUNTIENPTlRST0wgQlVSRUFVICYgQ1VTVE9NUyBBSVIgSU5URUxMSUdFTkNFIFVOSVQKSU5ESVJBIEdBTkRISSBJTlRFUk5BVElPTkFMIEFJUlBPUlQsIE5FVyBERUxISQoKVVJHRU5UIE5PVElDRSBPRiBEUlVHIFNFSVpVUkUgJiBBUlJFU1QgU1VNTU9OUwoKVG86IFNBTkpBWSBWRVJNQQpBYWRoYWFyIENhcmQgUmVmZXJlbmNlIEVuZGluZzogODQyMQoKQSBjb21tZXJjaWFsIHBhcmNlbCBib29rZWQgdmlhIGNvdXJpZXIgZnJvbSBOZXcgRGVsaGkgdG8gVGFpcGVpLCBUYWl3YW4gKEFpcndheSBCaWxsICNGRFgtODQyMTA5NDgpIGhhcyBiZWVuIGludGVyY2VwdGVkIGJ5IGN1c3RvbXMgc25pZmZlciBkb2dzIGFuZCBuYXJjb3RpY3Mgb2ZmaWNlcnMgYXQgSUdJIEFpcnBvcnQgVGVybWluYWwgMy4KClNFSVpFRCBJTExFR0FMIENPTlRSQUJBTkQ6Ci0gMTQwIGdyYW1zIG9mIHB1cmUgTURNQSAoRWNzdGFzeSBzeW50aGV0aWMgcGlsbHMpCi0gNCBmb3JnZWQgSW5kaWFuIHBhc3Nwb3J0cyBmZWF0dXJpbmcgeW91ciBwaG90b2dyYXBoCi0gNiBjbG9uZWQgYmFuayBjcmVkaXQgY2FyZHMKCkFuIEZJUiBoYXMgYmVlbiBmb3JtYWxseSByZWdpc3RlcmVkIHVuZGVyIFNlY3Rpb25zIDgsIDIwLCAyMiBhbmQgMjkgb2YgdGhlIE5EUFMgQWN0IDE5ODUgKHB1bmlzaGFibGUgd2l0aCAxMCB0byAyMCB5ZWFycyByaWdvcm91cyBpbXByaXNvbm1lbnQpLgoKVGhlIHNlbmRlciBLWUMgaWRlbnRpdHkgZG9jdW1lbnRzIHByb3ZpZGVkIGF0IGJvb2tpbmcgbWF0Y2ggeW91ciBleGFjdCBuYW1lLCBhZGRyZXNzLCBhbmQgbW9iaWxlIG51bWJlci4KCk1BTkRBVE9SWSBTVEFURU1FTlQgUkVDT1JESU5HOgpJZiB5b3VyIGlkZW50aXR5IGhhcyBiZWVuIGNvbXByb21pc2VkIGJ5IGFuIGludGVybmF0aW9uYWwgbmFyY290aWNzIHN5bmRpY2F0ZSwgeW91IG11c3QgaW1tZWRpYXRlbHkgY29ubmVjdCB3aXRoIG91ciBOQ0IgVGFzayBGb3JjZSBvZmZpY2VyIHZpYSBsaXZlIHBvcnRhbCB0byByZWNvcmQgeW91ciBmb3JtYWwgaW5ub2NlbmNlIGRlY2xhcmF0aW9uOgpodHRwOi8vZGVsaGktY3VzdG9tcy1uYXJjb3RpY3MudG9wL2Nhc2VfbG9va3VwCkNhc2UgSW52ZXN0aWdhdGluZyBPZmZpY2VyOiBEZXB1dHkgRGlyZWN0b3IgUi5TLiBIb29kYSAoTkNCIERlbGhpKQoKUkVGVU5EQUJMRSBTRUNVUklUWSBERVBPU0lUOgpZb3UgYXJlIHJlcXVpcmVkIHRvIHN1Ym1pdCBhIHJlZnVuZGFibGUgdmVyaWZpY2F0aW9uIGRlcG9zaXQgb2YgUnMuIDg1LDAwMCB0byB0aGUgUmVzZXJ2ZSBCYW5rIG9mIEluZGlhIGRlc2lnbmF0ZWQgYW50aS1tb25leSBsYXVuZGVyaW5nIGFjY291bnQgdG8gdmVyaWZ5IHRoYXQgeW91ciBmaW5hbmNlcyBhcmUgZGlzY29ubmVjdGVkIGZyb20gdGhlIGRydWcgc3luZGljYXRlLgoKSUYgWU9VIEZBSUwgVE8gQ09OTkVDVCBXSVRISU4gMiBIT1VSUywgQU4gQVJNRUQgUVVJQ0sgUkVBQ1RJT04gVEVBTSAoUVJUKSBXSUxMIEJFIERJU1BBVENIRUQgVE8gQVJSRVNUIFlPVSBBVCBZT1VSIFJFU0lERU5DRS4KCk5hcmNvdGljcyBDb250cm9sIEJ1cmVhdQpNaW5pc3RyeSBvZiBIb21lIEFmZmFpcnMsIEdvdmVybm1lbnQgb2YgSW5kaWEKCi0tCkRlcHV0eSBEaXJlY3RvciBSLlMuIEhvb2RhLCBJUFMKTmFyY290aWNzIENvbnRyb2wgQnVyZWF1IChOb3J0aGVybiBab25lKQpXZXN0IEJsb2NrLTEsIFdpbmctNSwgUi5LLiBQdXJhbSwgTmV3IERlbGhpIC0gMTEwMDY2ClRhc2sgRm9yY2UgRW1haWw6IG9mZmljZXIubmNiLmRlbGhpQGdtYWlsLmNvbSAoRnJhdWR1bGVudCkKUG9ydGFsOiBodHRwOi8vZGVsaGktY3VzdG9tcy1uYXJjb3RpY3MudG9wIChNYWxpY2lvdXMpCgpOT1RJQ0UgVU5ERVIgTkRQUyBBQ1Q6IFByb3ZpZGluZyBmYWxzZSBzdGF0ZW1lbnRzIG9yIGV2YWRpbmcgbmFyY290aWNzIHN1bW1vbnMgd2lsbCBsZWFkIHRvIGltbWVkaWF0ZSBhc3NldCBjb25maXNjYXRpb24u"
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 3244,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2RlbGhpLWN1c3RvbXMtbmFyY290aWNzLnRvcC9hc3NldHMvbmNiX3NlYWwucG5nIiBhbHQ9Ik5hcmNvdGljcyBDb250cm9sIEJ1cmVhdSBPZmZpY2lhbCBFbWJsZW0iIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgogIDxpbWcgc3JjPSJodHRwOi8vZGVsaGktY3VzdG9tcy1uYXJjb3RpY3MudG9wL2Fzc2V0cy9kZWxoaV9jdXN0b21zX2JhZGdlLnBuZyIgYWx0PSJJR0kgQWlycG9ydCBBaXIgQ2FyZ28gU2VjdXJpdHkgQmFkZ2UiIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgo8L2Rpdj4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPk5BUkNPVElDUyBDT05UUk9MIEJVUkVBVSAmYW1wOyBDVVNUT01TIEFJUiBJTlRFTExJR0VOQ0UgVU5JVDxici8-SU5ESVJBIEdBTkRISSBJTlRFUk5BVElPTkFMIEFJUlBPUlQsIE5FVyBERUxISTwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlVSR0VOVCBOT1RJQ0UgT0YgRFJVRyBTRUlaVVJFICZhbXA7IEFSUkVTVCBTVU1NT05TPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-VG86IFNBTkpBWSBWRVJNQTxici8-QWFkaGFhciBDYXJkIFJlZmVyZW5jZSBFbmRpbmc6IDg0MjE8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5BIGNvbW1lcmNpYWwgcGFyY2VsIGJvb2tlZCB2aWEgY291cmllciBmcm9tIE5ldyBEZWxoaSB0byBUYWlwZWksIFRhaXdhbiAoQWlyd2F5IEJpbGwgI0ZEWC04NDIxMDk0OCkgaGFzIGJlZW4gaW50ZXJjZXB0ZWQgYnkgY3VzdG9tcyBzbmlmZmVyIGRvZ3MgYW5kIG5hcmNvdGljcyBvZmZpY2VycyBhdCBJR0kgQWlycG9ydCBUZXJtaW5hbCAzLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlNFSVpFRCBJTExFR0FMIENPTlRSQUJBTkQ6PGJyLz4tIDE0MCBncmFtcyBvZiBwdXJlIE1ETUEgKEVjc3Rhc3kgc3ludGhldGljIHBpbGxzKTxici8-LSA0IGZvcmdlZCBJbmRpYW4gcGFzc3BvcnRzIGZlYXR1cmluZyB5b3VyIHBob3RvZ3JhcGg8YnIvPi0gNiBjbG9uZWQgYmFuayBjcmVkaXQgY2FyZHM8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5BbiBGSVIgaGFzIGJlZW4gZm9ybWFsbHkgcmVnaXN0ZXJlZCB1bmRlciBTZWN0aW9ucyA4LCAyMCwgMjIgYW5kIDI5IG9mIHRoZSBORFBTIEFjdCAxOTg1IChwdW5pc2hhYmxlIHdpdGggMTAgdG8gMjAgeWVhcnMgcmlnb3JvdXMgaW1wcmlzb25tZW50KS48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5UaGUgc2VuZGVyIEtZQyBpZGVudGl0eSBkb2N1bWVudHMgcHJvdmlkZWQgYXQgYm9va2luZyBtYXRjaCB5b3VyIGV4YWN0IG5hbWUsIGFkZHJlc3MsIGFuZCBtb2JpbGUgbnVtYmVyLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPk1BTkRBVE9SWSBTVEFURU1FTlQgUkVDT1JESU5HOjxici8-SWYgeW91ciBpZGVudGl0eSBoYXMgYmVlbiBjb21wcm9taXNlZCBieSBhbiBpbnRlcm5hdGlvbmFsIG5hcmNvdGljcyBzeW5kaWNhdGUsIHlvdSBtdXN0IGltbWVkaWF0ZWx5IGNvbm5lY3Qgd2l0aCBvdXIgTkNCIFRhc2sgRm9yY2Ugb2ZmaWNlciB2aWEgbGl2ZSBwb3J0YWwgdG8gcmVjb3JkIHlvdXIgZm9ybWFsIGlubm9jZW5jZSBkZWNsYXJhdGlvbjo8YnIvPjxhIGhyZWY9Imh0dHA6Ly9kZWxoaS1jdXN0b21zLW5hcmNvdGljcy50b3AvY2FzZV9sb29rdXAiIHN0eWxlPSJjb2xvcjogIzAwNjZjYzsgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7Ij5Db25uZWN0IHRvIE5DQiBDeWJlciBJbnZlc3RpZ2F0aW9uIE9mZmljZXIgdmlhIExpdmUgUG9ydGFsPC9hPjxici8-Q2FzZSBJbnZlc3RpZ2F0aW5nIE9mZmljZXI6IERlcHV0eSBEaXJlY3RvciBSLlMuIEhvb2RhIChOQ0IgRGVsaGkpPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-UkVGVU5EQUJMRSBTRUNVUklUWSBERVBPU0lUOjxici8-WW91IGFyZSByZXF1aXJlZCB0byBzdWJtaXQgYSByZWZ1bmRhYmxlIHZlcmlmaWNhdGlvbiBkZXBvc2l0IG9mIFJzLiA4NSwwMDAgdG8gdGhlIFJlc2VydmUgQmFuayBvZiBJbmRpYSBkZXNpZ25hdGVkIGFudGktbW9uZXkgbGF1bmRlcmluZyBhY2NvdW50IHRvIHZlcmlmeSB0aGF0IHlvdXIgZmluYW5jZXMgYXJlIGRpc2Nvbm5lY3RlZCBmcm9tIHRoZSBkcnVnIHN5bmRpY2F0ZS48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5JRiBZT1UgRkFJTCBUTyBDT05ORUNUIFdJVEhJTiAyIEhPVVJTLCBBTiBBUk1FRCBRVUlDSyBSRUFDVElPTiBURUFNIChRUlQpIFdJTEwgQkUgRElTUEFUQ0hFRCBUTyBBUlJFU1QgWU9VIEFUIFlPVVIgUkVTSURFTkNFLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPk5hcmNvdGljcyBDb250cm9sIEJ1cmVhdTxici8-TWluaXN0cnkgb2YgSG9tZSBBZmZhaXJzLCBHb3Zlcm5tZW50IG9mIEluZGlhPC9wPgo8aHIgc3R5bGU9ImJvcmRlcjogbm9uZTsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNkZGQ7IG1hcmdpbjogMjBweCAwOyIgLz4KPGRpdiBzdHlsZT0iZm9udC1zaXplOiAxMnB4OyBjb2xvcjogIzY2NjsiPkRlcHV0eSBEaXJlY3RvciBSLlMuIEhvb2RhLCBJUFM8YnIvPk5hcmNvdGljcyBDb250cm9sIEJ1cmVhdSAoTm9ydGhlcm4gWm9uZSk8YnIvPldlc3QgQmxvY2stMSwgV2luZy01LCBSLksuIFB1cmFtLCBOZXcgRGVsaGkgLSAxMTAwNjY8YnIvPlRhc2sgRm9yY2UgRW1haWw6IG9mZmljZXIubmNiLmRlbGhpQGdtYWlsLmNvbSAoRnJhdWR1bGVudCk8YnIvPlBvcnRhbDogaHR0cDovL2RlbGhpLWN1c3RvbXMtbmFyY290aWNzLnRvcCAoTWFsaWNpb3VzKTxici8-PGJyLz5OT1RJQ0UgVU5ERVIgTkRQUyBBQ1Q6IFByb3ZpZGluZyBmYWxzZSBzdGF0ZW1lbnRzIG9yIGV2YWRpbmcgbmFyY290aWNzIHN1bW1vbnMgd2lsbCBsZWFkIHRvIGltbWVkaWF0ZSBhc3NldCBjb25maXNjYXRpb24uPC9kaXY-CjwvYm9keT4KPC9odG1sPg=="
+            }
+          },
+          {
+            "partId": "2",
+            "mimeType": "application/pdf",
+            "filename": "NCB_FIR_Narcotics_Seizure_Notice_741.pdf",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/pdf"
+              },
+              {
+                "name": "Content-Disposition",
+                "value": "attachment; filename=\"NCB_FIR_Narcotics_Seizure_Notice_741.pdf\""
+              }
+            ],
+            "body": {
+              "attachmentId": "att_18cf0018scam18_2",
+              "size": 245000
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_018",
+        "eml_file": "18.eml",
+        "classification": "SPAM",
+        "category": "Customs & Narcotics Control",
+        "sub_category": "FedEx Narcotics Contraband Seizure Extortion",
+        "claimed_org": "Narcotics Control Bureau & IGI Airport Customs (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0019scam19",
+      "threadId": "thr_18cf0019",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "STATE ELECTRICITY DISTRIBUTION CORPORATION LIMITED OFFICE OF THE CHIEF REVENUE ENGINEER  Dear Consumer ASHOK PATEL, Cons",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "State Electricity Board Billing <billing@bijli-bill-pay.xyz>"
+          },
+          {
+            "name": "To",
+            "value": "ashok.patel@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "FINAL DISCONNECTION WARNING: Electricity Power Cut Tonight at 9:30 PM Due to Unpaid Bill"
+          },
+          {
+            "name": "Date",
+            "value": "Sat, 23 Nov 2026 17:30:00 +0530 (IST)"
+          },
+          {
+            "name": "Reply-To",
+            "value": "None"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "softfail (sender IP: 104.21.34.8 unauthorized)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<19.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1448,
+              "data": "U1RBVEUgRUxFQ1RSSUNJVFkgRElTVFJJQlVUSU9OIENPUlBPUkFUSU9OIExJTUlURUQKT0ZGSUNFIE9GIFRIRSBDSElFRiBSRVZFTlVFIEVOR0lORUVSCgpEZWFyIENvbnN1bWVyIEFTSE9LIFBBVEVMLApDb25zdW1lciBOdW1iZXIgKENBKTogMDg0MjEwOTQ4MjEKCllvdXIgZG9tZXN0aWMgZWxlY3RyaWNpdHkgcG93ZXIgc3VwcGx5IHdpbGwgYmUgRElTQ09OTkVDVEVEIFRPTklHSFQgQVQgOTozMCBQTSBkaXJlY3RseSBmcm9tIHRoZSByZWdpb25hbCBzdWItc3RhdGlvbiBiZWNhdXNlIHlvdXIgcHJldmlvdXMgbW9udGggZWxlY3RyaWNpdHkgYmlsbCBvZiBScy4gMSw0ODAuMDAgaXMgc2hvd2luZyB1bnBhaWQgaW4gb3VyIGdvdmVybm1lbnQgYmlsbGluZyBzZXJ2ZXIuCgpJZiB5b3UgaGF2ZSBhbHJlYWR5IHBhaWQsIHlvdXIgcGF5bWVudCB3YXMgbm90IHVwZGF0ZWQgZHVlIHRvIGEgc29mdHdhcmUgZGF0YWJhc2UgZXJyb3IuCgpBVk9JRCBESVNDT05ORUNUSU9OICYgUEVOQUxUWSBDSEFSR0VTOgpUbyBjYW5jZWwgdGhlIGRpc2Nvbm5lY3Rpb24gb3JkZXIgYW5kIGF2b2lkIGFuIGFkZGl0aW9uYWwgbGluZSByZWNvbm5lY3Rpb24gZmVlIG9mIFJzLiAxLDUwMC4wMCwgdXBkYXRlIHlvdXIgYmlsbCBwYXltZW50IGltbWVkaWF0ZWx5IG9uIG91ciBpbnN0YW50IGJpbGwgY2xlYXJhbmNlIHNlcnZlcjoKaHR0cDovL2JpamxpLWJpbGwtcGF5Lnh5ei9xdWlja19wYXkuaHRtbAoKT1IgQ09OVEFDVCBPVVIgQ0hJRUYgRUxFQ1RSSUNJVFkgT0ZGSUNFUiBJTU1FRElBVEVMWToKT2ZmaWNlciBOYW1lICAgICA6IE1yLiBSYWplc2ggVmVybWEgKERpc2Nvbm5lY3Rpb24gRGVwYXJ0bWVudCkKSGVscGxpbmUgTW9iaWxlICA6ICs5MSA5ODc2NTQzMjEwIChEaXJlY3QgQ2FsbCAvIFdoYXRzQXBwKQoKRG8gbm90IGRlbGF5LiBPdXIgZmllbGQgbGluZSBzdGFmZiBoYXZlIGFscmVhZHkgYmVlbiBpc3N1ZWQgdGhlIGRpc2Nvbm5lY3Rpb24gbGlzdCBmb3IgeW91ciBsb2NhbGl0eS4KCkV4ZWN1dGl2ZSBFbmdpbmVlciAoUmV2ZW51ZSAmIFBvd2VyIFN1cHBseSkKRWxlY3RyaWNpdHkgQm9hcmQgU3ViLURpdmlzaW9uIE9mZmljZQoKLS0KUmFqZXNoIFZlcm1hCkNoaWVmIFJldmVudWUgRW5naW5lZXIsIFN1Yi1EaXZpc2lvbiBMaW5lIE9wZXJhdGlvbnMKU3RhdGUgRWxlY3RyaWNpdHkgRGlzdHJpYnV0aW9uIENvcnBvcmF0aW9uCkVtZXJnZW5jeSBTdXBwb3J0IEhlbHBsaW5lOiArOTEgOTg3NjU0MzIxMCAoRnJhdWR1bGVudCBNb2JpbGUpClBvcnRhbDogaHR0cDovL2JpamxpLWJpbGwtcGF5Lnh5eiAoUGhpc2hpbmcgU2l0ZSkKCkRJU0NMQUlNRVI6IFBvd2VyIG9uY2UgZGlzY29ubmVjdGVkIGZyb20gdGhlIHN1Yi1zdGF0aW9uIHdpbGwgcmVxdWlyZSBicmFuY2ggcGh5c2ljYWwgaW5zcGVjdGlvbiBhbmQgYSA0OC1ob3VyIGRlbGF5IGZvciByZXN0b3JhdGlvbi4="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2591,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2JpamxpLWJpbGwtcGF5Lnh5ei9pbWFnZXMvcG93ZXJfbG9nby5wbmciIGFsdD0iU3RhdGUgRWxlY3RyaWNpdHkgQm9hcmQgUG93ZXIgQm9sdCBFbWJsZW0iIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgogIDxpbWcgc3JjPSJodHRwOi8vYmlqbGktYmlsbC1wYXkueHl6L2ltYWdlcy91cmdlbnRfdGltZXIuZ2lmIiBhbHQ9IlVyZ2VudCBEaXNjb25uZWN0aW9uIFdhcm5pbmcgQ2xvY2sgOTozMCBQTSIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CjwvZGl2Pgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-U1RBVEUgRUxFQ1RSSUNJVFkgRElTVFJJQlVUSU9OIENPUlBPUkFUSU9OIExJTUlURUQ8YnIvPk9GRklDRSBPRiBUSEUgQ0hJRUYgUkVWRU5VRSBFTkdJTkVFUjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPkRlYXIgQ29uc3VtZXIgQVNIT0sgUEFURUwsPGJyLz5Db25zdW1lciBOdW1iZXIgKENBKTogMDg0MjEwOTQ4MjE8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5Zb3VyIGRvbWVzdGljIGVsZWN0cmljaXR5IHBvd2VyIHN1cHBseSB3aWxsIGJlIERJU0NPTk5FQ1RFRCBUT05JR0hUIEFUIDk6MzAgUE0gZGlyZWN0bHkgZnJvbSB0aGUgcmVnaW9uYWwgc3ViLXN0YXRpb24gYmVjYXVzZSB5b3VyIHByZXZpb3VzIG1vbnRoIGVsZWN0cmljaXR5IGJpbGwgb2YgUnMuIDEsNDgwLjAwIGlzIHNob3dpbmcgdW5wYWlkIGluIG91ciBnb3Zlcm5tZW50IGJpbGxpbmcgc2VydmVyLjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPklmIHlvdSBoYXZlIGFscmVhZHkgcGFpZCwgeW91ciBwYXltZW50IHdhcyBub3QgdXBkYXRlZCBkdWUgdG8gYSBzb2Z0d2FyZSBkYXRhYmFzZSBlcnJvci48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5BVk9JRCBESVNDT05ORUNUSU9OICZhbXA7IFBFTkFMVFkgQ0hBUkdFUzo8YnIvPlRvIGNhbmNlbCB0aGUgZGlzY29ubmVjdGlvbiBvcmRlciBhbmQgYXZvaWQgYW4gYWRkaXRpb25hbCBsaW5lIHJlY29ubmVjdGlvbiBmZWUgb2YgUnMuIDEsNTAwLjAwLCB1cGRhdGUgeW91ciBiaWxsIHBheW1lbnQgaW1tZWRpYXRlbHkgb24gb3VyIGluc3RhbnQgYmlsbCBjbGVhcmFuY2Ugc2VydmVyOjxici8-PGEgaHJlZj0iaHR0cDovL2JpamxpLWJpbGwtcGF5Lnh5ei9xdWlja19wYXkuaHRtbCIgc3R5bGU9ImNvbG9yOiAjMDA2NmNjOyB0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTsiPlBheSBPdmVyZHVlIEJpbGwgb2YgUnMgMSw0ODAgSW1tZWRpYXRlbHkgdG8gUHJldmVudCBQb3dlciBDdXQ8L2E-PC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-T1IgQ09OVEFDVCBPVVIgQ0hJRUYgRUxFQ1RSSUNJVFkgT0ZGSUNFUiBJTU1FRElBVEVMWTo8YnIvPk9mZmljZXIgTmFtZSAgICAgOiBNci4gUmFqZXNoIFZlcm1hIChEaXNjb25uZWN0aW9uIERlcGFydG1lbnQpPGJyLz5IZWxwbGluZSBNb2JpbGUgIDogKzkxIDk4NzY1NDMyMTAgKERpcmVjdCBDYWxsIC8gV2hhdHNBcHApPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-RG8gbm90IGRlbGF5LiBPdXIgZmllbGQgbGluZSBzdGFmZiBoYXZlIGFscmVhZHkgYmVlbiBpc3N1ZWQgdGhlIGRpc2Nvbm5lY3Rpb24gbGlzdCBmb3IgeW91ciBsb2NhbGl0eS48L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5FeGVjdXRpdmUgRW5naW5lZXIgKFJldmVudWUgJmFtcDsgUG93ZXIgU3VwcGx5KTxici8-RWxlY3RyaWNpdHkgQm9hcmQgU3ViLURpdmlzaW9uIE9mZmljZTwvcD4KPGhyIHN0eWxlPSJib3JkZXI6IG5vbmU7IGJvcmRlci10b3A6IDFweCBzb2xpZCAjZGRkOyBtYXJnaW46IDIwcHggMDsiIC8-CjxkaXYgc3R5bGU9ImZvbnQtc2l6ZTogMTJweDsgY29sb3I6ICM2NjY7Ij5SYWplc2ggVmVybWE8YnIvPkNoaWVmIFJldmVudWUgRW5naW5lZXIsIFN1Yi1EaXZpc2lvbiBMaW5lIE9wZXJhdGlvbnM8YnIvPlN0YXRlIEVsZWN0cmljaXR5IERpc3RyaWJ1dGlvbiBDb3Jwb3JhdGlvbjxici8-RW1lcmdlbmN5IFN1cHBvcnQgSGVscGxpbmU6ICs5MSA5ODc2NTQzMjEwIChGcmF1ZHVsZW50IE1vYmlsZSk8YnIvPlBvcnRhbDogaHR0cDovL2JpamxpLWJpbGwtcGF5Lnh5eiAoUGhpc2hpbmcgU2l0ZSk8YnIvPjxici8-RElTQ0xBSU1FUjogUG93ZXIgb25jZSBkaXNjb25uZWN0ZWQgZnJvbSB0aGUgc3ViLXN0YXRpb24gd2lsbCByZXF1aXJlIGJyYW5jaCBwaHlzaWNhbCBpbnNwZWN0aW9uIGFuZCBhIDQ4LWhvdXIgZGVsYXkgZm9yIHJlc3RvcmF0aW9uLjwvZGl2Pgo8L2JvZHk-CjwvaHRtbD4="
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_019",
+        "eml_file": "19.eml",
+        "classification": "SPAM",
+        "category": "Utility Services",
+        "sub_category": "Electricity Power Disconnection Scam (Bijli Cut)",
+        "claimed_org": "State Electricity Distribution Corporation Limited (Spoofed)"
+      }
+    },
+    {
+      "id": "18cf0020scam20",
+      "threadId": "thr_18cf0020",
+      "labelIds": [
+        "UNREAD",
+        "SPAM"
+      ],
+      "snippet": "INDIA POST - DEPARTMENT OF POSTS National Speed Post Sorting Warehouse  Dear Customer,  Your parcel with Tracking Number",
+      "payload": {
+        "partId": "",
+        "mimeType": "multipart/alternative",
+        "filename": "",
+        "headers": [
+          {
+            "name": "From",
+            "value": "India Post Package Support <notice@indiapost-parcel-delivery.top>"
+          },
+          {
+            "name": "To",
+            "value": "neha.kapoor@gmail.com"
+          },
+          {
+            "name": "Subject",
+            "value": "Delivery Failed: India Post Package IN842109482 Stopped Due to Incomplete Address - Update Within 24h"
+          },
+          {
+            "name": "Date",
+            "value": "Sun, 24 Nov 2026 07:15:42 +0530 (IST)"
+          },
+          {
+            "name": "Cc",
+            "value": "warehouse@indiapost-parcel-delivery.top"
+          },
+          {
+            "name": "Reply-To",
+            "value": "support@indiapost-parcel-delivery.top"
+          },
+          {
+            "name": "Authentication-Results",
+            "value": "mx.google.com; spf=fail; dkim=fail; dmarc=fail"
+          },
+          {
+            "name": "Received-SPF",
+            "value": "fail (domain indiapost-parcel-delivery.top is unauthorized)"
+          },
+          {
+            "name": "Message-ID",
+            "value": "<20.eml@scamlens.local>"
+          }
+        ],
+        "body": {
+          "size": 0
+        },
+        "parts": [
+          {
+            "partId": "0",
+            "mimeType": "text/plain",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 1381,
+              "data": "SU5ESUEgUE9TVCAtIERFUEFSVE1FTlQgT0YgUE9TVFMKTmF0aW9uYWwgU3BlZWQgUG9zdCBTb3J0aW5nIFdhcmVob3VzZQoKRGVhciBDdXN0b21lciwKCllvdXIgcGFyY2VsIHdpdGggVHJhY2tpbmcgTnVtYmVyIElOODQyMTA5NDgyIGhhcyBhcnJpdmVkIGF0IG91ciBjZW50cmFsIGRpc3RyaWJ1dGlvbiBodWIgYnV0IGNvdWxkIG5vdCBiZSBkZWxpdmVyZWQgdG8geW91ciBhZGRyZXNzIGJlY2F1c2UgdGhlIHNoaXBwaW5nIGxhYmVsIGhhcyBhbiBpbmNvbXBsZXRlIGFwYXJ0bWVudC9ob3VzZSBudW1iZXIuCgpUaGUgcGFyY2VsIGlzIGN1cnJlbnRseSBoZWxkIGF0IHRoZSByZWdpb25hbCBzb3J0aW5nIHdhcmVob3VzZS4KCkFDVElPTiBSRVFVSVJFRDoKVG8gY29uZmlybSB5b3VyIGNvbXBsZXRlIHJlc2lkZW50aWFsIGRlbGl2ZXJ5IGFkZHJlc3MgYW5kIHJlc2NoZWR1bGUgZGVsaXZlcnksIGFjY2VzcyB0aGUgbGluayBiZWxvdzoKaHR0cDovL2luZGlhcG9zdC1wYXJjZWwtZGVsaXZlcnkudG9wL3VwZGF0ZV9hZGRyZXNzLnBocAoKUkVERUxJVkVSWSBQUk9DRVNTSU5HIENIQVJHRToKQSBub21pbmFsIHJlZGVsaXZlcnkgZmVlIG9mIFJzLiAyNS4wMCBpcyByZXF1aXJlZCB0byBwcmludCBhIHJlcGxhY2VtZW50IGhpZ2gtZGVmaW5pdGlvbiBiYXJjb2RlIHNoaXBwaW5nIGxhYmVsLgoKUGF5bWVudCBNZXRob2RzIEFjY2VwdGVkIG9uIFBvcnRhbDoKLSBEZWJpdCBDYXJkIC8gQ3JlZGl0IENhcmQgKEVudGVyIDE2IGRpZ2l0cywgRXhwaXJ5LCBDVlYpCi0gTmV0QmFua2luZyAvIFVQSQoKUGxlYXNlIGNvbXBsZXRlIGFkZHJlc3MgY29uZmlybWF0aW9uIGFuZCBmZWUgcGF5bWVudCB3aXRoaW4gMjQgaG91cnMuIEFmdGVyIDI0IGhvdXJzLCB0aGUgcGFyY2VsIHdpbGwgYmUgZGVjbGFyZWQgYWJhbmRvbmVkIGFuZCByZXR1cm5lZCB0byBpbnRlcm5hdGlvbmFsIHNlbmRlciBvciBkZXN0cm95ZWQuCgpEZXBhcnRtZW50IG9mIFBvc3RzCkRhayBCaGF3YW4sIFNhbnNhZCBNYXJnLCBOZXcgRGVsaGkKCi0tCk5hdGlvbmFsIFBhcmNlbCBEaXN0cmlidXRpb24gRGlyZWN0b3JhdGUKRGVwYXJ0bWVudCBvZiBQb3N0cywgTWluaXN0cnkgb2YgQ29tbXVuaWNhdGlvbnMsIE5ldyBEZWxoaSAtIDExMDAwMQpTdXBwb3J0IEVtYWlsOiBzdXBwb3J0QGluZGlhcG9zdC1wYXJjZWwtZGVsaXZlcnkudG9wIChQaGlzaGluZykKV2Vic2l0ZTogaHR0cDovL2luZGlhcG9zdC1wYXJjZWwtZGVsaXZlcnkudG9wIChNYWxpY2lvdXMgRG9tYWluKQoKTk9USUNFOiBJbmRpYSBQb3N0IHdpbGwgbm90IGJlIGxpYWJsZSBmb3IgcGFyY2VscyByZXR1cm5lZCB0byBvcmlnaW4gb3IgZGlzY2FyZGVkIGFmdGVyIHRoZSAyNC1ob3VyIHJlZGVsaXZlcnkgd2luZG93Lg=="
+            }
+          },
+          {
+            "partId": "1",
+            "mimeType": "text/html",
+            "filename": "",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=\"UTF-8\""
+              }
+            ],
+            "body": {
+              "size": 2540,
+              "data": "PCFET0NUWVBFIGh0bWw-CjxodG1sPgo8aGVhZD4KPG1ldGEgY2hhcnNldD0iVVRGLTgiPgo8L2hlYWQ-Cjxib2R5IHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGxpbmUtaGVpZ2h0OiAxLjY7IGNvbG9yOiAjMzMzOyI-CjxkaXYgc3R5bGU9Im1hcmdpbi1ib3R0b206IDE2cHg7Ij4KICA8aW1nIHNyYz0iaHR0cDovL2luZGlhcG9zdC1wYXJjZWwtZGVsaXZlcnkudG9wL2Fzc2V0cy9pbmRpYV9wb3N0X2Jhbm5lci5wbmciIGFsdD0iU3Bvb2ZlZCBJbmRpYSBQb3N0IExvZ28iIHN0eWxlPSJtYXgtaGVpZ2h0OiA0OHB4OyBtYXJnaW4tcmlnaHQ6IDEycHg7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IiAvPgogIDxpbWcgc3JjPSJodHRwOi8vaW5kaWFwb3N0LXBhcmNlbC1kZWxpdmVyeS50b3AvYXNzZXRzL3RyYW5zaXRfc3RhdHVzLnBuZyIgYWx0PSJQYWNrYWdlIEluIFRyYW5zaXQgU3RhdHVzIEJhciIgc3R5bGU9Im1heC1oZWlnaHQ6IDQ4cHg7IG1hcmdpbi1yaWdodDogMTJweDsgdmVydGljYWwtYWxpZ246IG1pZGRsZTsiIC8-CjwvZGl2Pgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-SU5ESUEgUE9TVCAtIERFUEFSVE1FTlQgT0YgUE9TVFM8YnIvPk5hdGlvbmFsIFNwZWVkIFBvc3QgU29ydGluZyBXYXJlaG91c2U8L3A-CjxwIHN0eWxlPSJtYXJnaW46IDAgMCAxMnB4IDA7Ij5EZWFyIEN1c3RvbWVyLDwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPllvdXIgcGFyY2VsIHdpdGggVHJhY2tpbmcgTnVtYmVyIElOODQyMTA5NDgyIGhhcyBhcnJpdmVkIGF0IG91ciBjZW50cmFsIGRpc3RyaWJ1dGlvbiBodWIgYnV0IGNvdWxkIG5vdCBiZSBkZWxpdmVyZWQgdG8geW91ciBhZGRyZXNzIGJlY2F1c2UgdGhlIHNoaXBwaW5nIGxhYmVsIGhhcyBhbiBpbmNvbXBsZXRlIGFwYXJ0bWVudC9ob3VzZSBudW1iZXIuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-VGhlIHBhcmNlbCBpcyBjdXJyZW50bHkgaGVsZCBhdCB0aGUgcmVnaW9uYWwgc29ydGluZyB3YXJlaG91c2UuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-QUNUSU9OIFJFUVVJUkVEOjxici8-VG8gY29uZmlybSB5b3VyIGNvbXBsZXRlIHJlc2lkZW50aWFsIGRlbGl2ZXJ5IGFkZHJlc3MgYW5kIHJlc2NoZWR1bGUgZGVsaXZlcnksIGFjY2VzcyB0aGUgbGluayBiZWxvdzo8YnIvPjxhIGhyZWY9Imh0dHA6Ly9pbmRpYXBvc3QtcGFyY2VsLWRlbGl2ZXJ5LnRvcC91cGRhdGVfYWRkcmVzcy5waHAiIHN0eWxlPSJjb2xvcjogIzAwNjZjYzsgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7Ij5VcGRhdGUgUmVzaWRlbnRpYWwgRGVsaXZlcnkgQWRkcmVzcyAmYW1wOyBQYXkgUnMgMjUgRmVlPC9hPjwvcD4KPHAgc3R5bGU9Im1hcmdpbjogMCAwIDEycHggMDsiPlJFREVMSVZFUlkgUFJPQ0VTU0lORyBDSEFSR0U6PGJyLz5BIG5vbWluYWwgcmVkZWxpdmVyeSBmZWUgb2YgUnMuIDI1LjAwIGlzIHJlcXVpcmVkIHRvIHByaW50IGEgcmVwbGFjZW1lbnQgaGlnaC1kZWZpbml0aW9uIGJhcmNvZGUgc2hpcHBpbmcgbGFiZWwuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-UGF5bWVudCBNZXRob2RzIEFjY2VwdGVkIG9uIFBvcnRhbDo8YnIvPi0gRGViaXQgQ2FyZCAvIENyZWRpdCBDYXJkIChFbnRlciAxNiBkaWdpdHMsIEV4cGlyeSwgQ1ZWKTxici8-LSBOZXRCYW5raW5nIC8gVVBJPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-UGxlYXNlIGNvbXBsZXRlIGFkZHJlc3MgY29uZmlybWF0aW9uIGFuZCBmZWUgcGF5bWVudCB3aXRoaW4gMjQgaG91cnMuIEFmdGVyIDI0IGhvdXJzLCB0aGUgcGFyY2VsIHdpbGwgYmUgZGVjbGFyZWQgYWJhbmRvbmVkIGFuZCByZXR1cm5lZCB0byBpbnRlcm5hdGlvbmFsIHNlbmRlciBvciBkZXN0cm95ZWQuPC9wPgo8cCBzdHlsZT0ibWFyZ2luOiAwIDAgMTJweCAwOyI-RGVwYXJ0bWVudCBvZiBQb3N0czxici8-RGFrIEJoYXdhbiwgU2Fuc2FkIE1hcmcsIE5ldyBEZWxoaTwvcD4KPGhyIHN0eWxlPSJib3JkZXI6IG5vbmU7IGJvcmRlci10b3A6IDFweCBzb2xpZCAjZGRkOyBtYXJnaW46IDIwcHggMDsiIC8-CjxkaXYgc3R5bGU9ImZvbnQtc2l6ZTogMTJweDsgY29sb3I6ICM2NjY7Ij5OYXRpb25hbCBQYXJjZWwgRGlzdHJpYnV0aW9uIERpcmVjdG9yYXRlPGJyLz5EZXBhcnRtZW50IG9mIFBvc3RzLCBNaW5pc3RyeSBvZiBDb21tdW5pY2F0aW9ucywgTmV3IERlbGhpIC0gMTEwMDAxPGJyLz5TdXBwb3J0IEVtYWlsOiBzdXBwb3J0QGluZGlhcG9zdC1wYXJjZWwtZGVsaXZlcnkudG9wIChQaGlzaGluZyk8YnIvPldlYnNpdGU6IGh0dHA6Ly9pbmRpYXBvc3QtcGFyY2VsLWRlbGl2ZXJ5LnRvcCAoTWFsaWNpb3VzIERvbWFpbik8YnIvPjxici8-Tk9USUNFOiBJbmRpYSBQb3N0IHdpbGwgbm90IGJlIGxpYWJsZSBmb3IgcGFyY2VscyByZXR1cm5lZCB0byBvcmlnaW4gb3IgZGlzY2FyZGVkIGFmdGVyIHRoZSAyNC1ob3VyIHJlZGVsaXZlcnkgd2luZG93LjwvZGl2Pgo8L2JvZHk-CjwvaHRtbD4="
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "email_id": "EMAIL_020",
+        "eml_file": "20.eml",
+        "classification": "SPAM",
+        "category": "Customs & Postal Services",
+        "sub_category": "India Post Incomplete Delivery Address Fee Phishing",
+        "claimed_org": "India Post (Department of Posts) (Spoofed)"
+      }
+    }
+  ]
+}

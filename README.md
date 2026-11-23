@@ -326,3 +326,92 @@ The longer-term goal is to make ScamLens AI useful to consumers while contributi
 **Project summary**
 
 ScamLens AI is an open-source, multimodal scam investigation assistant that combines evidence analysis, external verification and AI-driven reasoning to help people assess suspicious communications and take safer next steps. Its defining contribution is not just scam classification, but evidence-backed investigation with explicit uncertainty and reproducible evaluation.
+
+---
+
+## 14. Technical Architecture & Quick Start
+
+### A. Repository Structure
+
+```text
+ScamLens-AI/
+├── src/
+│   ├── scamlens/
+│   │   ├── ai/               # AI clients (custom endpoint, Groq, Ollama), catalog prompts, tool schemas
+│   │   ├── api/              # FastAPI REST endpoints (/investigate, /health)
+│   │   ├── core/             # Configuration, Pydantic/dataclass models, custom exceptions
+│   │   ├── extractors/       # Forensic extractors (email, url, text, qr, vision, privacy PII)
+│   │   ├── intelligence/     # Threat intel connectors (VirusTotal, Google Safe Browsing, mock intel)
+│   │   ├── investigator/     # ScamInvestigator engine, multi-evidence scorer, action recommender
+│   │   └── rag/              # Domain knowledge base & Indian trusted entities catalog
+│   └── data_generate_dummy/  # Offline benchmark generation scripts (1.eml ... 20.eml, JSON, MD)
+├── data/
+│   ├── raw_emails/           # Local numbered RFC 5322 MIME files (1.eml ... 20.eml - git-ignored)
+│   ├── spam-indian-bank-emails.json  # Full Gmail REST API JSON format (20 benchmark emails)
+│   └── spam-indian-bank-emails.md    # Raw RFC 5322 MIME email blocks
+├── claude/
+│   └── agentic-ai-plan.md    # v3.0.0 Architecture Blueprint (Cyclic ReAct & Multi-Agent)
+├── tests/                    # 30 passing unit tests (extractors, investigator, models, readers)
+├── SETUP.md                  # Comprehensive local development and environment setup guide
+├── pyproject.toml            # Project packaging & dependency groups ([dev], [ai], [gmail], [agentic])
+└── requirements.txt          # Frozen development dependencies
+```
+
+### B. Email Forensics & Offline PoC Pipeline
+
+ScamLens-AI features unified email analysis designed for both offline PoC development and live inbox scanning:
+
+- **Offline Local Reader (`LocalEmailReader`)**: Read from `data/raw_emails/1.eml` ... `20.eml`, `data/spam-indian-bank-emails.json`, or `.md` files without Google Cloud credentials or network calls.
+- **Live Gmail REST API (`GmailReader`)**: Connects to user inboxes using OAuth 2.0 with read-only permissions (`https://www.googleapis.com/auth/gmail.readonly`).
+- **Forensic Checks Extracted**:
+  - Sender vs. Reply-To domain spoofing detection
+  - RFC 5322 authentication records (`SPF`, `DKIM`, `DMARC`)
+  - Malicious / phishing URL harvesting
+  - Dangerous attachment detection (`.exe`, `.iso`, `.apk`, macro-enabled files)
+
+```python
+from scamlens.extractors.email import LocalEmailReader, extract_email_evidence
+from scamlens.investigator.engine import ScamInvestigator
+
+# 1. Load local emails (exact 1..20 numerical order)
+reader = LocalEmailReader("data/raw_emails")
+emails = reader.fetch_messages()
+
+# 2. Analyze first email
+first_email = emails[0]
+print(f"Subject: {first_email.subject} | From: {first_email.sender_email}")
+print(f"SPF: {first_email.spf_status} | URLs: {len(first_email.extracted_urls)}")
+
+# 3. Investigate through multi-evidence engine
+investigator = ScamInvestigator()
+result = investigator.investigate_email(first_email)
+print(f"Verdict: {result.verdict.value} | Risk Score: {result.risk_score}/100")
+```
+
+### C. Agentic AI & LangGraph State Machine
+
+ScamLens-AI supports next-generation autonomous investigation architectures:
+- **Plan A (Hierarchical Multi-Agent)**: A supervisor agent orchestrates specialized subagents (Email Forensics, URL Intel, Content Triage, Evidence Synthesizer).
+- **Plan B (Cyclic ReAct State Machine)**: A stateful ReAct cycle with iterative tool calling, uncertainty reduction, and maximum iteration termination safeguards.
+- **Plan C (Unified Hybrid Engine)**: Dynamically selects Plan B for fast single email triage and Plan A for complex, multi-evidence incidents.
+
+*Full blueprints, state graphs, and tool availability matrices are documented in [claude/agentic-ai-plan.md](claude/agentic-ai-plan.md).*
+
+### D. Quick Installation & Running Tests
+
+```bash
+# 1. Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# 2. Install dependencies (including agentic AI extras)
+pip install -e ".[dev,ai,gmail,agentic]"
+
+# 3. Configure environment
+cp .env.example .env
+
+# 4. Run full unit test suite (30 passing tests)
+python3 -m unittest discover tests
+```
+
+*For complete step-by-step instructions on setting up custom AI endpoints, Groq, Ollama, CLI scanners, and FastAPI service, see [SETUP.md](SETUP.md).*

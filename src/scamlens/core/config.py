@@ -108,6 +108,13 @@ class Settings:
     )
     data_dir: Path = Path(os.getenv("DATA_DIR", str(_PROJECT_ROOT / "data")))
 
+    # Gmail Integration
+    gmail_credentials_file: str = os.getenv("GMAIL_CREDENTIALS_FILE", "credentials.json")
+    gmail_token_file: str = os.getenv("GMAIL_TOKEN_FILE", "token.json")
+    gmail_scopes: str = os.getenv(
+        "GMAIL_SCOPES", "https://www.googleapis.com/auth/gmail.readonly"
+    )
+
 
 _cached_settings: Optional[Settings] = None
 

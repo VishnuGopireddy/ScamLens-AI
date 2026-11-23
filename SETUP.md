@@ -34,14 +34,18 @@ Key configuration options in `.env`:
 
 ### Option A: Using `uv` (Fastest)
 ```bash
-uv pip install -e ".[dev,ai]"
+uv pip install -e ".[dev,ai,gmail,agentic]"
+# Or install using requirements.txt
+uv pip install -r requirements.txt
 ```
 
 ### Option B: Using standard Python venv
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e ".[dev,ai]"
+pip install -e ".[dev,ai,gmail,agentic]"
+# Or install using requirements.txt
+pip install -r requirements.txt
 ```
 
 ### Option C: Automated Setup Script
@@ -118,7 +122,176 @@ python3 src/scamlens/cli.py --text "Urgent electricity bill power cut" --json
 
 ---
 
-## 6. Starting the REST API Service
+## 6. Email Analysis & Forensics (Local Datasets & Gmail REST API)
+
+ScamLens-AI provides dual support for email investigation:
+1. **Local Offline Datasets** (`LocalEmailReader`): Test pipelines, algorithms, and agentic workflows completely offline without Google Cloud credentials or OAuth.
+2. **Live Gmail REST API** (`GmailReader`): Securely fetch and triage live inbox messages using OAuth 2.0 read-only permissions (`https://www.googleapis.com/auth/gmail.readonly`).
+
+---
+
+### A. Offline Development & Local Proof-of-Concept (Recommended for PoC)
+
+For rapid local testing and development, ScamLens-AI includes a 20-email benchmark dataset covering authentic Indian financial and government communications (5 HAM, 15 SPAM):
+- **Raw RFC 5322 MIME messages**: `data/raw_emails/1.eml` through `data/raw_emails/20.eml` (ignored by git).
+- **Gmail REST API JSON format**: `data/spam-indian-bank-emails.json` (exact schema returned by `users.messages.get`).
+- **Raw Markdown dataset**: `data/spam-indian-bank-emails.md` (raw MIME code blocks without manual field categorization).
+
+#### 1. Programmatic Usage with `LocalEmailReader`
+`LocalEmailReader` provides the exact same API interface as `GmailReader` (`fetch_messages()`, `get_message()`, `list_message_summaries()`):
+
+```python
+from scamlens.extractors.email import LocalEmailReader, extract_email_evidence
+from scamlens.investigator.engine import ScamInvestigator
+
+# Option 1: Load individual numbered .eml files (data/raw_emails/1.eml ... 20.eml)
+reader = LocalEmailReader("data/raw_emails")
+
+# Option 2: Load Gmail REST API JSON format
+# reader = LocalEmailReader("data/spam-indian-bank-emails.json")
+
+# Option 3: Load directly from Markdown dataset
+# reader = LocalEmailReader("data/spam-indian-bank-emails.md")
+
+# Fetch all parsed EmailMessage objects (sorted numerically 1..20)
+messages = reader.fetch_messages()
+
+# Inspect automatically separated fields
+for msg in messages[:3]:
+    print(f"[{msg.id}] {msg.subject}")
+    print(f"  Sender:      {msg.sender_name} <{msg.sender_email}> (domain: {msg.sender_domain})")
+    print(f"  To / CC:     {msg.recipient} | CC: {msg.cc}")
+    print(f"  Auth:        SPF={msg.spf_status}, DKIM={msg.dkim_status}, DMARC={msg.dmarc_status}")
+    print(f"  Attachments: {[a.filename for a in msg.attachments]}")
+    print(f"  URLs Found:  {msg.extracted_urls}")
+    print(f"  Content:     {msg.body_cleaned[:120]}...\n")
+
+# Run evidence extraction or full scam investigation
+investigator = ScamInvestigator()
+result = investigator.investigate_email(messages[0])
+print(f"Verdict: {result.verdict.value} | Risk Score: {result.risk_score}/100")
+```
+
+#### 2. Regenerating or Customizing Dummy Datasets
+The data preparation and generation scripts are maintained under `src/data_generate_dummy/`:
+```bash
+# Generate/regenerate data/raw_emails/1.eml ... 20.eml, .json, and .md
+python3 src/data_generate_dummy/generate_raw_datasets.py
+```
+
+---
+
+### B. Live Google Cloud Gmail REST API Setup
+To connect to live Gmail accounts:
+1. Open the [Google Cloud Console](https://console.cloud.google.com).
+2. Create a project (or select an existing one).
+3. Navigate to **APIs & Services > Library**, search for **Gmail API**, and click **Enable**.
+4. Configure the **OAuth consent screen**:
+   - User Type: **External**.
+   - Under **Test users**, add your email (e.g. `your-email@gmail.com`) and click **Save**, OR click **Publish App** to allow access.
+5. Create **OAuth 2.0 Credentials**:
+   - Go to **APIs & Services > Credentials**.
+   - Click **Create Credentials > OAuth client ID**.
+   - Application type: **Desktop app** *(Recommended for scripts and notebooks; permits localhost login without redirect URI restrictions)*.
+   - Click **Create**, download the JSON client secret, and save it in the project root as `credentials.json`:
+     ```bash
+     cp ~/Downloads/client_secret_*.json credentials.json
+     ```
+
+> **Security Note**: Both `credentials.json` and `token.json` are listed in `.gitignore` to prevent committing secrets to version control.
+
+### B. Environment Configuration (Optional)
+In `.env`, you can customize the credential paths if needed:
+```bash
+GMAIL_CREDENTIALS_FILE=credentials.json
+GMAIL_TOKEN_FILE=token.json
+GMAIL_SCOPES=https://www.googleapis.com/auth/gmail.readonly
+```
+
+### C. Interactive Demo in Jupyter Notebook
+Launch the dedicated Gmail parsing notebook to authenticate and print all extracted email fields:
+```bash
+# Open in VS Code, Cursor, or Jupyter Lab
+notebooks/gmail_auth_and_read.ipynb
+```
+The notebook automatically:
+- Connects using `credentials.json` (and caches your login in `token.json`).
+- Queries emails by folder or category (`is:unread`, `label:INBOX`, `category:primary`, `category:updates`, etc.).
+- Decodes MIME payloads and extracts:
+  - **Sender** (Display Name & Email Address)
+  - **Domain of the Sender**
+  - **Subject**
+  - **Time of the Email**
+  - **Recipient(s)**
+  - **Reply-To**
+  - **Has Attachment** (Boolean flag, filenames, MIME types, and sizes)
+  - **Email Content** (Decoded text content)
+  - **Embedded Links** (All URLs extracted from text and HTML)
+  - **Security Headers** (SPF, DKIM, DMARC validation)
+
+### D. Scanning Emails via CLI
+Run the CLI scanner to triage emails directly from your terminal:
+```bash
+# Scan the 5 latest unread emails
+python3 scripts/scan_gmail.py --query "is:unread" --max-results 5
+
+# Scan latest emails in the Inbox
+python3 scripts/scan_gmail.py --query "label:INBOX" --max-results 10
+
+# Scan a specific email by Gmail message ID with structured JSON output
+python3 scripts/scan_gmail.py --msg-id <MESSAGE_ID> --json
+```
+
+### E. Programmatic Usage in Python
+```python
+from scamlens.extractors.email import GmailReader
+from scamlens.investigator.engine import ScamInvestigator
+
+# 1. Initialize reader and fetch messages
+reader = GmailReader()
+messages = reader.fetch_messages(query="label:INBOX", max_results=5)
+
+# 2. Inspect parsed fields
+for msg in messages:
+    print(f"Subject:        {msg.subject}")
+    print(f"Sender:         {msg.sender_email} (domain: {msg.sender_domain})")
+    print(f"Time:           {msg.date}")
+    print(f"Has Attachment: {msg.has_attachment}")
+    print(f"Content:        {msg.body_cleaned[:200]}...")
+
+    # Optional: Run ScamLens multi-evidence investigation
+    # investigator = ScamInvestigator()
+    # result = investigator.investigate_email(msg)
+```
+
+### F. Troubleshooting Common Errors
+- **`Error 400: redirect_uri_mismatch`**: Your OAuth client ID in Google Cloud Console was created as a "Web application" instead of a "Desktop app". In GCP Console > Credentials, create a new OAuth client ID with Application type = **Desktop app**.
+- **`Error 403: access_denied`**: The GCP project is in "Testing" status and your email is not in the Test Users list. In GCP Console > OAuth consent screen, either add your email under **Test users** and click Save, or click **Publish App**.
+- **`google-api-python-client is not installed`**: Install with `pip install -r requirements.txt` or `pip install -e ".[gmail]"`.
+
+---
+
+## 7. Agentic AI & LangGraph Workflows
+
+ScamLens-AI includes an advanced Agentic AI investigation framework that transitions from static heuristic scoring to dynamic, cyclic ReAct reasoning and hierarchical multi-agent orchestration powered by **LangGraph**.
+
+### A. Installing Agentic Dependencies
+Install the dedicated `agentic` extras group:
+```bash
+uv pip install -e ".[agentic]"
+# Or using pip:
+pip install langgraph>=1.2.0 langchain-core>=0.3.0
+```
+
+### B. Architectural Blueprints
+Refer to [claude/agentic-ai-plan.md](claude/agentic-ai-plan.md) for the complete engineering specification:
+- **Plan A (Hierarchical Multi-Agent Orchestrator)**: A supervisor agent routes investigation tasks to specialized domain subagents (Email Forensics, Threat Intel, Content Triage, Evidence Synthesizer).
+- **Plan B (Cyclic ReAct State Machine)**: A stateful ReAct cycle with iterative tool invocation (`extract_email_evidence`, `analyze_url`, `knowledge_lookup`) and dynamic termination safeguards.
+- **Plan C (Unified Hybrid Engine)**: Dynamically selects Plan B for low-latency single email triage and Plan A for complex, multi-evidence incidents.
+
+---
+
+## 8. Starting the REST API Service
 
 Launch the FastAPI development server:
 ```bash
@@ -130,10 +303,10 @@ uvicorn scamlens.api.main:app --host 0.0.0.0 --port 8000 --reload
 
 ---
 
-## 7. Running Tests & Evaluation Benchmark
+## 9. Running Tests & Evaluation Benchmark
 
 ```bash
-# Run unit test suite
+# Run unit test suite (30 unit tests covering extractors, models, readers, scorer)
 python3 -m unittest discover tests
 
 # Run reproducible evaluation benchmark (README §9 & §10)
