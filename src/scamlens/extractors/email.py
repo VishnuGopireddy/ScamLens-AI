@@ -568,7 +568,7 @@ def extract_email_evidence(msg: EmailMessage) -> List[EvidenceItem]:
     # 5. Display Name Brand Spoofing Check
     sender_name_lower = msg.sender_name.lower()
     for brand, valid_domains in _KNOWN_BRAND_DOMAINS.items():
-        if brand in sender_name_lower:
+        if re.search(rf"\b{re.escape(brand)}\b", sender_name_lower):
             is_valid_domain = any(
                 msg.sender_domain == d or msg.sender_domain.endswith(f".{d}")
                 for d in valid_domains

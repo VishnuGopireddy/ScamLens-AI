@@ -71,6 +71,14 @@ def main() -> None:
         action="store_true",
         help="Output full forensic investigation results in JSON",
     )
+    parser.add_argument(
+        "--strategy",
+        "--agent-architecture",
+        dest="strategy",
+        choices=["linear", "orchestrator"],
+        default="linear",
+        help="Investigation execution strategy: deterministic 'linear' (default) or Phase 1 'orchestrator'",
+    )
 
     args = parser.parse_args()
 
@@ -115,12 +123,17 @@ def main() -> None:
 
     all_results = []
     for idx, msg in enumerate(messages_to_scan, start=1):
-        result = investigator.investigate_email(msg, incident_stage=stage)
+        result = investigator.investigate_email(
+            msg,
+            incident_stage=stage,
+            strategy=args.strategy,
+        )
         payload = {
             "email_id": msg.id,
             "subject": msg.subject,
             "sender": msg.sender,
             "date": msg.date,
+            "strategy": args.strategy,
             "investigation": result.to_dict(),
         }
         all_results.append(payload)

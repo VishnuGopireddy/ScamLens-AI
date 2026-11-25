@@ -235,6 +235,9 @@ Run the CLI scanner to triage emails directly from your terminal:
 # Scan the 5 latest unread emails
 python3 scripts/scan_gmail.py --query "is:unread" --max-results 5
 
+# Scan using the Phase 1 AI Orchestrator strategy
+python3 scripts/scan_gmail.py --query "is:unread" --max-results 5 --strategy orchestrator
+
 # Scan latest emails in the Inbox
 python3 scripts/scan_gmail.py --query "label:INBOX" --max-results 10
 
@@ -271,45 +274,72 @@ for msg in messages:
 
 ---
 
-## 7. Agentic AI & LangGraph Workflows
+## 7. Agentic AI & Phase 1 Orchestrator
 
-ScamLens-AI includes an advanced Agentic AI investigation framework that transitions from static heuristic scoring to dynamic, cyclic ReAct reasoning and hierarchical multi-agent orchestration powered by **LangGraph**.
+ScamLens-AI implements a **Phase 1 2-Turn Parallel Tool Orchestrator** (`strategy="orchestrator"`) in `src/scamlens/investigator/engine.py` and `src/scamlens/ai/openai_compat.py`:
+- **Turn 1 (Parallel Fan-Out)**: The LLM selects tools from the 9-tool `SCAMLENS_TOOLS` catalog (`src/scamlens/ai/tools.py`), and `ThreadPoolExecutor` runs them concurrently.
+- **Turn 2 (Forced Synthesis & Deterministic Scoring)**: The LLM synthesizes correlated findings while `src/scamlens/investigator/scorer.py` computes the deterministic 0–100 risk score and verdict from typed `EvidenceItem`s.
+- **Resilient Fallback**: Automatically falls back to `strategy="linear"` if the LLM endpoint is unreachable or running in simulated offline mode.
 
 ### A. Installing Agentic Dependencies
-Install the dedicated `agentic` extras group:
+Install the dedicated `agentic` extras group for LangGraph notebook workflows and Phase 2 development:
 ```bash
 uv pip install -e ".[agentic]"
 # Or using pip:
 pip install langgraph>=1.2.0 langchain-core>=0.3.0
 ```
 
-### B. Architectural Blueprints
-Refer to [claude/agentic-ai-plan.md](claude/agentic-ai-plan.md) for the complete engineering specification:
+### B. Architectural Blueprints (Phase 2 Roadmap)
+Refer to [claude/agentic-ai-plan.md](claude/agentic-ai-plan.md) for the Phase 2 LangGraph specification:
 - **Plan A (Hierarchical Multi-Agent Orchestrator)**: A supervisor agent routes investigation tasks to specialized domain subagents (Email Forensics, Threat Intel, Content Triage, Evidence Synthesizer).
-- **Plan B (Cyclic ReAct State Machine)**: A stateful ReAct cycle with iterative tool invocation (`extract_email_evidence`, `analyze_url`, `knowledge_lookup`) and dynamic termination safeguards.
+- **Plan B (Cyclic ReAct State Machine)**: A stateful ReAct cycle with iterative tool invocation and dynamic termination safeguards.
 - **Plan C (Unified Hybrid Engine)**: Dynamically selects Plan B for low-latency single email triage and Plan A for complex, multi-evidence incidents.
 
 ---
 
-## 8. Starting the REST API Service
+## 8. Launching the Interactive Web GUI (Live SSE)
 
-Launch the FastAPI development server:
+ScamLens-AI includes a zero-dependency Web GUI under `src/GUI/` powered by Python's built-in `ThreadingHTTPServer` and Server-Sent Events (SSE):
+
+```bash
+# Start the Web GUI server (default http://127.0.0.1:8080)
+python3 scripts/run_gui.py --host 127.0.0.1 --port 8080
+
+# Alternatives:
+PYTHONPATH=src python3 -m GUI --port 8080
+python3 src/scamlens/cli.py --gui --port 8080
+```
+
+Open `http://127.0.0.1:8080` in your browser to access:
+1. **Multimodal Investigator**: Submit message text, URLs, QR/UPI payloads, screenshots (drag-and-drop), `PRE_ACTION`/`POST_ACTION` stage, and one-click benchmark presets.
+2. **Email & Gmail Forensics**: Inspect local datasets (`data/raw_emails`), fetch/scan live Gmail messages (requires `credentials.json` + cached `token.json`), or paste/upload `.eml` files with a live status feed (`reading_email` → `email_parsed` → `analyzing_url` → `scoring` → `completed`).
+3. **Trusted Registry & Samples**: Browse verified Indian bank domains, SMS headers, helplines (`1930`), UPI rules, and sample scenarios.
+4. **Technical Details (Top-Right Tab)**: Interactive architecture diagram, Phase 1 Orchestrator flow & live system prompt inspector, and 9-tool JSON schema explorer.
+
+---
+
+## 9. Starting the FastAPI REST Service
+
+Launch the FastAPI development server (when `fastapi` and `uvicorn` are installed):
 ```bash
 uvicorn scamlens.api.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 - Interactive OpenAPI Docs (Swagger UI): `http://localhost:8000/docs`
-- Health check: `http://localhost:8000/health`
-- Investigation endpoint: `POST http://localhost:8000/api/v1/investigate`
+- Health check: `GET http://localhost:8000/health` (and `/api/v1/health`)
+- Investigation endpoints: `POST /api/v1/investigate`, `POST /api/v1/investigate/email`
+- Metadata & Email endpoints: `GET /api/v1/samples`, `GET /api/v1/registry`, `GET /api/v1/architecture`, `GET /api/v1/emails/local`, `GET /api/v1/emails/gmail/status`, `GET /api/v1/emails/gmail`
+
+*(For SSE streaming endpoints `/api/v1/investigate/stream`, `/api/v1/investigate/email/stream`, and `/api/v1/emails/scan/stream`, launch the built-in GUI server in Section 8.)*
 
 ---
 
-## 9. Running Tests & Evaluation Benchmark
+## 10. Running Tests & Evaluation Benchmark
 
 ```bash
-# Run unit test suite (30 unit tests covering extractors, models, readers, scorer)
-python3 -m unittest discover tests
+# Run unit test suite (50 unit tests covering extractors, orchestrator, GUI/SSE, models, readers)
+PYTHONPATH=src python3 -m unittest discover tests -v
 
 # Run reproducible evaluation benchmark (README §9 & §10)
-python3 benchmark/runner.py
+PYTHONPATH=src python3 benchmark/runner.py
 ```
 

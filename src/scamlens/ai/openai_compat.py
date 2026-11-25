@@ -11,13 +11,15 @@ Provides a unified tool calling interface:
 from __future__ import annotations
 
 import base64
+from concurrent.futures import ThreadPoolExecutor
 import json
 import mimetypes
 import os
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from scamlens.ai.base import BaseLLMClient
 from scamlens.ai.tools import SCAMLENS_TOOLS, ToolDispatcher
@@ -306,6 +308,46 @@ class OpenAICompatibleClient(BaseLLMClient):
         )
         return response["choices"][0]["message"]["content"]
 
+    def _run_single_tool_call(
+        self,
+        tc: Dict[str, Any],
+        turn: int,
+        tool_dispatcher: ToolDispatcher,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any], List[Any]]:
+        """Execute one OpenAI tool_call dict and return history record, ToolMessage, and evidence."""
+        tc_id = tc.get("id", f"call_{turn}")
+        fn = tc.get("function", {})
+        fn_name = fn.get("name", "")
+        args_str = fn.get("arguments", "{}")
+        try:
+            args = json.loads(args_str) if isinstance(args_str, str) else args_str
+        except Exception:
+            args = {}
+        if not isinstance(args, dict):
+            args = {}
+
+        t0 = time.perf_counter()
+        if hasattr(tool_dispatcher, "execute_tool_with_evidence"):
+            tool_result, evidence = tool_dispatcher.execute_tool_with_evidence(fn_name, args)
+        else:
+            tool_result = tool_dispatcher.execute_tool(fn_name, args)
+            evidence = []
+        elapsed_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+
+        history_entry = {
+            "id": tc_id,
+            "tool": fn_name,
+            "arguments": args,
+            "result": tool_result,
+            "execution_time_ms": elapsed_ms,
+        }
+        tool_message = {
+            "role": "tool",
+            "tool_call_id": tc_id,
+            "content": json.dumps(tool_result),
+        }
+        return history_entry, tool_message, evidence
+
     def run_agent_loop(
         self,
         initial_prompt: str,
@@ -313,28 +355,50 @@ class OpenAICompatibleClient(BaseLLMClient):
         tools: Optional[List[Dict[str, Any]]] = None,
         dispatcher: Optional[ToolDispatcher] = None,
         max_turns: int = 5,
+        parallel_tools: bool = True,
+        on_event: Optional[Any] = None,
     ) -> Dict[str, Any]:
         """Execute an agentic tool calling loop in OpenAI format.
 
         Compatible with Groq, OpenAI, Ollama, vLLM, and Gemini.
         1. Model receives messages and available tools.
-        2. If model generates tool_calls, dispatcher executes them.
+        2. If model generates tool_calls, dispatcher executes them (concurrently when parallel_tools=True).
         3. Tool results are appended with role: 'tool' and sent back to model.
-        4. Loop repeats until model generates final text answer or max_turns is reached.
+        4. Loop repeats until model generates final text answer or max_turns is reached
+           (on the final allowed turn after tools ran, tools are omitted to force synthesis).
         """
         tools_to_use = tools or SCAMLENS_TOOLS
         tool_dispatcher = dispatcher or ToolDispatcher()
+
+        def _emit(stage: str, message: str, **extra: Any) -> None:
+            if callable(on_event):
+                try:
+                    on_event({"stage": stage, "message": message, **extra})
+                except Exception:
+                    pass
 
         messages: List[Dict[str, Any]] = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": initial_prompt},
         ]
         executed_tool_calls: List[Dict[str, Any]] = []
+        collected_evidence: List[Any] = []
 
         for turn in range(max_turns):
+            # Force final text synthesis on the last turn if tools already executed
+            is_forced_synthesis = (turn == max_turns - 1) and bool(executed_tool_calls)
+            _emit(
+                "orchestrator_turn",
+                (
+                    f"AI Orchestrator turn {turn + 1}/{max_turns}: synthesizing correlated findings..."
+                    if is_forced_synthesis
+                    else f"AI Orchestrator turn {turn + 1}/{max_turns}: selecting forensic tools..."
+                ),
+                data={"turn": turn + 1, "max_turns": max_turns, "forced_synthesis": is_forced_synthesis},
+            )
             response = self.chat_completion(
                 messages=messages,
-                tools=tools_to_use,
+                tools=None if is_forced_synthesis else tools_to_use,
                 tool_choice="auto",
             )
             message = response["choices"][0]["message"]
@@ -344,43 +408,55 @@ class OpenAICompatibleClient(BaseLLMClient):
             messages.append(message)
 
             if not tool_calls:
-                # Agent completed investigation without further tools
                 return {
                     "final_response": message.get("content", ""),
                     "tool_history": executed_tool_calls,
+                    "evidence_items": collected_evidence,
                     "turns": turn + 1,
                 }
 
-            # Execute all requested tools
-            for tc in tool_calls:
-                tc_id = tc.get("id", f"call_{turn}")
-                fn = tc.get("function", {})
-                fn_name = fn.get("name", "")
-                args_str = fn.get("arguments", "{}")
-                try:
-                    args = json.loads(args_str) if isinstance(args_str, str) else args_str
-                except Exception:
-                    args = {}
+            requested_names = [tc.get("function", {}).get("name", "") for tc in tool_calls]
+            _emit(
+                "orchestrator_tools_dispatched",
+                f"Dispatching {len(tool_calls)} tool(s): {', '.join(requested_names)}",
+                data={"tools": requested_names, "parallel": parallel_tools},
+            )
 
-                # Execute local tool
-                tool_result = tool_dispatcher.execute_tool(fn_name, args)
-                executed_tool_calls.append({
-                    "id": tc_id,
-                    "tool": fn_name,
-                    "arguments": args,
-                    "result": tool_result,
-                })
+            # Execute requested tools (in parallel when multiple calls emitted)
+            if parallel_tools and len(tool_calls) > 1:
+                workers = min(8, len(tool_calls))
+                with ThreadPoolExecutor(max_workers=workers) as executor:
+                    batch = list(
+                        executor.map(
+                            lambda tc: self._run_single_tool_call(tc, turn, tool_dispatcher),
+                            tool_calls,
+                        )
+                    )
+            else:
+                batch = [
+                    self._run_single_tool_call(tc, turn, tool_dispatcher)
+                    for tc in tool_calls
+                ]
 
-                # Append tool result to conversation in standard OpenAI tool format
-                messages.append({
-                    "role": "tool",
-                    "tool_call_id": tc_id,
-                    "content": json.dumps(tool_result),
-                })
+            for history_entry, tool_message, evidence in batch:
+                executed_tool_calls.append(history_entry)
+                messages.append(tool_message)
+                collected_evidence.extend(evidence)
+                _emit(
+                    "orchestrator_tool_done",
+                    f"Tool '{history_entry['tool']}' completed ({history_entry['execution_time_ms']} ms, {len(evidence)} indicator(s))",
+                    data={
+                        "tool": history_entry["tool"],
+                        "arguments": history_entry["arguments"],
+                        "execution_time_ms": history_entry["execution_time_ms"],
+                        "findings_count": len(evidence),
+                    },
+                )
 
         return {
-            "final_response": messages[-1].get("content", ""),
+            "final_response": messages[-1].get("content", "") or "",
             "tool_history": executed_tool_calls,
+            "evidence_items": collected_evidence,
             "turns": max_turns,
         }
 

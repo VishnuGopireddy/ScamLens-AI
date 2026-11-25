@@ -96,7 +96,7 @@ class TestOpenAICompat(unittest.TestCase):
             "verify_brand_official_domain",
             {"brand": "sbi", "domain": "sbi-fake.xyz"}
         )
-        self.assertFalse(brand_res["is_official"])
+        self.assertIs(brand_res["is_official"], False)
         self.assertEqual(brand_res["cybercrime_helpline"], "1930")
 
         # 3. QR UPI decode tool
@@ -105,6 +105,55 @@ class TestOpenAICompat(unittest.TestCase):
             {"qr_payload": "upi://pay?pa=scammer@upi&pn=LuckyDraw&am=5000"}
         )
         self.assertIn("findings", qr_res)
+
+        # 4. ICANN RDAP domain age tool
+        rdap_res = dispatcher.execute_tool(
+            "inspect_domain_whois_age",
+            {"domain_or_url": "sbi-fake-login.xyz"}
+        )
+        self.assertIn("findings", rdap_res)
+        self.assertTrue(len(rdap_res["findings"]) > 0)
+
+        # 5. VirusTotal v3 reputation tool
+        vt_res = dispatcher.execute_tool(
+            "check_virustotal_reputation",
+            {"url": "http://sbi-fake-login.xyz/update"}
+        )
+        self.assertIn("virustotal_findings", vt_res)
+        self.assertTrue(len(vt_res["virustotal_findings"]) > 0)
+
+        # 6. Text indicators tool (urgency & credentials)
+        text_res = dispatcher.execute_tool(
+            "extract_text_indicators",
+            {"text": "Debit freeze at 23:59! Enter Customer ID and NetBanking IPIN immediately."}
+        )
+        self.assertIn("findings", text_res)
+        self.assertTrue(text_res["has_urgency"])
+
+        # 7. Email authentication tool (SPF, DKIM, DMARC, Sender Domain)
+        auth_res = dispatcher.execute_tool(
+            "inspect_email_authentication",
+            {
+                "from_addr": "HDFC Bank Compliance Unit <alert@hdfc-pan-update.online>",
+                "reply_to": "support@hdfc-pan-update.online",
+                "spf": "fail",
+                "dkim": "fail",
+                "dmarc": "fail",
+            }
+        )
+        self.assertIn("auth_findings", auth_res)
+        self.assertGreaterEqual(len(auth_res["auth_findings"]), 3)
+
+        # 8. Contact details inspection tool
+        contact_res = dispatcher.execute_tool(
+            "inspect_contact_details",
+            {
+                "text": "Customer Safety Line: +91 9123456789\nGrievance: compliance@hdfc-pan-update.online",
+                "claimed_brand": "HDFC Bank",
+            }
+        )
+        self.assertIn("contact_findings", contact_res)
+        self.assertGreaterEqual(len(contact_res["contact_findings"]), 2)
 
     @patch.object(OpenAICompatibleClient, "chat_completion")
     def test_agent_tool_loop(self, mock_chat):
@@ -152,6 +201,85 @@ class TestOpenAICompat(unittest.TestCase):
         self.assertEqual(result["tool_history"][0]["tool"], "verify_brand_official_domain")
         self.assertFalse(result["tool_history"][0]["result"]["is_official"])
         self.assertIn("phishing scam", result["final_response"])
+        self.assertGreaterEqual(len(result["evidence_items"]), 1)
+
+    def test_tool_dispatcher_use_mock_config_and_evidence(self):
+        # Explicit override works
+        live_dispatcher = ToolDispatcher(use_mock=False)
+        self.assertFalse(live_dispatcher.intel.use_mock)
+
+        # Default reads Settings.use_mock_intelligence
+        default_dispatcher = ToolDispatcher()
+        self.assertEqual(default_dispatcher.intel.use_mock, get_settings().use_mock_intelligence)
+
+        # execute_tool_with_evidence returns EvidenceItems uniformly
+        res, evidence = default_dispatcher.execute_tool_with_evidence(
+            "verify_brand_official_domain",
+            {"brand": "hdfc", "domain": "hdfc-pan-update.online"},
+        )
+        self.assertFalse(res["is_official"])
+        self.assertEqual(len(evidence), 1)
+        self.assertEqual(evidence[0].source, "brand_registry")
+
+    @patch.object(OpenAICompatibleClient, "chat_completion")
+    def test_parallel_two_turn_orchestrator_loop(self, mock_chat):
+        step1_response = {
+            "choices": [{
+                "message": {
+                    "role": "assistant",
+                    "content": None,
+                    "tool_calls": [
+                        {
+                            "id": "call_1",
+                            "type": "function",
+                            "function": {
+                                "name": "analyze_url_structure",
+                                "arguments": json.dumps({"url": "http://hdfc-pan-update.online/auth/login"}),
+                            },
+                        },
+                        {
+                            "id": "call_2",
+                            "type": "function",
+                            "function": {
+                                "name": "verify_brand_official_domain",
+                                "arguments": json.dumps({"brand": "hdfc", "domain": "hdfc-pan-update.online"}),
+                            },
+                        },
+                    ],
+                }
+            }]
+        }
+        step2_response = {
+            "choices": [{
+                "message": {
+                    "role": "assistant",
+                    "content": "Confirmed HDFC credential harvesting phishing attempt.",
+                    "tool_calls": None,
+                }
+            }]
+        }
+        mock_chat.side_effect = [step1_response, step2_response]
+
+        client = OpenAICompatibleClient(api_key="mock_key", provider="groq")
+        result = client.run_agent_loop(
+            initial_prompt="Investigate hdfc-pan-update.online/auth/login",
+            system_prompt="Orchestrator",
+            dispatcher=ToolDispatcher(use_mock=True),
+            max_turns=2,
+            parallel_tools=True,
+        )
+
+        self.assertEqual(len(result["tool_history"]), 2)
+        self.assertEqual([h["tool"] for h in result["tool_history"]], [
+            "analyze_url_structure",
+            "verify_brand_official_domain",
+        ])
+        self.assertIn("execution_time_ms", result["tool_history"][0])
+        self.assertGreaterEqual(len(result["evidence_items"]), 3)
+        self.assertEqual(result["turns"], 2)
+        # Turn 2 synthesis call must omit tools to guarantee final report generation
+        second_call_kwargs = mock_chat.call_args_list[1].kwargs
+        self.assertIsNone(second_call_kwargs["tools"])
 
 
 if __name__ == "__main__":

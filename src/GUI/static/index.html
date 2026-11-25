@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScamLens-AI — Multimodal Scam Investigation Workbench</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo" aria-hidden="true">SL</div>
+      <div>
+        <h1>ScamLens-AI</h1>
+        <p class="subtitle">Multimodal Evidence-Based Scam Investigation &amp; Email Forensics</p>
+      </div>
+    </div>
+
+    <div class="status-pills" id="systemPills">
+      <span class="pill pill-muted" id="pillProvider">AI: loading...</span>
+      <span class="pill pill-muted" id="pillIntel">Intel: loading...</span>
+      <span class="pill pill-muted" id="pillPrivacy">PII Guard: loading...</span>
+      <span class="pill pill-muted" id="pillGmail">Gmail: checking...</span>
+    </div>
+  </header>
+
+  <nav class="nav-bar">
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="investigator" role="tab">Multimodal Investigator</button>
+      <button class="tab-btn" data-tab="email" role="tab">Email &amp; Gmail Forensics</button>
+      <button class="tab-btn" data-tab="registry" role="tab">Trusted Registry &amp; Samples</button>
+    </div>
+
+    <div class="global-controls">
+      <label class="control-inline" for="strategySelect">
+        <span>Strategy:</span>
+        <select id="strategySelect">
+          <option value="linear">Linear (Deterministic Fast)</option>
+          <option value="orchestrator">Orchestrator (Phase 1 AI Tools)</option>
+        </select>
+      </label>
+      <button class="tab-btn tab-btn-tech" data-tab="architecture" role="tab" title="Inspect Orchestrator, 9 Tools &amp; Architecture">
+        Technical Details
+      </button>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- TAB 1: MULTIMODAL INVESTIGATOR -->
+    <section id="tab-investigator" class="tab-panel active">
+      <div class="workspace-grid">
+        <div class="card input-card">
+          <div class="card-header">
+            <div>
+              <h2>Submit Suspicious Evidence</h2>
+              <p class="hint">Combine message text, links, QR/UPI payloads, and screenshots in one investigation.</p>
+            </div>
+            <div class="preset-box">
+              <select id="samplePresetSelect" aria-label="Load sample case">
+                <option value="">Load Sample Case...</option>
+              </select>
+            </div>
+          </div>
+
+          <form id="investigateForm" class="stack-form">
+            <div class="field">
+              <label for="inputText">Message / SMS / WhatsApp / Offer Text</label>
+              <textarea id="inputText" rows="5" placeholder="Paste suspicious message text here... (OTPs, cards, passwords & phone numbers are automatically sanitized by Privacy Guard)"></textarea>
+              <div class="field-meta"><span id="charCount">0</span> / 10,000 chars</div>
+            </div>
+
+            <div class="field">
+              <label for="inputUrls">Suspicious URLs (one per line or comma-separated)</label>
+              <textarea id="inputUrls" rows="2" placeholder="http://sbi-verification-portal.xyz&#10;https://bit.ly/..."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="inputQr">QR / UPI Payload String</label>
+              <input id="inputQr" type="text" placeholder="upi://pay?pa=scammer@upi&pn=Cashback&am=4999" />
+              <div id="qrLivePreview" class="qr-preview hidden"></div>
+            </div>
+
+            <div class="field">
+              <label for="inputImages">Screenshots / Images (Vision Analysis)</label>
+              <div class="dropzone" id="imageDropzone">
+                <input id="inputImages" type="file" accept="image/*" multiple hidden />
+                <p>Drop screenshot(s) here or <button type="button" class="link-btn" id="browseImagesBtn">browse files</button></p>
+                <span class="hint">Supports PNG, JPG, WEBP up to 10 MB</span>
+              </div>
+              <div id="imagePreviewList" class="image-previews"></div>
+            </div>
+
+            <div class="field">
+              <label for="inputContext">Additional Context (Optional)</label>
+              <input id="inputContext" type="text" placeholder="e.g., Received via WhatsApp from unknown number claiming to be HDFC KYC" />
+            </div>
+
+            <div class="field">
+              <label>Incident Stage</label>
+              <div class="stage-toggle">
+                <label class="radio-card">
+                  <input type="radio" name="incidentStage" value="PRE_ACTION" checked />
+                  <div>
+                    <strong>Pre-Action (Checking First)</strong>
+                    <span>Have not clicked, paid, or shared OTP/PIN</span>
+                  </div>
+                </label>
+                <label class="radio-card radio-danger">
+                  <input type="radio" name="incidentStage" value="POST_ACTION" />
+                  <div>
+                    <strong>Post-Action (Already Interacted)</strong>
+                    <span>Clicked link, shared credentials, or sent money</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="runInvestigateBtn">
+                Investigate Evidence (Live)
+              </button>
+              <button type="button" class="btn btn-secondary" id="clearInvestigateBtn">Clear</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="results-column" id="multimodalResultsSlot"></div>
+      </div>
+    </section>
+
+    <!-- TAB 2: EMAIL & GMAIL FORENSICS -->
+    <section id="tab-email" class="tab-panel">
+      <div class="workspace-grid">
+        <div class="card email-card">
+          <div class="card-header">
+            <div>
+              <h2>Email &amp; Gmail Forensics</h2>
+              <p class="hint">Read from Local Dataset, Live Gmail REST API, or raw .eml MIME messages with live status updates.</p>
+            </div>
+          </div>
+
+          <div class="subtabs" role="tablist">
+            <button class="subtab-btn active" data-email-source="local">Local Dataset (Offline)</button>
+            <button class="subtab-btn" data-email-source="gmail">Live Gmail Inbox</button>
+            <button class="subtab-btn" data-email-source="raw">Paste / Upload .eml</button>
+          </div>
+
+          <!-- LOCAL DATASET CONTROLS -->
+          <div id="emailSourceLocal" class="email-source-panel active">
+            <div class="toolbar">
+              <button type="button" class="btn btn-secondary" id="loadLocalEmailsBtn">Load Local Emails</button>
+              <button type="button" class="btn btn-primary" id="scanLocalInboxBtn">Batch Scan Top 5 (Live)</button>
+              <span class="hint" id="localDatasetInfo">data/raw_emails / JSON</span>
+            </div>
+          </div>
+
+          <!-- LIVE GMAIL CONTROLS -->
+          <div id="emailSourceGmail" class="email-source-panel">
+            <div id="gmailAuthBanner" class="info-banner">Checking Gmail OAuth status...</div>
+            <div class="toolbar">
+              <input id="gmailQueryInput" type="text" value="is:unread" placeholder="Gmail query (e.g. is:unread, label:SPAM)" />
+              <input id="gmailMaxInput" type="number" min="1" max="25" value="5" style="width: 72px" title="Max messages" />
+              <button type="button" class="btn btn-secondary" id="fetchGmailBtn">Fetch Inbox</button>
+              <button type="button" class="btn btn-primary" id="scanGmailInboxBtn">Live Scan Inbox</button>
+            </div>
+          </div>
+
+          <!-- RAW EML CONTROLS -->
+          <div id="emailSourceRaw" class="email-source-panel">
+            <div class="field">
+              <div class="toolbar" style="margin-bottom: 8px;">
+                <label for="rawEmlInput" style="margin:0;">Raw RFC 5322 / MIME Content</label>
+                <label class="btn btn-secondary btn-sm" style="cursor:pointer;">
+                  Upload .eml file
+                  <input id="rawEmlFileInput" type="file" accept=".eml,.txt,.msg" hidden />
+                </label>
+              </div>
+              <textarea id="rawEmlInput" rows="8" placeholder="From: HDFC Bank &lt;alert@hdfc-pan-update.online&gt;&#10;Reply-To: attacker@dropmail.com&#10;Authentication-Results: spf=fail; dkim=fail; dmarc=fail&#10;Subject: Urgent PAN KYC Update&#10;&#10;Dear customer, update at http://hdfc-pan-update.online/login immediately."></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" id="investigateRawEmlBtn">Parse &amp; Investigate .eml (Live)</button>
+            </div>
+          </div>
+
+          <!-- INBOX MESSAGE LIST -->
+          <div id="emailListContainer" class="email-list-container">
+            <div class="email-list-header">
+              <strong id="emailListTitle">Inbox Messages</strong>
+              <span class="hint" id="emailListCount">0 loaded</span>
+            </div>
+            <div id="emailList" class="email-list">
+              <p class="empty-state">Click "Load Local Emails" or "Fetch Inbox" to list messages.</p>
+            </div>
+          </div>
+
+          <!-- PARSED EMAIL INSPECTOR -->
+          <div id="parsedEmailInspector" class="parsed-email-box hidden">
+            <div class="parsed-email-top">
+              <div>
+                <span class="badge badge-info">PARSED EMAIL</span>
+                <h3 id="parsedSubject">Subject</h3>
+              </div>
+              <div class="email-inspect-actions">
+                <label class="inline-check">
+                  <input type="checkbox" id="emailPostActionCheck" />
+                  <span>Post-Action</span>
+                </label>
+                <button type="button" class="btn btn-primary btn-sm" id="investigateSelectedEmailBtn">
+                  Investigate This Email (Live)
+                </button>
+              </div>
+            </div>
+
+            <div class="email-headers-grid" id="parsedHeadersGrid"></div>
+            <div class="auth-badges" id="parsedAuthBadges"></div>
+            <div id="parsedAttachmentsBox" class="parsed-subbox hidden"></div>
+            <div id="parsedUrlsBox" class="parsed-subbox hidden"></div>
+            <div class="parsed-body-wrap">
+              <strong>Body Preview</strong>
+              <pre id="parsedBodyPreview" class="email-body-pre"></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-column" id="emailResultsSlot"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: TRUSTED REGISTRY & SAMPLES -->
+    <section id="tab-registry" class="tab-panel">
+      <div class="registry-grid">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Verified Indian Banks &amp; Government Services</h2>
+              <p class="hint">Authoritative reference data from <code>RegionalKnowledgeBase</code> (<code>trusted_domains.json</code>).</p>
+            </div>
+          </div>
+          <div id="registryBanksContainer">Loading registry...</div>
+          <h3 style="margin-top: 20px;">Government &amp; Emergency Services</h3>
+          <div id="registryGovContainer"></div>
+          <h3 style="margin-top: 20px;">UPI Legitimacy Rules</h3>
+          <ul id="registryUpiRules" class="rules-list"></ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>Evaluation Benchmark Scenarios</h2>
+              <p class="hint">Scenarios from <code>benchmark/datasets/sample_cases.json</code>. Click any case to test it live.</p>
+            </div>
+          </div>
+          <div id="benchmarkCasesContainer">Loading sample cases...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: TECHNICAL ARCHITECTURE & ORCHESTRATOR / TOOLS INSPECTOR -->
+    <section id="tab-architecture" class="tab-panel">
+      <div class="card tech-overview-card">
+        <div class="card-header">
+          <div>
+            <h2>System Architecture &amp; Agentic Orchestration</h2>
+            <p class="hint">Click any component or diagram node below to inspect its internals, or explore the 9 forensic tools.</p>
+          </div>
+          <div class="tech-runtime-badges" id="techRuntimeBadges"></div>
+        </div>
+
+        <div id="archComponentFlow" class="arch-flow"></div>
+
+        <!-- INTERACTIVE AGENTIC AI ARCHITECTURE DIAGRAM -->
+        <div class="agentic-diagram-wrap">
+          <div class="diagram-header">
+            <h3>Agentic AI Architecture Diagram (Phase 1: 2-Turn Parallel Fan-Out / Fan-In + Deterministic Guardrail)</h3>
+            <span class="hint">Click any block in the diagram to jump to its details</span>
+          </div>
+          <svg class="agentic-svg" viewBox="0 0 1120 420" role="img" aria-label="ScamLens-AI Agentic AI Architecture Diagram">
+            <defs>
+              <marker id="arrowBlue" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L9,3 z" fill="#38bdf8" />
+              </marker>
+              <marker id="arrowGreen" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L9,3 z" fill="#22c55e" />
+              </marker>
+              <marker id="arrowAmber" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b" />
+              </marker>
+            </defs>
+
+            <!-- Outer Phase 1 Frame -->
+            <rect x="200" y="14" width="665" height="318" rx="14" fill="rgba(56,189,248,0.04)" stroke="#2a3954" stroke-dasharray="6 4" />
+            <text x="216" y="36" fill="#7dd3fc" font-size="12" font-weight="700">PHASE 1 AGENTIC ORCHESTRATOR (OpenAICompatibleClient.run_agent_loop, max_turns=2)</text>
+
+            <!-- Step 1: Input & Privacy Guard -->
+            <g class="svg-node" data-diag-comp="privacy">
+              <rect x="16" y="72" width="155" height="92" rx="10" fill="#121a28" stroke="#38bdf8" stroke-width="1.5" />
+              <text x="93" y="96" text-anchor="middle" fill="#7dd3fc" font-size="11" font-weight="700">1. PRE-CHECKS</text>
+              <text x="93" y="116" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="700">Privacy Guard</text>
+              <text x="93" y="134" text-anchor="middle" fill="#93a4bf" font-size="10">Contact check + PII</text>
+              <text x="93" y="148" text-anchor="middle" fill="#93a4bf" font-size="10">redaction &amp; URL extract</text>
+            </g>
+
+            <!-- Step 2: Multimodal Extractors -->
+            <g class="svg-node" data-diag-comp="extractors">
+              <rect x="16" y="196" width="155" height="82" rx="10" fill="#121a28" stroke="#2a3954" stroke-width="1.5" />
+              <text x="93" y="219" text-anchor="middle" fill="#93a4bf" font-size="10" font-weight="700">EMAIL / VISION / QR</text>
+              <text x="93" y="238" text-anchor="middle" fill="#e6edf7" font-size="12" font-weight="700">Extractors</text>
+              <text x="93" y="256" text-anchor="middle" fill="#93a4bf" font-size="10">SPF/DKIM/DMARC, OCR</text>
+            </g>
+
+            <!-- Arrow Pre-checks -> Turn 1 -->
+            <line x1="171" y1="118" x2="214" y2="118" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowBlue)" />
+            <path d="M93,196 L93,168" stroke="#38bdf8" stroke-width="1.4" marker-end="url(#arrowBlue)" />
+
+            <!-- Turn 1: LLM Planner -->
+            <g class="svg-node" data-diag-comp="orchestrator">
+              <rect x="220" y="64" width="175" height="108" rx="10" fill="#162540" stroke="#38bdf8" stroke-width="2" />
+              <text x="307" y="88" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="700">TURN 1: FAN-OUT</text>
+              <text x="307" y="108" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="700">LLM Tool Planner</text>
+              <text x="307" y="128" text-anchor="middle" fill="#cbd5e1" font-size="10">Sanitized briefing +</text>
+              <text x="307" y="143" text-anchor="middle" fill="#cbd5e1" font-size="10">up to 12 distinct-host URLs</text>
+              <text x="307" y="159" text-anchor="middle" fill="#7dd3fc" font-size="10">Emits parallel tool_calls</text>
+            </g>
+
+            <!-- Parallel ThreadPoolExecutor Box -->
+            <g class="svg-node" data-diag-comp="tools">
+              <rect x="435" y="54" width="225" height="205" rx="10" fill="#121a28" stroke="#22c55e" stroke-width="1.6" />
+              <text x="547" y="76" text-anchor="middle" fill="#86efac" font-size="11" font-weight="700">PARALLEL TOOL DISPATCH</text>
+              <text x="547" y="92" text-anchor="middle" fill="#93a4bf" font-size="10">ThreadPoolExecutor (max 8 workers)</text>
+
+              <rect x="448" y="104" width="199" height="28" rx="6" fill="#1d293f" stroke="#2a3954" class="svg-tool-chip" data-diag-tool="analyze_url_structure" />
+              <text x="547" y="122" text-anchor="middle" fill="#e6edf7" font-size="10" font-family="monospace">URL + Auth + Contact Tools</text>
+
+              <rect x="448" y="138" width="199" height="28" rx="6" fill="#1d293f" stroke="#2a3954" class="svg-tool-chip" data-diag-tool="inspect_domain_whois_age" />
+              <text x="547" y="156" text-anchor="middle" fill="#e6edf7" font-size="10" font-family="monospace">RDAP Age + VirusTotal v3</text>
+
+              <rect x="448" y="172" width="199" height="28" rx="6" fill="#1d293f" stroke="#2a3954" class="svg-tool-chip" data-diag-tool="verify_brand_official_domain" />
+              <text x="547" y="190" text-anchor="middle" fill="#e6edf7" font-size="10" font-family="monospace">Brand RAG + QR/UPI + Text</text>
+
+              <rect x="448" y="208" width="199" height="38" rx="6" fill="rgba(34,197,94,0.12)" stroke="rgba(34,197,94,0.45)" />
+              <text x="547" y="224" text-anchor="middle" fill="#86efac" font-size="10" font-weight="700">Dual Output per Tool</text>
+              <text x="547" y="238" text-anchor="middle" fill="#cbd5e1" font-size="9.5">JSON ToolMessage + EvidenceItem[]</text>
+            </g>
+
+            <!-- Arrow Turn 1 -> Parallel Pool -->
+            <line x1="395" y1="118" x2="429" y2="118" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowBlue)" />
+
+            <!-- Turn 2: Forced Synthesis -->
+            <g class="svg-node" data-diag-comp="orchestrator">
+              <rect x="692" y="64" width="158" height="108" rx="10" fill="#162540" stroke="#38bdf8" stroke-width="2" />
+              <text x="771" y="88" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="700">TURN 2: FAN-IN</text>
+              <text x="771" y="108" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="700">LLM Synthesis</text>
+              <text x="771" y="128" text-anchor="middle" fill="#cbd5e1" font-size="10">tools=None forces</text>
+              <text x="771" y="143" text-anchor="middle" fill="#cbd5e1" font-size="10">correlated narrative</text>
+              <text x="771" y="159" text-anchor="middle" fill="#7dd3fc" font-size="10">(No score guessing)</text>
+            </g>
+
+            <!-- Arrow Parallel Pool -> Turn 2 -->
+            <line x1="660" y1="118" x2="686" y2="118" stroke="#38bdf8" stroke-width="1.8" marker-end="url(#arrowBlue)" />
+
+            <!-- Fallback Box inside/bottom of Phase 1 -->
+            <g class="svg-node" data-diag-comp="orchestrator">
+              <rect x="220" y="268" width="440" height="50" rx="8" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.3" />
+              <text x="440" y="289" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="700">RESILIENT LINEAR FALLBACK</text>
+              <text x="440" y="306" text-anchor="middle" fill="#fde68a" font-size="10">On ModelInferenceError or offline mock -&gt; runs deterministic _investigate_linear()</text>
+            </g>
+            <path d="M307,172 L307,262" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrowAmber)" />
+
+            <!-- Deterministic Scorer & Recommender -->
+            <g class="svg-node" data-diag-comp="scorer">
+              <rect x="896" y="64" width="206" height="156" rx="10" fill="#121a28" stroke="#22c55e" stroke-width="1.8" />
+              <text x="999" y="88" text-anchor="middle" fill="#86efac" font-size="11" font-weight="700">DETERMINISTIC GUARDRAIL</text>
+              <text x="999" y="109" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="700">Scorer &amp; Verdict</text>
+              <text x="999" y="130" text-anchor="middle" fill="#cbd5e1" font-size="10">Deduplicate EvidenceItems</text>
+              <text x="999" y="146" text-anchor="middle" fill="#cbd5e1" font-size="10">scorer.py (0-100 calibrated)</text>
+              <text x="999" y="162" text-anchor="middle" fill="#cbd5e1" font-size="10">recommend.py (PRE/POST)</text>
+              <text x="999" y="184" text-anchor="middle" fill="#86efac" font-size="10" font-weight="700">Final InvestigationResult</text>
+              <text x="999" y="200" text-anchor="middle" fill="#93a4bf" font-size="9.5">+ SSE Live Status Stream</text>
+            </g>
+
+            <!-- Arrows to Deterministic Scorer -->
+            <line x1="850" y1="118" x2="890" y2="118" stroke="#22c55e" stroke-width="1.8" marker-end="url(#arrowGreen)" />
+            <path d="M660,228 L890,175" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrowGreen)" />
+            <path d="M660,293 L999,293 L999,226" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrowAmber)" />
+
+            <!-- Bottom Threat Intel & SSE Bar -->
+            <g class="svg-node" data-diag-comp="intel_rag">
+              <rect x="200" y="348" width="430" height="56" rx="10" fill="#121a28" stroke="#2a3954" stroke-width="1.4" />
+              <text x="415" y="371" text-anchor="middle" fill="#7dd3fc" font-size="11" font-weight="700">EXTERNAL INTEL &amp; RAG SOURCES</text>
+              <text x="415" y="389" text-anchor="middle" fill="#93a4bf" font-size="10">ICANN RDAP (apex) &bull; VirusTotal v3 &bull; trusted_domains.json &bull; Helpline 1930</text>
+            </g>
+            <g class="svg-node" data-diag-comp="gui_sse">
+              <rect x="650" y="348" width="452" height="56" rx="10" fill="#121a28" stroke="#2a3954" stroke-width="1.4" />
+              <text x="876" y="371" text-anchor="middle" fill="#7dd3fc" font-size="11" font-weight="700">LIVE OBSERVABILITY &amp; OUTPUT</text>
+              <text x="876" y="389" text-anchor="middle" fill="#93a4bf" font-size="10">SSE Status Events (orchestrator_turn, tool_done, scoring, completed) &bull; Provenance</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="tech-grid">
+        <div class="card tech-detail-card">
+          <div id="archComponentDetail">
+            <p class="empty-state">Select a component above to inspect its technical details.</p>
+          </div>
+        </div>
+
+        <div class="card tech-tools-card">
+          <div class="card-header">
+            <div>
+              <h2>9-Tool Forensic Arsenal (<code>SCAMLENS_TOOLS</code>)</h2>
+              <p class="hint">Click any tool to inspect its OpenAI JSON schema, underlying Python extractor/API, guidelines, and few-shot calibration.</p>
+            </div>
+          </div>
+          <div id="archToolPills" class="tool-selector-grid"></div>
+          <div id="archToolDetail" class="tool-detail-box"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- SHARED LIVE PIPELINE + REPORT TEMPLATE (moved dynamically into active results slot) -->
+  <template id="resultsWorkspaceTemplate">
+    <div class="results-stack">
+      <!-- LIVE STATUS PIPELINE -->
+      <div class="card live-feed-card">
+        <div class="card-header">
+          <div class="live-title-row">
+            <span class="pulse-dot idle" id="livePulseDot"></span>
+            <div>
+              <h2>Live Investigation Status</h2>
+              <p class="hint" id="liveStageSubtitle">Waiting for investigation...</p>
+            </div>
+          </div>
+          <span class="pill pill-muted" id="liveTimerPill">0.0s</span>
+        </div>
+
+        <!-- Live parsed email snapshot shown right inside the stream when reading/parsing an email -->
+        <div id="liveEmailSnapshot" class="live-email-snapshot hidden"></div>
+
+        <ol id="liveStatusFeed" class="live-feed">
+          <li class="feed-empty">Submit content or select an email to watch live forensic stages (reading email &rarr; parsing headers &rarr; analyzing URLs &rarr; scoring &rarr; final verdict).</li>
+        </ol>
+      </div>
+
+      <!-- FINAL INVESTIGATION REPORT -->
+      <div id="reportContainer" class="card report-card hidden">
+        <div id="postActionAlert" class="emergency-banner hidden">
+          <strong>URGENT POST-HARM ACTION REQUIRED:</strong> Immediately contact your bank or call National Cybercrime Helpline <strong>1930</strong> and file at <a href="https://cybercrime.gov.in" target="_blank" rel="noopener">cybercrime.gov.in</a>.
+        </div>
+
+        <div class="verdict-header">
+          <div class="verdict-main">
+            <span class="verdict-badge" id="verdictBadge">Verdict</span>
+            <p class="report-summary" id="reportSummary"></p>
+          </div>
+          <div class="score-widgets">
+            <div class="score-box">
+              <span class="score-label">Risk Score</span>
+              <div class="score-value"><span id="riskScoreValue">0</span><small>/100</small></div>
+              <div class="score-bar-track"><div class="score-bar-fill" id="riskScoreBar"></div></div>
+            </div>
+            <div class="score-box">
+              <span class="score-label">Confidence</span>
+              <div class="score-value"><span id="confidenceValue">0</span><small>%</small></div>
+              <div class="score-bar-track"><div class="score-bar-fill conf-fill" id="confidenceBar"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <h3>Recommended Next Steps</h3>
+          <ul id="recommendationsList" class="actions-list"></ul>
+        </div>
+
+        <div class="report-section">
+          <div class="section-row">
+            <h3>Evidence Findings (<span id="evidenceCount">0</span>)</h3>
+            <div class="filter-pills" id="evidenceFilters"></div>
+          </div>
+          <div id="evidenceList" class="evidence-grid"></div>
+        </div>
+
+        <div class="report-section" id="uncertaintiesSection">
+          <h3>Uncertainties &amp; Limitations</h3>
+          <ul id="uncertaintiesList" class="uncertainties-list"></ul>
+        </div>
+
+        <div class="report-section" id="provenanceSection">
+          <h3>Investigation Provenance &amp; Tool Trace</h3>
+          <div id="provenanceList" class="provenance-list"></div>
+        </div>
+
+        <p class="disclaimer-box" id="disclaimerText"></p>
+      </div>
+    </div>
+  </template>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

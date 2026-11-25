@@ -12,17 +12,23 @@ from urllib.parse import urlparse
 from scamlens.core.models import EvidenceCategory, EvidenceItem, SeverityLevel
 
 _URL_REGEX = re.compile(
-    r"https?://(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?::\d+)?(?:/[^\s]*)?",
+    r"https?://(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?::\d+)?(?:/[^\s<>\"'\)\]]*)?",
     re.IGNORECASE,
 )
 
 _SUSPICIOUS_TLDS = {
-    "xyz", "top", "work", "loan", "click", "vip", "cfd", "gq", "ml", "tk", "ga"
+    "xyz", "top", "work", "loan", "click", "vip", "cfd", "gq", "ml", "tk", "ga",
+    "online", "site", "live", "store", "cc", "club", "buzz", "rest", "icu"
 }
 
 _IMPERSONATION_TARGETS = [
     "sbi", "hdfc", "icici", "pnb", "axis", "kotak", "paytm", "phonepe",
     "gpay", "amazon", "flipkart", "indiapost", "incometax", "uidai", "aadhaar"
+]
+
+_CREDENTIAL_PATH_KEYWORDS = [
+    "login", "signin", "auth", "verify", "update", "kyc", "netbanking",
+    "banking", "portal", "secure", "credential", "pan", "aadhaar"
 ]
 
 
@@ -31,7 +37,8 @@ def extract_urls(text: str) -> List[str]:
     if not text:
         return []
     matches = _URL_REGEX.findall(text)
-    return list(dict.fromkeys(matches))
+    cleaned = [m.rstrip(">).,;\"'") for m in matches]
+    return list(dict.fromkeys(u for u in cleaned if u))
 
 
 def analyze_url(url: str) -> List[EvidenceItem]:
@@ -106,6 +113,28 @@ def analyze_url(url: str) -> List[EvidenceItem]:
                 summary="Unencrypted HTTP protocol",
                 details="URL does not use secure HTTPS encryption.",
                 source="url_parser",
+            )
+        )
+
+    # 5. Credential harvesting path on untrusted / impersonating domain
+    path_lower = (parsed.path or "").lower()
+    matched_path_keywords = [k for k in _CREDENTIAL_PATH_KEYWORDS if k in path_lower]
+    has_domain_risk = bool(
+        tld in _SUSPICIOUS_TLDS
+        or any(b in hostname for b in _IMPERSONATION_TARGETS)
+        or re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", hostname)
+    )
+    if matched_path_keywords and has_domain_risk:
+        findings.append(
+            EvidenceItem(
+                category=EvidenceCategory.URL_DOMAIN,
+                severity=SeverityLevel.HIGH,
+                summary="Credential harvesting risk",
+                details=(
+                    f"URL path '{parsed.path}' contains sensitive authentication keywords "
+                    f"({', '.join(matched_path_keywords)}) on an untrusted or suspicious domain."
+                ),
+                source="url_path_heuristic",
             )
         )
 
