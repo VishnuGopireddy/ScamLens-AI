@@ -12,6 +12,7 @@ from scamlens.ai.prompts import (
     PromptTemplate,
     list_available_prompts,
     load_prompt,
+    load_tool_prompts,
 )
 
 
@@ -64,6 +65,31 @@ class TestPromptCatalog(unittest.TestCase):
     def test_prompt_not_found(self):
         with self.assertRaises(FileNotFoundError):
             load_prompt("non_existent_prompt_v99")
+
+    def test_load_tool_prompts_catalog(self):
+        catalog = load_tool_prompts()
+        self.assertIn("tools", catalog)
+        self.assertIn("orchestrator", catalog)
+        expected_tools = [
+            "analyze_url_structure",
+            "verify_brand_official_domain",
+            "decode_qr_payment",
+            "check_threat_intelligence",
+            "extract_text_indicators",
+        ]
+        for t in expected_tools:
+            self.assertIn(t, catalog["tools"])
+
+    def test_load_single_tool_prompt(self):
+        prompt_info = load_tool_prompts("analyze_url_structure")
+        self.assertEqual(prompt_info["name"], "analyze_url_structure")
+        self.assertIn("system_prompt", prompt_info)
+        self.assertIn("user_template", prompt_info)
+        self.assertIn("few_shot_examples", prompt_info)
+
+    def test_load_tool_prompt_unknown_raises(self):
+        with self.assertRaises(KeyError):
+            load_tool_prompts("unknown_tool_xyz")
 
 
 if __name__ == "__main__":

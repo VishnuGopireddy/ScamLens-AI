@@ -11,13 +11,16 @@ Provides a unified tool calling interface:
 from __future__ import annotations
 
 import base64
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import mimetypes
 import os
+import re
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from scamlens.ai.base import BaseLLMClient
 from scamlens.ai.tools import SCAMLENS_TOOLS, ToolDispatcher
@@ -32,6 +35,59 @@ DEFAULT_PRESET_ENDPOINTS = {
     "gemini": "https://generativelanguage.googleapis.com/v1beta/openai",
     "custom": "",
 }
+
+
+_XML_TOOL_CALL_RE = re.compile(
+    r"<tool_call>\s*(\{.*?\})\s*(?:</tool_call>|$)",
+    re.DOTALL | re.IGNORECASE,
+)
+_THINK_BLOCK_RE = re.compile(
+    r"<think>.*?</think>",
+    re.DOTALL | re.IGNORECASE,
+)
+
+
+def _extract_xml_tool_calls(
+    content: str, turn: int
+) -> Tuple[List[Dict[str, Any]], str]:
+    """Extract Qwen/vLLM-style <tool_call>{...}</tool_call> blocks into OpenAI tool_calls."""
+    if not content or "<tool_call>" not in content.lower():
+        return [], content
+
+    parsed_calls: List[Dict[str, Any]] = []
+    for idx, match in enumerate(_XML_TOOL_CALL_RE.finditer(content)):
+        raw_json = match.group(1).strip()
+        try:
+            obj = json.loads(raw_json)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(obj, dict) or not obj.get("name"):
+            continue
+        args = obj.get("arguments", {})
+        parsed_calls.append(
+            {
+                "id": f"xml_call_{turn}_{idx}",
+                "type": "function",
+                "function": {
+                    "name": str(obj["name"]),
+                    "arguments": json.dumps(args) if isinstance(args, dict) else str(args),
+                },
+            }
+        )
+
+    cleaned = _XML_TOOL_CALL_RE.sub("", content).strip()
+    return parsed_calls, cleaned
+
+
+def _clean_synthesis_text(content: str) -> str:
+    """Strip <think> reasoning and stray <tool_call> XML blocks from final synthesis."""
+    if not content:
+        return ""
+    cleaned = _THINK_BLOCK_RE.sub("", content)
+    cleaned = _XML_TOOL_CALL_RE.sub("", cleaned)
+    # Remove any unclosed trailing <tool_call> fragment
+    cleaned = re.sub(r"<tool_call>.*$", "", cleaned, flags=re.DOTALL | re.IGNORECASE)
+    return cleaned.strip()
 
 
 class OpenAICompatibleClient(BaseLLMClient):
@@ -306,6 +362,46 @@ class OpenAICompatibleClient(BaseLLMClient):
         )
         return response["choices"][0]["message"]["content"]
 
+    def _run_single_tool_call(
+        self,
+        tc: Dict[str, Any],
+        turn: int,
+        tool_dispatcher: ToolDispatcher,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any], List[Any]]:
+        """Execute one OpenAI tool_call dict and return history record, ToolMessage, and evidence."""
+        tc_id = tc.get("id", f"call_{turn}")
+        fn = tc.get("function", {})
+        fn_name = fn.get("name", "")
+        args_str = fn.get("arguments", "{}")
+        try:
+            args = json.loads(args_str) if isinstance(args_str, str) else args_str
+        except Exception:
+            args = {}
+        if not isinstance(args, dict):
+            args = {}
+
+        t0 = time.perf_counter()
+        if hasattr(tool_dispatcher, "execute_tool_with_evidence"):
+            tool_result, evidence = tool_dispatcher.execute_tool_with_evidence(fn_name, args)
+        else:
+            tool_result = tool_dispatcher.execute_tool(fn_name, args)
+            evidence = []
+        elapsed_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+
+        history_entry = {
+            "id": tc_id,
+            "tool": fn_name,
+            "arguments": args,
+            "result": tool_result,
+            "execution_time_ms": elapsed_ms,
+        }
+        tool_message = {
+            "role": "tool",
+            "tool_call_id": tc_id,
+            "content": json.dumps(tool_result),
+        }
+        return history_entry, tool_message, evidence
+
     def run_agent_loop(
         self,
         initial_prompt: str,
@@ -313,74 +409,194 @@ class OpenAICompatibleClient(BaseLLMClient):
         tools: Optional[List[Dict[str, Any]]] = None,
         dispatcher: Optional[ToolDispatcher] = None,
         max_turns: int = 5,
+        parallel_tools: bool = True,
+        on_event: Optional[Any] = None,
     ) -> Dict[str, Any]:
         """Execute an agentic tool calling loop in OpenAI format.
 
         Compatible with Groq, OpenAI, Ollama, vLLM, and Gemini.
         1. Model receives messages and available tools.
-        2. If model generates tool_calls, dispatcher executes them.
+        2. If model generates tool_calls, dispatcher executes them (concurrently when parallel_tools=True).
         3. Tool results are appended with role: 'tool' and sent back to model.
-        4. Loop repeats until model generates final text answer or max_turns is reached.
+        4. Loop repeats until model generates final text answer or max_turns is reached
+           (on the final allowed turn after tools ran, tools are omitted to force synthesis).
         """
         tools_to_use = tools or SCAMLENS_TOOLS
         tool_dispatcher = dispatcher or ToolDispatcher()
+
+        def _emit(stage: str, message: str, **extra: Any) -> None:
+            if callable(on_event):
+                try:
+                    on_event({"stage": stage, "message": message, **extra})
+                except Exception:
+                    pass
 
         messages: List[Dict[str, Any]] = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": initial_prompt},
         ]
         executed_tool_calls: List[Dict[str, Any]] = []
+        collected_evidence: List[Any] = []
 
         for turn in range(max_turns):
+            # Force final text synthesis on the last turn if tools already executed
+            is_forced_synthesis = (turn == max_turns - 1) and bool(executed_tool_calls)
+            call_index = turn + 1
+            active_tools = None if is_forced_synthesis else tools_to_use
+            _emit(
+                "orchestrator_turn",
+                (
+                    f"[LLM CALL #{call_index}] {self.provider}/{self.model} — Turn {call_index}/{max_turns}: synthesizing correlated findings..."
+                    if is_forced_synthesis
+                    else f"[LLM CALL #{call_index}] {self.provider}/{self.model} — Turn {call_index}/{max_turns}: selecting forensic tools..."
+                ),
+                detail=f"msgs={len(messages)}, tools={len(active_tools) if active_tools else 0}",
+                data={
+                    "turn": call_index,
+                    "max_turns": max_turns,
+                    "call_index": call_index,
+                    "forced_synthesis": is_forced_synthesis,
+                    "provider": self.provider,
+                    "model": self.model,
+                    "messages_count": len(messages),
+                    "tools_count": len(active_tools) if active_tools else 0,
+                    "llm_call": True,
+                },
+            )
+            t_llm0 = time.perf_counter()
             response = self.chat_completion(
                 messages=messages,
-                tools=tools_to_use,
+                tools=active_tools,
                 tool_choice="auto",
             )
-            message = response["choices"][0]["message"]
+            llm_latency_ms = round((time.perf_counter() - t_llm0) * 1000.0, 2)
+            choice = response["choices"][0]
+            message = choice["message"]
             tool_calls = message.get("tool_calls")
+            usage = response.get("usage") or {}
+            resp_model = response.get("model") or self.model
+            finish_reason = choice.get("finish_reason")
+            content_str = message.get("content") or ""
+
+            # Support models/endpoints (e.g. Qwen3 without --enable-auto-tool-choice)
+            # that emit <tool_call>{...}</tool_call> XML inside content instead of tool_calls
+            if not tool_calls and active_tools is not None and content_str:
+                xml_calls, cleaned_content = _extract_xml_tool_calls(content_str, turn)
+                if xml_calls:
+                    tool_calls = xml_calls
+                    content_str = cleaned_content
+                    message = {
+                        "role": "assistant",
+                        "content": cleaned_content or None,
+                        "tool_calls": xml_calls,
+                    }
+
+            requested_names = [tc.get("function", {}).get("name", "") for tc in (tool_calls or [])]
+
+            _emit(
+                "llm_call_done",
+                f"[LLM CALL #{call_index}] {self.provider}/{resp_model} responded",
+                detail=(
+                    f"Decision: requested {len(requested_names)} tool(s) -> {', '.join(requested_names)}"
+                    if requested_names
+                    else f"Output: {'simulated mock' if '[Simulated ' in content_str else 'final synthesis'} ({len(content_str)} chars)"
+                ),
+                data={
+                    "call_index": call_index,
+                    "turn": call_index,
+                    "max_turns": max_turns,
+                    "provider": self.provider,
+                    "model": resp_model,
+                    "latency_ms": llm_latency_ms,
+                    "usage": usage,
+                    "finish_reason": finish_reason,
+                    "tool_calls_count": len(requested_names),
+                    "tool_names": requested_names,
+                    "response_chars": len(content_str),
+                    "simulated": "[Simulated " in content_str,
+                    "llm_call": True,
+                },
+            )
 
             # Append assistant message to context
             messages.append(message)
 
             if not tool_calls:
-                # Agent completed investigation without further tools
+                cleaned_final = _clean_synthesis_text(content_str)
+                if not cleaned_final and executed_tool_calls:
+                    tool_list = ", ".join(entry["tool"] for entry in executed_tool_calls)
+                    cleaned_final = (
+                        f"Executed {len(executed_tool_calls)} forensic tool(s) ({tool_list}) "
+                        f"and collected {len(collected_evidence)} evidence indicator(s)."
+                    )
                 return {
-                    "final_response": message.get("content", ""),
+                    "final_response": cleaned_final,
                     "tool_history": executed_tool_calls,
+                    "evidence_items": collected_evidence,
                     "turns": turn + 1,
                 }
 
-            # Execute all requested tools
-            for tc in tool_calls:
-                tc_id = tc.get("id", f"call_{turn}")
-                fn = tc.get("function", {})
-                fn_name = fn.get("name", "")
-                args_str = fn.get("arguments", "{}")
-                try:
-                    args = json.loads(args_str) if isinstance(args_str, str) else args_str
-                except Exception:
-                    args = {}
+            _emit(
+                "orchestrator_tools_dispatched",
+                f"Dispatching {len(tool_calls)} tool(s): {', '.join(requested_names)}",
+                data={"tools": requested_names, "parallel": parallel_tools},
+            )
 
-                # Execute local tool
-                tool_result = tool_dispatcher.execute_tool(fn_name, args)
-                executed_tool_calls.append({
-                    "id": tc_id,
-                    "tool": fn_name,
-                    "arguments": args,
-                    "result": tool_result,
-                })
-
-                # Append tool result to conversation in standard OpenAI tool format
-                messages.append({
-                    "role": "tool",
-                    "tool_call_id": tc_id,
-                    "content": json.dumps(tool_result),
-                })
+            # Execute requested tools (in parallel when multiple calls emitted), emitting completions live
+            if parallel_tools and len(tool_calls) > 1:
+                workers = min(8, len(tool_calls))
+                ordered_results: List[Optional[Tuple[Dict[str, Any], Dict[str, Any], List[Any]]]] = [
+                    None
+                ] * len(tool_calls)
+                with ThreadPoolExecutor(max_workers=workers) as executor:
+                    future_to_idx = {
+                        executor.submit(self._run_single_tool_call, tc, turn, tool_dispatcher): idx
+                        for idx, tc in enumerate(tool_calls)
+                    }
+                    for fut in as_completed(future_to_idx):
+                        idx = future_to_idx[fut]
+                        history_entry, tool_message, evidence = fut.result()
+                        ordered_results[idx] = (history_entry, tool_message, evidence)
+                        _emit(
+                            "orchestrator_tool_done",
+                            f"Tool '{history_entry['tool']}' completed ({history_entry['execution_time_ms']} ms, {len(evidence)} indicator(s))",
+                            data={
+                                "tool": history_entry["tool"],
+                                "arguments": history_entry["arguments"],
+                                "execution_time_ms": history_entry["execution_time_ms"],
+                                "findings_count": len(evidence),
+                                "findings_summary": [f.summary for f in evidence],
+                            },
+                        )
+                batch = [item for item in ordered_results if item is not None]
+                for history_entry, tool_message, evidence in batch:
+                    executed_tool_calls.append(history_entry)
+                    messages.append(tool_message)
+                    collected_evidence.extend(evidence)
+            else:
+                for tc in tool_calls:
+                    history_entry, tool_message, evidence = self._run_single_tool_call(
+                        tc, turn, tool_dispatcher
+                    )
+                    executed_tool_calls.append(history_entry)
+                    messages.append(tool_message)
+                    collected_evidence.extend(evidence)
+                    _emit(
+                        "orchestrator_tool_done",
+                        f"Tool '{history_entry['tool']}' completed ({history_entry['execution_time_ms']} ms, {len(evidence)} indicator(s))",
+                        data={
+                            "tool": history_entry["tool"],
+                            "arguments": history_entry["arguments"],
+                            "execution_time_ms": history_entry["execution_time_ms"],
+                            "findings_count": len(evidence),
+                            "findings_summary": [f.summary for f in evidence],
+                        },
+                    )
 
         return {
-            "final_response": messages[-1].get("content", ""),
+            "final_response": messages[-1].get("content", "") or "",
             "tool_history": executed_tool_calls,
+            "evidence_items": collected_evidence,
             "turns": max_turns,
         }
 

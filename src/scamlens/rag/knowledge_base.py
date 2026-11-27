@@ -34,14 +34,29 @@ class RegionalKnowledgeBase:
             None if brand is not in the registry
         """
         brand_key = brand.lower().strip()
-        banks = self._data.get("banks", {})
-        if brand_key in banks:
-            official_domains = banks[brand_key].get("official_domains", [])
-            domain_clean = domain.lower().strip().split(":")[0]
-            for od in official_domains:
-                if domain_clean == od or domain_clean.endswith("." + od):
-                    return True
-            return False
+        aliases = {
+            "state bank of india": "sbi",
+            "sbi bank": "sbi",
+            "hdfc bank": "hdfc",
+            "icici bank": "icici",
+            "punjab national bank": "pnb",
+            "pnb bank": "pnb",
+            "india post": "indiapost",
+            "income tax": "incometax",
+            "income tax department": "incometax",
+            "aadhaar": "uidai",
+        }
+        brand_key = aliases.get(brand_key, brand_key)
+        domain_clean = domain.lower().strip().split(":")[0]
+
+        for section in ("banks", "government_services"):
+            entries = self._data.get(section, {})
+            if brand_key in entries and "official_domains" in entries[brand_key]:
+                official_domains = entries[brand_key]["official_domains"]
+                for od in official_domains:
+                    if domain_clean == od or domain_clean.endswith("." + od):
+                        return True
+                return False
         return None
 
     def get_national_cybercrime_helpline(self) -> str:

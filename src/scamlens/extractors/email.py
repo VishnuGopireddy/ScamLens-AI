@@ -568,7 +568,7 @@ def extract_email_evidence(msg: EmailMessage) -> List[EvidenceItem]:
     # 5. Display Name Brand Spoofing Check
     sender_name_lower = msg.sender_name.lower()
     for brand, valid_domains in _KNOWN_BRAND_DOMAINS.items():
-        if brand in sender_name_lower:
+        if re.search(rf"\b{re.escape(brand)}\b", sender_name_lower):
             is_valid_domain = any(
                 msg.sender_domain == d or msg.sender_domain.endswith(f".{d}")
                 for d in valid_domains
@@ -741,16 +741,28 @@ class GmailReader:
             self._service = self._auth_manager.build_service()
         return self._service
 
+    def get_profile_email(self, user_id: str = "me") -> Optional[str]:
+        """Return the authenticated Gmail account's email address."""
+        profile = self.service.users().getProfile(userId=user_id).execute()
+        email_addr = profile.get("emailAddress") if isinstance(profile, dict) else None
+        return str(email_addr).strip() if email_addr else None
+
     def list_message_summaries(
-        self, query: str = "is:unread", max_results: int = 10, user_id: str = "me"
+        self,
+        query: str = "is:unread",
+        max_results: int = 10,
+        user_id: str = "me",
+        include_spam_trash: bool = False,
     ) -> List[Dict[str, str]]:
         """List basic message references matching a query."""
-        results = (
-            self.service.users()
-            .messages()
-            .list(userId=user_id, q=query, maxResults=max_results)
-            .execute()
-        )
+        list_kwargs: Dict[str, Any] = {
+            "userId": user_id,
+            "maxResults": max_results,
+            "includeSpamTrash": include_spam_trash,
+        }
+        if query:
+            list_kwargs["q"] = query
+        results = self.service.users().messages().list(**list_kwargs).execute()
         return results.get("messages", [])
 
     def get_message(self, message_id: str, user_id: str = "me") -> EmailMessage:
@@ -764,11 +776,18 @@ class GmailReader:
         return parse_gmail_message(raw)
 
     def fetch_messages(
-        self, query: str = "is:unread", max_results: int = 10, user_id: str = "me"
+        self,
+        query: str = "is:unread",
+        max_results: int = 10,
+        user_id: str = "me",
+        include_spam_trash: bool = False,
     ) -> List[EmailMessage]:
         """Fetch, decode, and parse all messages matching query."""
         summaries = self.list_message_summaries(
-            query=query, max_results=max_results, user_id=user_id
+            query=query,
+            max_results=max_results,
+            user_id=user_id,
+            include_spam_trash=include_spam_trash,
         )
         messages: List[EmailMessage] = []
         for item in summaries:

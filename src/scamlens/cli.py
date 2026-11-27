@@ -22,6 +22,9 @@ def main() -> None:
         description="ScamLens-AI: Multimodal Scam Detection, Investigation and Response"
     )
     parser.add_argument("--version", action="version", version=f"ScamLens-AI {__version__}")
+    parser.add_argument("--gui", action="store_true", help="Launch the interactive Web GUI server")
+    parser.add_argument("--host", default="127.0.0.1", help="GUI bind host (default: 127.0.0.1)")
+    parser.add_argument("--port", type=int, default=8080, help="GUI bind port (default: 8080)")
     parser.add_argument("--text", type=str, help="Suspicious message or claim text")
     parser.add_argument("--url", type=str, help="Suspicious URL or link")
     parser.add_argument("--qr", type=str, help="Decoded QR code payload (e.g. UPI URI or URL)")
@@ -29,6 +32,12 @@ def main() -> None:
     parser.add_argument("--json", action="store_true", help="Output results in JSON format")
 
     args = parser.parse_args()
+
+    if args.gui:
+        from GUI.server import run_gui_server
+
+        run_gui_server(host=args.host, port=args.port)
+        return
 
     if not (args.text or args.url or args.qr):
         parser.print_help()

@@ -12,7 +12,7 @@ from typing import Tuple
 # Regex patterns for sensitive information
 _OTP_PATTERN = re.compile(r"\b(otp|one time password|verification code)[\s:=]+([0-9]{4,8})\b", re.IGNORECASE)
 _CARD_PATTERN = re.compile(r"\b(?:\d[ -]*?){13,16}\b")
-_PHONE_IN_PATTERN = re.compile(r"(?:\+91[\-\s]?)?[6-9]\d{9}\b")
+_PHONE_IN_PATTERN = re.compile(r"(?<!\d)(?:\+91[\-\s]?)?[6-9]\d{9}(?!\d)")
 _PASSWORD_PATTERN = re.compile(r"\b(password|passwd|pin)[\s:=]+([^\s,;]+)", re.IGNORECASE)
 
 

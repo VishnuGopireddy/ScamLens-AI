@@ -336,22 +336,26 @@ ScamLens AI is an open-source, multimodal scam investigation assistant that comb
 ```text
 ScamLens-AI/
 ├── src/
+│   ├── GUI/                  # Zero-dependency Web GUI & SSE live status server (index.html, app.js, styles.css)
 │   ├── scamlens/
-│   │   ├── ai/               # AI clients (custom endpoint, Groq, Ollama), catalog prompts, tool schemas
-│   │   ├── api/              # FastAPI REST endpoints (/investigate, /health)
-│   │   ├── core/             # Configuration, Pydantic/dataclass models, custom exceptions
+│   │   ├── ai/               # AI clients (custom endpoint, Groq, Ollama, vLLM, Gemini), prompts, 9-tool schemas
+│   │   ├── api/              # FastAPI REST endpoints & shared handlers (/investigate, /emails, /architecture, /health)
+│   │   ├── core/             # Configuration, dataclass domain models, custom exceptions
 │   │   ├── extractors/       # Forensic extractors (email, url, text, qr, vision, privacy PII)
-│   │   ├── intelligence/     # Threat intel connectors (VirusTotal, Google Safe Browsing, mock intel)
-│   │   ├── investigator/     # ScamInvestigator engine, multi-evidence scorer, action recommender
+│   │   ├── intelligence/     # Threat intel connectors (ICANN RDAP, VirusTotal v3, mock intel)
+│   │   ├── investigator/     # ScamInvestigator engine (linear & Phase 1 orchestrator), scorer, recommender
 │   │   └── rag/              # Domain knowledge base & Indian trusted entities catalog
 │   └── data_generate_dummy/  # Offline benchmark generation scripts (1.eml ... 20.eml, JSON, MD)
+├── scripts/
+│   ├── run_gui.py            # Launches the interactive Web GUI at http://127.0.0.1:8080
+│   └── scan_gmail.py         # CLI Gmail inbox scanner (--strategy linear|orchestrator)
 ├── data/
 │   ├── raw_emails/           # Local numbered RFC 5322 MIME files (1.eml ... 20.eml - git-ignored)
 │   ├── spam-indian-bank-emails.json  # Full Gmail REST API JSON format (20 benchmark emails)
 │   └── spam-indian-bank-emails.md    # Raw RFC 5322 MIME email blocks
 ├── claude/
-│   └── agentic-ai-plan.md    # v3.0.0 Architecture Blueprint (Cyclic ReAct & Multi-Agent)
-├── tests/                    # 30 passing unit tests (extractors, investigator, models, readers)
+│   └── agentic-ai-plan.md    # v3.0.0 Architecture Blueprint (Phase 1 & Phase 2 Multi-Agent)
+├── tests/                    # 50 passing unit tests (extractors, investigator, orchestrator, GUI/SSE, readers)
 ├── SETUP.md                  # Comprehensive local development and environment setup guide
 ├── pyproject.toml            # Project packaging & dependency groups ([dev], [ai], [gmail], [agentic])
 └── requirements.txt          # Frozen development dependencies
@@ -388,16 +392,52 @@ result = investigator.investigate_email(first_email)
 print(f"Verdict: {result.verdict.value} | Risk Score: {result.risk_score}/100")
 ```
 
-### C. Agentic AI & LangGraph State Machine
+### C. Agentic AI Orchestrator & Roadmap
 
-ScamLens-AI supports next-generation autonomous investigation architectures:
-- **Plan A (Hierarchical Multi-Agent)**: A supervisor agent orchestrates specialized subagents (Email Forensics, URL Intel, Content Triage, Evidence Synthesizer).
-- **Plan B (Cyclic ReAct State Machine)**: A stateful ReAct cycle with iterative tool calling, uncertainty reduction, and maximum iteration termination safeguards.
-- **Plan C (Unified Hybrid Engine)**: Dynamically selects Plan B for fast single email triage and Plan A for complex, multi-evidence incidents.
+- **Implemented — Phase 1 Orchestrator (`strategy="orchestrator"`)**: A bounded 2-turn parallel fan-out / fan-in tool-calling loop across all 9 tools in `SCAMLENS_TOOLS` (`OpenAICompatibleClient.run_agent_loop()` + `ToolDispatcher`), with automatic fallback to the deterministic `linear` pipeline when the LLM is unreachable and deterministic 0–100 scoring via `scorer.py`.
+- **Phase 2 Roadmap (LangGraph Multi-Agent)**: Hierarchical Supervisor + specialized worker agents (Email Forensics, URL Intel, Content Triage, Reputation) with an Evaluator-Reflector loop.
 
-*Full blueprints, state graphs, and tool availability matrices are documented in [claude/agentic-ai-plan.md](claude/agentic-ai-plan.md).*
+```mermaid
+flowchart TD
+    Input([User Submission / Email]) --> PreChecks["1. Common Pre-Checks\nContact Heuristics, PII Redaction (redact_pii),\nURL Extraction, Vision OCR"]
+    PreChecks --> Turn1["2. Phase 1 Turn 1 (Fan-Out)\nLLM selects forensic tools from SCAMLENS_TOOLS"]
 
-### D. Quick Installation & Running Tests
+    Turn1 -->|Parallel Tool Calls| Pool["3. ThreadPoolExecutor (max 8 workers)\nToolDispatcher.execute_tool_with_evidence()"]
+    Turn1 -->|ModelInferenceError / Offline Mock| Fallback["Fallback: _investigate_linear()"]
+
+    subgraph Tools ["9-Tool Forensic Arsenal"]
+        T1["URL Structure & Credential Paths"]
+        T2["ICANN RDAP Age & 404"]
+        T3["VirusTotal v3 Consensus"]
+        T4["Brand Registry RAG + 1930"]
+        T5["Email SPF/DKIM/DMARC & Spoof"]
+        T6["Text Urgency, Contact & QR/UPI"]
+    end
+
+    Pool --> Tools
+    Tools -->|JSON ToolMessages| Turn2["4. Phase 1 Turn 2 (Fan-In)\ntools=None -> Correlated LLM Narrative"]
+    Tools -->|Typed EvidenceItems| Dedupe["5. Deduplicate & Deterministic Guardrail\nscorer.py (0-100) + recommend.py"]
+    Turn2 --> Dedupe
+    Fallback --> Dedupe
+    Dedupe --> Result([InvestigationResult + Provenance + SSE Stream])
+```
+
+*Full blueprints, Phase 2 state graphs, and tool availability matrices are documented in [claude/agentic-ai-plan.md](claude/agentic-ai-plan.md).*
+
+### D. Interactive Web GUI (Live SSE Workbench)
+
+ScamLens-AI includes a zero-dependency Web GUI in `src/GUI/` with Server-Sent Events (SSE) streaming so you can watch every investigation step live (`reading_email` → `email_parsed` → `privacy_guard` → `analyzing_url` → `scoring` → `completed`):
+
+```bash
+# Launch the interactive Web GUI at http://127.0.0.1:8080
+python3 scripts/run_gui.py --port 8080
+# Or via the CLI / module entrypoint:
+PYTHONPATH=src python3 -m GUI --port 8080
+```
+
+Tabs included: **Multimodal Investigator**, **Email & Gmail Forensics** (Local `.eml`/JSON, Live Gmail Inbox, Raw `.eml` paste/upload), **Trusted Registry & Samples**, and **Technical Details** (interactive Orchestrator & 9-Tool inspector).
+
+### E. Quick Installation & Running Tests
 
 ```bash
 # 1. Create and activate virtual environment
@@ -410,8 +450,9 @@ pip install -e ".[dev,ai,gmail,agentic]"
 # 3. Configure environment
 cp .env.example .env
 
-# 4. Run full unit test suite (30 passing tests)
-python3 -m unittest discover tests
+# 4. Run full unit test suite (50 passing tests) and benchmark
+PYTHONPATH=src python3 -m unittest discover tests
+PYTHONPATH=src python3 benchmark/runner.py
 ```
 
-*For complete step-by-step instructions on setting up custom AI endpoints, Groq, Ollama, CLI scanners, and FastAPI service, see [SETUP.md](SETUP.md).*
+*For complete step-by-step instructions on setting up custom AI endpoints, Groq, Ollama, the Web GUI, CLI scanners, and FastAPI service, see [SETUP.md](SETUP.md).*

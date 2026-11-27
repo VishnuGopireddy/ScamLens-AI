@@ -10,27 +10,76 @@
 
 ---
 
-## Executive Overview: Two Agentic Paradigms
+## Executive Overview: Phase 1 vs. Phase 2 Architecture
 
-ScamLens-AI investigates deceptive messages, emails, and financial fraud. Building an autonomous agentic module can be approached through two distinct paradigms:
+ScamLens-AI investigates deceptive messages, emails, and financial fraud. The agentic system evolution is structured into two core phases:
+
+### Phase 1 Architecture: 2-Turn Parallel Tool Orchestrator (Current Baseline)
+*Formalized in `notebooks/step-step-agentic-ai-tools.ipynb` (Section 11, Cell 29).*
+
+- **Mechanism**: A 2-Turn Fan-Out / Fan-In model with a single LLM brain.
+- **Turn 1 (Tool Selection)**: The LLM analyzes the suspicious incident and emits parallel tool calls (`analyze_url_structure`, `inspect_domain_whois_age`, `check_virustotal_reputation`, `extract_text_indicators`).
+- **Parallel Dispatch**: Tools execute concurrently, returning raw JSON results (`ToolMessage`s).
+- **Turn 2 (Synthesis & Correlation)**: The LLM ingests all tool outputs simultaneously, performs cross-signal correlation, and generates the final forensic report.
+- **Characteristics**: Fast, bounded 2-turn execution, zero information siloing, minimal latency.
 
 ```
-┌────────────────────────────────────────────────────────────────────────┐
-│  Plan A: Hierarchical Multi-Agent (Orchestrator-Worker / Fan-Out)      │
-│  • Multiple role-specialized agents (URL, Message, Image, Risk).       │
-│  • Parallel execution across input modalities.                         │
-│  • Best for: High-throughput multimodal triage of incoming uploads.   │
-└────────────────────────────────────────────────────────────────────────┘
-                                    vs
-┌────────────────────────────────────────────────────────────────────────┐
-│  Plan B: Cyclic ReAct Forensic Investigator (Single-Agent + Tools)    │
-│  • One unified investigative brain maintaining a hypothesis ledger.    │
-│  • Iterative step-by-step tool calling (redirects, WHOIS, DNS, RAG).   │
-│  • Best for: Deep multi-hop email/phishing forensic deduction.         │
-└────────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ Phase 1: 2-Turn Parallel Tool Orchestrator                                             │
+│                                                                                        │
+│                      ┌── Tool 1: analyze_url_structure ────────┐                        │
+│                      ├── Tool 2: inspect_domain_whois_age ─────┤                        │
+│ User Incident ──► LLM ├── Tool 3: check_virustotal_reputation ──┼─► ToolMessages ──► LLM│
+│   (Turn 1)    emits  └── Tool 4: extract_text_indicators ──────┘     Raw JSON   (Turn 2)│
+│               calls          (Executes in Parallel!)                                   │
+│                                                                           ▼            │
+│                                                                      Final Report      │
+└────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-This document provides complete, production-grade technical blueprints for **both architectures**, followed by an objective **trade-off comparison**, a **Unified Production Hybrid Architecture** (Plan C), and a **Migration & Coexistence Strategy** with the existing `ScamInvestigator` pipeline.
+---
+
+### Phase 2 Architecture: Multi-Agent Supervisor with Evaluator-Reflector Loop (Next Target)
+
+Phase 2 scales to a specialized **Multi-Agent Orchestrator** paired with an **Evaluator-Optimizer feedback loop**:
+
+```mermaid
+flowchart TD
+    START([START]) --> ParseEmail["Parse Email & Redact PII\n(Extract MIME, headers, URLs, text)"]
+    ParseEmail --> Supervisor["Supervisor / Planner\n(Evaluates incident & plans agent delegation)"]
+
+    subgraph WORKERS ["Specialized Worker Agent Pool (Parallel Fan-Out)"]
+        Supervisor --> EmailAgent["Email Agent\nMIME headers, SPF/DKIM/DMARC,\nReply-To & display name"]
+        Supervisor --> URLAgent["URL Agent\nURL structure, homoglyphs,\nredirect chains"]
+        Supervisor --> ContentAgent["Content Agent\nNLP urgency, psychological coercion,\nbrand impersonation claims"]
+        Supervisor --> RepAgent["Reputation Agent\nVirusTotal v3 intel, RDAP/WHOIS age,\n404 / suspension status"]
+    end
+
+    EmailAgent --> SharedEvidence["Shared Evidence Ledger\n(Accumulates verified EvidenceItems)"]
+    URLAgent --> SharedEvidence
+    ContentAgent --> SharedEvidence
+    RepAgent --> SharedEvidence
+
+    SharedEvidence --> Evaluator["Evaluator\n(Assesses hypothesis coverage & signal sufficiency)"]
+
+    Evaluator --> Decision{"Sufficient Evidence?"}
+    Decision -->|"No (Missing gaps / unverified hops)"| Reinvestigate["Re-investigate\n(Formulates directed queries for missing signals)"]
+    Reinvestigate --> Supervisor
+
+    Decision -->|"Yes (Epistemically confident)"| RiskEngine["Risk Engine\n(Deterministic calibrated scorer.py)"]
+    RiskEngine --> LLMReport["LLM Report\n(Synthesizes findings, uncertainties & recommendations)"]
+    LLMReport --> ENDNode([END])
+```
+
+- **Supervisor / Planner**: Decomposes the parsed email context and delegates forensic investigations to specialized agents.
+- **Specialized Worker Agents**:
+  1. **Email Agent**: Invariants on sender domain, SPF/DKIM/DMARC auth alignment, Reply-To diversion, and attachments.
+  2. **URL Agent**: Lexical inspection, homoglyph detection, URL shortener detection, and redirect tracing.
+  3. **Content Agent**: Semantic text analysis, urgency cues, coercive psychological framing, and brand impersonation claims.
+  4. **Reputation Agent**: Live external telemetry including ICANN RDAP domain registration age and VirusTotal v3 multi-engine consensus.
+- **Shared Evidence Ledger**: Central state accumulator (`Annotated[list[EvidenceItem], operator.add]`).
+- **Evaluator & Re-investigate Loop**: Evaluates accumulated evidence against open threat hypotheses. If evidence is ambiguous or incomplete (e.g. newly discovered redirect domain requires reputation check), it loops back for targeted re-investigation.
+- **Risk Engine & LLM Report**: Calibrated risk scoring is calculated deterministically (`scorer.py`) before final LLM synthesis, ensuring zero hallucinated probability numbers.
 
 ---
 
@@ -453,16 +502,16 @@ The ReAct loop's power comes from mapping **each hypothesis type to a prioritize
 | Hypothesis ID | Generated When | Verification Tool | Maps to `EvidenceCategory` | Tool Status |
 | :--- | :--- | :--- | :--- | :--- |
 | `HYP-MALICIOUS-LINK` | Email contains extracted URLs | `analyze_url_structure` → per URL | `URL_DOMAIN` | ✅ Exists |
-| `HYP-BRAND-SPOOF` | Sender display name contains known brand but domain doesn't match | `verify_brand_official_domain` | `IMPERSONATION` | ✅ Exists |
-| `HYP-THREAT-INTEL` | URLs present but not checked against threat databases | `check_threat_intelligence` | `EXTERNAL_INTEL` | ✅ Exists |
+| `HYP-BRAND-SPOOF` | Sender display name claims brand but URL/host is suspicious | `analyze_url_structure` + `inspect_domain_whois_age` | `IMPERSONATION` / `URL_DOMAIN` | ✅ Exists (Parametric LLM + RDAP 404 detection) |
+| `HYP-THREAT-INTEL` | URLs present but not checked against threat databases | `check_virustotal_reputation` | `EXTERNAL_INTEL` | ✅ Implemented (VirusTotal v3) |
 | `HYP-AUTH-FAIL` | SPF/DKIM/DMARC status is `fail` or `softfail` | _(Already resolved by `extract_email_evidence`)_ | `IMPERSONATION` | ✅ Pre-computed |
 | `HYP-REPLYTO-DIVERT` | Reply-To domain differs from sender domain | _(Already resolved by `extract_email_evidence`)_ | `IMPERSONATION` | ✅ Pre-computed |
 | `HYP-DANGEROUS-ATTACH` | Email has attachments with high-risk extensions | _(Already resolved by `extract_email_evidence`)_ | `EXTERNAL_INTEL` | ✅ Pre-computed |
-| `HYP-DOMAIN-AGE` | URL leads to unknown or suspicious domain | `inspect_domain_whois_age` | `EXTERNAL_INTEL` | 🔧 Phase 2 |
+| `HYP-DOMAIN-AGE` | URL leads to unknown, newly registered, or 404 domain | `inspect_domain_whois_age` | `EXTERNAL_INTEL` | ✅ Implemented (ICANN RDAP RFC 7482 + 404) |
 | `HYP-REDIRECT-CHAIN` | URL is a known shortener (bit.ly, tinyurl, etc.) | `trace_url_redirects` | `URL_DOMAIN` | 🔧 Phase 2 |
 | `HYP-REGIONAL-MODUS` | Text matches known regional scam patterns | `consult_cybercrime_kb` | `EXTERNAL_INTEL` | 🔧 Phase 2 |
 
-> ✅ = Exists in `ToolDispatcher` or `extract_email_evidence` today. 🔧 = To be implemented in Phase 2.
+> ✅ = Exists in `ToolDispatcher` or `ThreatIntelligenceClient` today. 🔧 = To be implemented in Phase 2.
 
 ---
 
@@ -853,14 +902,52 @@ def build_agentic_email_graph() -> StateGraph:
 
 | Tool Identifier (Plan Name) | ToolDispatcher Name | Forensic Capability | Maps to `EvidenceCategory` | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| `verify_brand_domain` | `verify_brand_official_domain` | Exact & Levenshtein matching against verified RAG bank/gov registry | `IMPERSONATION` | ✅ Exists |
-| `analyze_url_structure` | `analyze_url_structure` | Inspect URL for IP hosts, suspicious TLDs, homoglyphs, brand keywords | `URL_DOMAIN` | ✅ Exists |
-| `query_threat_intelligence` | `check_threat_intelligence` | Reputation check against VirusTotal & Google Safe Browsing | `EXTERNAL_INTEL` | ✅ Exists |
-| `decode_qr_payment` | `decode_qr_payment` | Decode and inspect UPI payment QR payloads | `QR_CODE` / `PAYMENT_UPI` | ✅ Exists |
+| `analyze_url_structure` | `analyze_url_structure` | Fast local regex & lexical analysis: inspects URL for IP hosts, suspicious TLDs (.xyz, .top, .online), homoglyphs, brand keywords, and credential harvesting paths (`/auth/login`) | `URL_DOMAIN` | ✅ Updated |
+| `inspect_domain_whois_age` | `inspect_domain_whois_age` | Real ICANN RDAP RFC 7482 query: calculates exact domain age (<30 days = zero-day flag) and catches HTTP 404 (unregistered or suspended domains) | `EXTERNAL_INTEL` | ✅ Implemented |
+| `query_threat_intelligence` | `check_virustotal_reputation` | Multi-engine consensus & threat flags via VirusTotal API v3 (70+ security vendors) | `EXTERNAL_INTEL` | ✅ Implemented |
+| `decode_qr_payment` | `decode_qr_payment` | Parse and inspect UPI payment QR payloads for debit traps (`am=`, `pa=`, reverse-PIN fraud) | `QR_CODE` / `PAYMENT_UPI` | ✅ Exists |
+| `extract_text_indicators` | `extract_text_indicators` | Extract psychological manipulation, urgency cues ("debit freeze at 23:59"), and sensitive credential / KYC requests ("Customer ID", "IPIN") | `TEXT_CLAIM` / `URGENCY` | ✅ Updated |
+| `inspect_email_authentication` | `inspect_email_authentication` | Forensically check SPF/DKIM/DMARC headers, sender domain alignment, and display name impersonation | `IMPERSONATION` | ✅ Implemented |
+| `inspect_contact_details` | `inspect_contact_details` | Verify customer support phone numbers (personal mobile vs toll-free) and compliance email domains | `IMPERSONATION` | ✅ Implemented |
+| `verify_brand_domain` | `verify_brand_official_domain` | Static dictionary lookup of Indian bank domains | `IMPERSONATION` | ⚠️ Decommissioned |
 | `trace_url_redirects` | _(not yet implemented)_ | Follow HTTP 301/302 chains in sandbox to reveal terminal host | `URL_DOMAIN` | 🔧 Phase 2 |
-| `inspect_domain_whois_age` | _(not yet implemented)_ | WHOIS/RDAP lookup; flag domains < 30 days old | `EXTERNAL_INTEL` | 🔧 Phase 2 |
 | `consult_cybercrime_kb` | _(not yet implemented)_ | Semantic search against 1930 FIR patterns, RBI circulars | `EXTERNAL_INTEL` | 🔧 Phase 2 |
 | `inspect_attachment_heuristics` | _(not yet implemented)_ | Magic bytes vs declared MIME type; macro/executable detection | `EXTERNAL_INTEL` | 🔧 Phase 2 |
+
+### Indicator-to-Tool Verification Matrix
+
+| Indicator | Evidence | Forensic Assessment | Verifying Tool |
+| :--- | :--- | :--- | :--- |
+| **Sender domain** | `hdfc-pan-update.online` | Suspicious impersonation / disposable TLD | `inspect_email_authentication` + `inspect_domain_whois_age` |
+| **SPF** | `Fail` | Authentication failure (server not authorized) | `inspect_email_authentication` |
+| **DKIM** | `Fail` | Cryptographic signature failure | `inspect_email_authentication` |
+| **DMARC** | `Fail` | Domain policy alignment rejection | `inspect_email_authentication` |
+| **URL** | `hdfc-pan-update.online/auth/login` | Credential harvesting risk on high-abuse `.online` TLD | `analyze_url_structure` + `check_virustotal_reputation` |
+| **Urgency** | `Debit freeze at 23:59` | Coercive psychological pressure tactic | `extract_text_indicators` |
+| **Sensitive info** | `Customer ID and NetBanking IPIN` | Critical banking credential theft risk | `extract_text_indicators` |
+| **Brand impersonation** | `HDFC Bank` | High-risk institutional brand impersonation | `inspect_email_authentication` + `analyze_url_structure` |
+| **Contact details** | `Fraudulent-looking email and phone` | Personal mobile helpline (`+91 9123456789`) & spoofed compliance email | `inspect_contact_details` |
+
+---
+
+## Tool Execution Paradigms: Orchestrator vs. ReAct Loop
+
+In our reference notebook (`notebooks/step-step-agentic-ai-tools.ipynb`), we implement and formalize two distinct tool-execution paradigms:
+
+### 1. Parallel Tool Orchestrator (Section 11, Cell 29)
+- **Architecture**: 2-Turn Parallel Fan-Out / Fan-In (9-tool arsenal).
+- **Workflow**:
+  1. **Turn 1 (Tool Selection)**: The LLM receives the suspicious incident and tool schemas. It decides in a single inference call which tools are needed and emits parallel tool calls (e.g., `analyze_url_structure`, `inspect_domain_whois_age`, `check_virustotal_reputation`, `check_threat_intelligence`, `verify_brand_official_domain`, `extract_text_indicators`, `inspect_email_authentication`, `inspect_contact_details`).
+  2. **Execution**: The local Dispatcher runs the selected tools concurrently and gathers raw JSON outputs.
+  3. **Turn 2 (Synthesis & Correlation)**: All raw outputs are injected as `ToolMessage`s into the conversation. The LLM performs a single correlation turn where it synthesizes lexical signals, RDAP 404 status, and threat flags into a unified forensic report.
+- **Efficiency**: Exactly **2 LLM calls** total, zero information siloing, and low wall-clock latency.
+
+### 2. Autonomous Cyclic ReAct Agent (Section 12, Cells 31–33)
+- **Architecture**: Stateful dynamic reasoning loop via LangGraph (`StateGraph`).
+- **Workflow**:
+  - `agent_node` → `should_continue` conditional edge → `tools_node` → `agent_node` loop.
+  - The agent invokes tools sequentially or in batches based on intermediate observations (e.g., extracting a URL from text first, then checking its RDAP status, then terminating early if the domain is confirmed 404/fraudulent without burning external API quota).
+- **Efficiency**: Dynamic 1 to $N$ hops, stopping as soon as epistemic certainty is achieved.
 
 ---
 
@@ -967,11 +1054,18 @@ class ScamInvestigator:
 
 ## Implementation Roadmap
 
-- [x] **Phase 1: Architecture Blueprint**: Document Plan A, Plan B, and Hybrid Plan C in `claude/agentic-ai-plan.md`.
-- [ ] **Phase 2: Core Graph Implementation**: Implement `src/scamlens/investigator/agent_workflow.py` with Plan B's ReAct graph. Add `investigate_email_agentic()` to `ScamInvestigator`.
-- [ ] **Phase 2 (Tools)**: Implement `trace_url_redirects`, `inspect_domain_whois_age`, `consult_cybercrime_kb`, and `inspect_attachment_heuristics` in `ToolDispatcher`.
-- [ ] **Phase 3: CLI & API Strategy Switch**: Add `--agent-architecture=[linear|react|hybrid]` to `scripts/scan_gmail.py` and `?strategy=` to FastAPI endpoint.
-- [ ] **Phase 4: Empirical Benchmark**: Benchmark against PhishBench to measure precision, recall, latency, and token cost between linear vs ReAct vs hybrid.
+- [x] **Phase 1: Architecture Blueprint**: Document Phase 1 vs. Phase 2 blueprints in `claude/agentic-ai-plan.md`.
+- [x] **Phase 1: Tool Orchestrator Implementation (2-Turn Parallel Fan-Out / Fan-In)**:
+  - Implement real ICANN RDAP client (`inspect_domain_whois_age`) with zero-day age calculation and clean HTTP 404 handling.
+  - Implement real VirusTotal v3 client (`check_virustotal_reputation`) with multi-engine consensus and campaign tagging.
+  - Consolidate all tool prompts into centralized catalog (`src/scamlens/ai/prompts/catalog/tool_prompts.json`).
+  - Formalize 9-tool 2-Turn Parallel Fan-Out / Fan-In Orchestrator in `notebooks/step-step-agentic-ai-tools.ipynb` (Section 11, Cell 29).
+- [ ] **Phase 2: Evaluator-Reflector Multi-Agent Workflow Service**:
+  - Implement `src/scamlens/investigator/agent_workflow.py` with Supervisor / Planner, 4 specialized agents (Email, URL, Content, Reputation), Shared Evidence ledger, and Evaluator feedback loop (`Sufficient Evidence?` -> `Re-investigate`).
+  - Route converged evidence into deterministic `Risk Engine` (`scorer.py`) and final `LLM Report`.
+  - Add `investigate_email_agentic()` method to `ScamInvestigator`.
+- [ ] **Phase 3: CLI & API Strategy Switch**: Add `--agent-architecture=[linear|orchestrator|multiagent]` to `scripts/scan_gmail.py` and `?strategy=` to FastAPI endpoint.
+- [ ] **Phase 4: Empirical Benchmark**: Benchmark against PhishBench to measure precision, recall, latency, and token cost across linear vs. Phase 1 Orchestrator vs. Phase 2 Multi-Agent.
 
 ---
 

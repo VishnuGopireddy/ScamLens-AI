@@ -6,6 +6,7 @@ variables, and renders OpenAI-compatible messages with optional few-shot example
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -103,4 +104,33 @@ def load_prompt(name: str) -> PromptTemplate:
         input_variables=data.get("input_variables", []),
         few_shot_examples=data.get("few_shot_examples", []),
     )
+
+
+def load_tool_prompts(tool_name: Optional[str] = None) -> Dict[str, Any]:
+    """Load prompt configurations for investigative tools from the global catalog JSON.
+
+    Args:
+        tool_name: Optional tool name (e.g., 'analyze_url_structure'). If provided,
+                   returns the configuration dict for that specific tool. If None,
+                   returns the entire tool prompts catalog dictionary.
+
+    Returns:
+        Dict containing system prompts, user templates, guidelines, and few-shot examples.
+    """
+    json_path = _CATALOG_DIR / "tool_prompts.json"
+    if not json_path.is_file():
+        raise FileNotFoundError(f"Global tool prompts catalog not found at: {json_path}")
+
+    with open(json_path, "r", encoding="utf-8") as f:
+        catalog = json.load(f)
+
+    if tool_name:
+        tools = catalog.get("tools", {})
+        if tool_name not in tools:
+            raise KeyError(
+                f"Tool '{tool_name}' not found in tool_prompts.json. Available tools: {list(tools.keys())}"
+            )
+        return tools[tool_name]
+
+    return catalog
 

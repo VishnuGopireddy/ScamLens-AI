@@ -35,6 +35,11 @@ class TestExtractors(unittest.TestCase):
         self.assertIn(EvidenceCategory.URL_DOMAIN, categories)
         self.assertIn(EvidenceCategory.IMPERSONATION, categories)
 
+    def test_url_extractor_strips_trailing_angle_bracket(self):
+        text = "Links: <http://grammarly.com/> and <https://www.grammarly.com/upgrade/plus>."
+        urls = extract_urls(text)
+        self.assertEqual(urls, ["http://grammarly.com/", "https://www.grammarly.com/upgrade/plus"])
+
     def test_qr_payment_payload(self):
         payload = "upi://pay?pa=merchant@upi&pn=RetailStore&am=150"
         findings = analyze_qr_payload(payload)
