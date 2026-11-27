@@ -115,8 +115,56 @@
       .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   }
 
+  function renderToolCallCardHtml(rawJson) {
+    try {
+      const parsed = JSON.parse(rawJson.trim());
+      const name = parsed.name || "tool_call";
+      const args = parsed.arguments && typeof parsed.arguments === "object"
+        ? parsed.arguments
+        : {};
+      const argRows = Object.entries(args)
+        .map(([k, v]) => {
+          const valStr = typeof v === "string" ? v : JSON.stringify(v);
+          return `<div class="summary-tool-arg"><span class="summary-tool-key">${escapeHtml(k)}</span><code>${escapeHtml(valStr)}</code></div>`;
+        })
+        .join("");
+      return `
+        <div class="summary-tool-card">
+          <div class="summary-tool-head">
+            <span class="badge badge-info">TOOL CALL</span>
+            <strong class="summary-tool-name">${escapeHtml(name)}</strong>
+          </div>
+          ${argRows ? `<div class="summary-tool-args">${argRows}</div>` : ""}
+        </div>
+      `;
+    } catch {
+      return `<pre class="tech-pre">${escapeHtml(rawJson.trim())}</pre>`;
+    }
+  }
+
   function formatReportSummaryHtml(summary) {
-    const lines = String(summary || "").split(/\r?\n/);
+    let text = String(summary || "");
+    const specialBlocks = [];
+
+    // Extract <think>...</think> blocks into collapsible reasoning boxes
+    text = text.replace(/<think>([\s\S]*?)<\/think>/gi, (_, inner) => {
+      const token = `@@SCAMLENS_BLOCK_${specialBlocks.length}@@`;
+      specialBlocks.push(
+        `<details class="summary-think-box"><summary>Model Reasoning</summary><pre class="tech-pre">${escapeHtml(inner.trim())}</pre></details>`
+      );
+      return `\n${token}\n`;
+    });
+
+    // Extract <tool_call>...</tool_call> (and trailing unclosed <tool_call>) into styled cards
+    text = text.replace(/<tool_call>([\s\S]*?)(?:<\/tool_call>|$)/gi, (_, inner) => {
+      const trimmed = inner.trim();
+      if (!trimmed) return "";
+      const token = `@@SCAMLENS_BLOCK_${specialBlocks.length}@@`;
+      specialBlocks.push(renderToolCallCardHtml(trimmed));
+      return `\n${token}\n`;
+    });
+
+    const lines = text.split(/\r?\n/);
     const out = [];
     let inList = false;
 
@@ -131,6 +179,12 @@
       const line = rawLine.trim();
       if (!line) {
         closeList();
+        continue;
+      }
+      const blockMatch = line.match(/^@@SCAMLENS_BLOCK_(\d+)@@$/);
+      if (blockMatch) {
+        closeList();
+        out.push(specialBlocks[Number(blockMatch[1])] || "");
         continue;
       }
       if (/^#{1,4}\s+/.test(line)) {

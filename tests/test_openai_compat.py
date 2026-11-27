@@ -321,6 +321,55 @@ class TestOpenAICompat(unittest.TestCase):
         self.assertEqual(findings[0].source, "virustotal_v3_offline")
         self.assertNotIn("Simulated", findings[0].summary)
 
+    @patch.object(OpenAICompatibleClient, "chat_completion")
+    def test_xml_tool_call_tags_in_content_are_executed_and_cleaned(self, mock_chat: MagicMock) -> None:
+        xml_turn1 = (
+            "<think>Checking email headers and URL.</think>\n"
+            "<tool_call>\n"
+            '{"name": "inspect_email_authentication", "arguments": {"from_addr": "LIC Claims <claims@lic-bonus-settlement.xyz>", "reply_to": "licofficer@gmail.com", "spf": "fail", "dkim": "fail", "dmarc": "fail"}}\n'
+            "</tool_call>\n"
+            "<tool_call>\n"
+            '{"name": "analyze_url_structure", "arguments": {"url": "http://lic-bonus-settlement.xyz/claim_form"}}\n'
+            "</tool_call>"
+        )
+        mock_chat.side_effect = [
+            {
+                "choices": [{
+                    "finish_reason": "stop",
+                    "message": {"role": "assistant", "content": xml_turn1, "tool_calls": None},
+                }]
+            },
+            {
+                "choices": [{
+                    "finish_reason": "stop",
+                    "message": {
+                        "role": "assistant",
+                        "content": "<think>Summarizing</think>**Verdict Summary:** Phishing impersonating LIC.",
+                        "tool_calls": None,
+                    },
+                }]
+            },
+        ]
+
+        client = OpenAICompatibleClient(api_key="mock_key", provider="custom")
+        result = client.run_agent_loop(
+            initial_prompt="Investigate LIC email",
+            system_prompt="Orchestrator",
+            dispatcher=ToolDispatcher(use_mock=True),
+            max_turns=2,
+            parallel_tools=True,
+        )
+
+        self.assertEqual(result["turns"], 2)
+        self.assertEqual(len(result["tool_history"]), 2)
+        self.assertEqual(
+            [h["tool"] for h in result["tool_history"]],
+            ["inspect_email_authentication", "analyze_url_structure"],
+        )
+        self.assertNotIn("<tool_call>", result["final_response"])
+        self.assertNotIn("<think>", result["final_response"])
+        self.assertIn("Phishing impersonating LIC.", result["final_response"])
+
 
 if __name__ == "__main__":
     unittest.main()

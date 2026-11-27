@@ -15,6 +15,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import mimetypes
 import os
+import re
 import time
 import urllib.error
 import urllib.request
@@ -34,6 +35,59 @@ DEFAULT_PRESET_ENDPOINTS = {
     "gemini": "https://generativelanguage.googleapis.com/v1beta/openai",
     "custom": "",
 }
+
+
+_XML_TOOL_CALL_RE = re.compile(
+    r"<tool_call>\s*(\{.*?\})\s*(?:</tool_call>|$)",
+    re.DOTALL | re.IGNORECASE,
+)
+_THINK_BLOCK_RE = re.compile(
+    r"<think>.*?</think>",
+    re.DOTALL | re.IGNORECASE,
+)
+
+
+def _extract_xml_tool_calls(
+    content: str, turn: int
+) -> Tuple[List[Dict[str, Any]], str]:
+    """Extract Qwen/vLLM-style <tool_call>{...}</tool_call> blocks into OpenAI tool_calls."""
+    if not content or "<tool_call>" not in content.lower():
+        return [], content
+
+    parsed_calls: List[Dict[str, Any]] = []
+    for idx, match in enumerate(_XML_TOOL_CALL_RE.finditer(content)):
+        raw_json = match.group(1).strip()
+        try:
+            obj = json.loads(raw_json)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(obj, dict) or not obj.get("name"):
+            continue
+        args = obj.get("arguments", {})
+        parsed_calls.append(
+            {
+                "id": f"xml_call_{turn}_{idx}",
+                "type": "function",
+                "function": {
+                    "name": str(obj["name"]),
+                    "arguments": json.dumps(args) if isinstance(args, dict) else str(args),
+                },
+            }
+        )
+
+    cleaned = _XML_TOOL_CALL_RE.sub("", content).strip()
+    return parsed_calls, cleaned
+
+
+def _clean_synthesis_text(content: str) -> str:
+    """Strip <think> reasoning and stray <tool_call> XML blocks from final synthesis."""
+    if not content:
+        return ""
+    cleaned = _THINK_BLOCK_RE.sub("", content)
+    cleaned = _XML_TOOL_CALL_RE.sub("", cleaned)
+    # Remove any unclosed trailing <tool_call> fragment
+    cleaned = re.sub(r"<tool_call>.*$", "", cleaned, flags=re.DOTALL | re.IGNORECASE)
+    return cleaned.strip()
 
 
 class OpenAICompatibleClient(BaseLLMClient):
@@ -423,6 +477,20 @@ class OpenAICompatibleClient(BaseLLMClient):
             resp_model = response.get("model") or self.model
             finish_reason = choice.get("finish_reason")
             content_str = message.get("content") or ""
+
+            # Support models/endpoints (e.g. Qwen3 without --enable-auto-tool-choice)
+            # that emit <tool_call>{...}</tool_call> XML inside content instead of tool_calls
+            if not tool_calls and active_tools is not None and content_str:
+                xml_calls, cleaned_content = _extract_xml_tool_calls(content_str, turn)
+                if xml_calls:
+                    tool_calls = xml_calls
+                    content_str = cleaned_content
+                    message = {
+                        "role": "assistant",
+                        "content": cleaned_content or None,
+                        "tool_calls": xml_calls,
+                    }
+
             requested_names = [tc.get("function", {}).get("name", "") for tc in (tool_calls or [])]
 
             _emit(
@@ -454,8 +522,15 @@ class OpenAICompatibleClient(BaseLLMClient):
             messages.append(message)
 
             if not tool_calls:
+                cleaned_final = _clean_synthesis_text(content_str)
+                if not cleaned_final and executed_tool_calls:
+                    tool_list = ", ".join(entry["tool"] for entry in executed_tool_calls)
+                    cleaned_final = (
+                        f"Executed {len(executed_tool_calls)} forensic tool(s) ({tool_list}) "
+                        f"and collected {len(collected_evidence)} evidence indicator(s)."
+                    )
                 return {
-                    "final_response": content_str,
+                    "final_response": cleaned_final,
                     "tool_history": executed_tool_calls,
                     "evidence_items": collected_evidence,
                     "turns": turn + 1,
