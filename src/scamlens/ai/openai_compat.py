@@ -11,7 +11,7 @@ Provides a unified tool calling interface:
 from __future__ import annotations
 
 import base64
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import mimetypes
 import os
@@ -387,71 +387,136 @@ class OpenAICompatibleClient(BaseLLMClient):
         for turn in range(max_turns):
             # Force final text synthesis on the last turn if tools already executed
             is_forced_synthesis = (turn == max_turns - 1) and bool(executed_tool_calls)
+            call_index = turn + 1
+            active_tools = None if is_forced_synthesis else tools_to_use
             _emit(
                 "orchestrator_turn",
                 (
-                    f"AI Orchestrator turn {turn + 1}/{max_turns}: synthesizing correlated findings..."
+                    f"[LLM CALL #{call_index}] {self.provider}/{self.model} — Turn {call_index}/{max_turns}: synthesizing correlated findings..."
                     if is_forced_synthesis
-                    else f"AI Orchestrator turn {turn + 1}/{max_turns}: selecting forensic tools..."
+                    else f"[LLM CALL #{call_index}] {self.provider}/{self.model} — Turn {call_index}/{max_turns}: selecting forensic tools..."
                 ),
-                data={"turn": turn + 1, "max_turns": max_turns, "forced_synthesis": is_forced_synthesis},
+                detail=f"msgs={len(messages)}, tools={len(active_tools) if active_tools else 0}",
+                data={
+                    "turn": call_index,
+                    "max_turns": max_turns,
+                    "call_index": call_index,
+                    "forced_synthesis": is_forced_synthesis,
+                    "provider": self.provider,
+                    "model": self.model,
+                    "messages_count": len(messages),
+                    "tools_count": len(active_tools) if active_tools else 0,
+                    "llm_call": True,
+                },
             )
+            t_llm0 = time.perf_counter()
             response = self.chat_completion(
                 messages=messages,
-                tools=None if is_forced_synthesis else tools_to_use,
+                tools=active_tools,
                 tool_choice="auto",
             )
-            message = response["choices"][0]["message"]
+            llm_latency_ms = round((time.perf_counter() - t_llm0) * 1000.0, 2)
+            choice = response["choices"][0]
+            message = choice["message"]
             tool_calls = message.get("tool_calls")
+            usage = response.get("usage") or {}
+            resp_model = response.get("model") or self.model
+            finish_reason = choice.get("finish_reason")
+            content_str = message.get("content") or ""
+            requested_names = [tc.get("function", {}).get("name", "") for tc in (tool_calls or [])]
+
+            _emit(
+                "llm_call_done",
+                f"[LLM CALL #{call_index}] {self.provider}/{resp_model} responded",
+                detail=(
+                    f"Decision: requested {len(requested_names)} tool(s) -> {', '.join(requested_names)}"
+                    if requested_names
+                    else f"Output: {'simulated mock' if '[Simulated ' in content_str else 'final synthesis'} ({len(content_str)} chars)"
+                ),
+                data={
+                    "call_index": call_index,
+                    "turn": call_index,
+                    "max_turns": max_turns,
+                    "provider": self.provider,
+                    "model": resp_model,
+                    "latency_ms": llm_latency_ms,
+                    "usage": usage,
+                    "finish_reason": finish_reason,
+                    "tool_calls_count": len(requested_names),
+                    "tool_names": requested_names,
+                    "response_chars": len(content_str),
+                    "simulated": "[Simulated " in content_str,
+                    "llm_call": True,
+                },
+            )
 
             # Append assistant message to context
             messages.append(message)
 
             if not tool_calls:
                 return {
-                    "final_response": message.get("content", ""),
+                    "final_response": content_str,
                     "tool_history": executed_tool_calls,
                     "evidence_items": collected_evidence,
                     "turns": turn + 1,
                 }
 
-            requested_names = [tc.get("function", {}).get("name", "") for tc in tool_calls]
             _emit(
                 "orchestrator_tools_dispatched",
                 f"Dispatching {len(tool_calls)} tool(s): {', '.join(requested_names)}",
                 data={"tools": requested_names, "parallel": parallel_tools},
             )
 
-            # Execute requested tools (in parallel when multiple calls emitted)
+            # Execute requested tools (in parallel when multiple calls emitted), emitting completions live
             if parallel_tools and len(tool_calls) > 1:
                 workers = min(8, len(tool_calls))
+                ordered_results: List[Optional[Tuple[Dict[str, Any], Dict[str, Any], List[Any]]]] = [
+                    None
+                ] * len(tool_calls)
                 with ThreadPoolExecutor(max_workers=workers) as executor:
-                    batch = list(
-                        executor.map(
-                            lambda tc: self._run_single_tool_call(tc, turn, tool_dispatcher),
-                            tool_calls,
+                    future_to_idx = {
+                        executor.submit(self._run_single_tool_call, tc, turn, tool_dispatcher): idx
+                        for idx, tc in enumerate(tool_calls)
+                    }
+                    for fut in as_completed(future_to_idx):
+                        idx = future_to_idx[fut]
+                        history_entry, tool_message, evidence = fut.result()
+                        ordered_results[idx] = (history_entry, tool_message, evidence)
+                        _emit(
+                            "orchestrator_tool_done",
+                            f"Tool '{history_entry['tool']}' completed ({history_entry['execution_time_ms']} ms, {len(evidence)} indicator(s))",
+                            data={
+                                "tool": history_entry["tool"],
+                                "arguments": history_entry["arguments"],
+                                "execution_time_ms": history_entry["execution_time_ms"],
+                                "findings_count": len(evidence),
+                                "findings_summary": [f.summary for f in evidence],
+                            },
                         )
-                    )
+                batch = [item for item in ordered_results if item is not None]
+                for history_entry, tool_message, evidence in batch:
+                    executed_tool_calls.append(history_entry)
+                    messages.append(tool_message)
+                    collected_evidence.extend(evidence)
             else:
-                batch = [
-                    self._run_single_tool_call(tc, turn, tool_dispatcher)
-                    for tc in tool_calls
-                ]
-
-            for history_entry, tool_message, evidence in batch:
-                executed_tool_calls.append(history_entry)
-                messages.append(tool_message)
-                collected_evidence.extend(evidence)
-                _emit(
-                    "orchestrator_tool_done",
-                    f"Tool '{history_entry['tool']}' completed ({history_entry['execution_time_ms']} ms, {len(evidence)} indicator(s))",
-                    data={
-                        "tool": history_entry["tool"],
-                        "arguments": history_entry["arguments"],
-                        "execution_time_ms": history_entry["execution_time_ms"],
-                        "findings_count": len(evidence),
-                    },
-                )
+                for tc in tool_calls:
+                    history_entry, tool_message, evidence = self._run_single_tool_call(
+                        tc, turn, tool_dispatcher
+                    )
+                    executed_tool_calls.append(history_entry)
+                    messages.append(tool_message)
+                    collected_evidence.extend(evidence)
+                    _emit(
+                        "orchestrator_tool_done",
+                        f"Tool '{history_entry['tool']}' completed ({history_entry['execution_time_ms']} ms, {len(evidence)} indicator(s))",
+                        data={
+                            "tool": history_entry["tool"],
+                            "arguments": history_entry["arguments"],
+                            "execution_time_ms": history_entry["execution_time_ms"],
+                            "findings_count": len(evidence),
+                            "findings_summary": [f.summary for f in evidence],
+                        },
+                    )
 
         return {
             "final_response": messages[-1].get("content", "") or "",

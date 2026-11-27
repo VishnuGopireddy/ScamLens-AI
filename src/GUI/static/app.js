@@ -1,6 +1,8 @@
 (() => {
   "use strict";
 
+  const GMAIL_POLL_INTERVAL_SEC = 60;
+
   const state = {
     activeTab: "investigator",
     activeEmailSource: "local",
@@ -15,6 +17,13 @@
     evidenceFilter: "ALL",
     timerInterval: null,
     startTimeMs: 0,
+    gmailReady: false,
+    isScanning: false,
+    polledGmailIds: new Set(),
+    gmailPollTickId: null,
+    gmailPollNextInSec: GMAIL_POLL_INTERVAL_SEC,
+    gmailLastPollNote: "",
+    gmailNewAlertCount: 0,
   };
 
   // ---------------------------------------------------------------------------
@@ -331,14 +340,16 @@
       pillPriv.className = `pill ${health.enable_pii_redaction ? "pill-ok" : "pill-warn"}`;
 
       const pillGmail = document.getElementById("pillGmail");
-      pillGmail.textContent = gmail.ready ? "Gmail: Ready" : "Gmail: OAuth Needed";
-      pillGmail.className = `pill ${gmail.ready ? "pill-ok" : "pill-warn"}`;
+      state.gmailReady = Boolean(gmail.ready);
+      pillGmail.style.cursor = "pointer";
+      pillGmail.title = "Open Live Gmail Forensics";
 
       const banner = document.getElementById("gmailAuthBanner");
       if (banner) {
         banner.textContent = `Gmail OAuth Status: ${gmail.status_note} (credentials.json: ${gmail.credentials_exists ? "found" : "missing"}, token.json: ${gmail.token_exists ? "found" : "missing"})`;
         banner.className = `info-banner ${gmail.ready ? "ok" : "warn"}`;
       }
+      syncGmailAutoPollState();
     } catch (err) {
       console.error("Failed to fetch health:", err);
     }
@@ -477,6 +488,7 @@
     mountResultsTemplate("multimodalResultsSlot");
     const runBtn = document.getElementById("runInvestigateBtn");
     runBtn.disabled = true;
+    state.isScanning = true;
 
     const text = document.getElementById("inputText").value;
     const urlsRaw = document.getElementById("inputUrls").value;
@@ -513,6 +525,7 @@
       stopLiveTimer("error");
       appendStatusEvent({ stage: "error", message: err.message }, true);
     } finally {
+      state.isScanning = false;
       runBtn.disabled = false;
     }
   }
@@ -622,20 +635,25 @@
     }
   }
 
+  function getGmailQuery() {
+    const el = document.getElementById("gmailQueryInput");
+    return el ? el.value.trim() : "-in:trash -in:drafts";
+  }
+
   async function fetchGmailEmailsList() {
     mountResultsTemplate("emailResultsSlot");
     resetLiveFeed("Fetching Gmail messages...");
     startLiveTimer();
-    const query = document.getElementById("gmailQueryInput").value.trim() || "is:unread";
+    const query = getGmailQuery();
     const maxResults = Number(document.getElementById("gmailMaxInput").value || 5);
-    appendStatusEvent({ stage: "reading_gmail", message: `Querying Gmail API (q="${query}", max=${maxResults})...`, timestamp: new Date().toTimeString().slice(0, 8) });
+    appendStatusEvent({ stage: "reading_gmail", message: `Querying Gmail API (q="${query || "ALL MAIL"}", max=${maxResults})...`, timestamp: new Date().toTimeString().slice(0, 8) });
 
     try {
-      const resp = await fetch(`/api/v1/emails/gmail?query=${encodeURIComponent(query)}&max_results=${maxResults}`);
+      const resp = await fetch(`/api/v1/emails/gmail?query=${encodeURIComponent(query)}&max_results=${maxResults}&include_spam_trash=true`);
       const data = await resp.json();
       if (!resp.ok) throw new Error(data.detail || "Failed to fetch Gmail");
       stopLiveTimer("done");
-      renderEmailList(data.emails || [], `Gmail Inbox ("${query}")`, "gmail");
+      renderEmailList(data.emails || [], `Gmail ("${query || "All Mail"}")`, "gmail");
       appendStatusEvent({ stage: "gmail_loaded", message: `Fetched and parsed ${data.count} Gmail message(s).`, timestamp: new Date().toTimeString().slice(0, 8) });
       if (state.emails.length) {
         renderParsedEmail(state.emails[0]);
@@ -650,6 +668,7 @@
     mountResultsTemplate("emailResultsSlot");
     resetLiveFeed("Starting live email forensic investigation...");
     startLiveTimer();
+    state.isScanning = true;
 
     try {
       await streamSSE("/api/v1/investigate/email/stream", payload, {
@@ -663,6 +682,9 @@
               state.selectedEmail._verdict = data.investigation.verdict;
               state.selectedEmail._risk_score = data.investigation.risk_score;
               state.selectedEmail._investigation = data.investigation;
+              if (state.selectedEmail._source === "gmail" && state.selectedEmail.id) {
+                state.polledGmailIds.add(state.selectedEmail.id);
+              }
               renderEmailList(state.emails, document.getElementById("emailListTitle").textContent);
             }
           }
@@ -675,6 +697,8 @@
     } catch (err) {
       stopLiveTimer("error");
       appendStatusEvent({ stage: "error", message: err.message }, true);
+    } finally {
+      state.isScanning = false;
     }
   }
 
@@ -682,8 +706,9 @@
     mountResultsTemplate("emailResultsSlot");
     resetLiveFeed(`Starting live ${source} inbox scan...`);
     startLiveTimer();
+    state.isScanning = true;
 
-    const query = document.getElementById("gmailQueryInput").value.trim() || "is:unread";
+    const query = getGmailQuery();
     const maxResults = source === "gmail" ? Number(document.getElementById("gmailMaxInput").value || 5) : 5;
     const scannedEmails = [];
 
@@ -692,6 +717,7 @@
         source,
         query,
         max_results: maxResults,
+        include_spam_trash: true,
         strategy: getStrategy(),
         incident_stage: document.getElementById("emailPostActionCheck").checked ? "POST_ACTION" : "PRE_ACTION",
       }, {
@@ -701,14 +727,23 @@
           em._verdict = data.investigation.verdict;
           em._risk_score = data.investigation.risk_score;
           em._investigation = data.investigation;
+          em._source = source;
+          if (source === "gmail" && em.id) {
+            state.polledGmailIds.add(em.id);
+          }
           scannedEmails.push(em);
-          renderEmailList(scannedEmails, `${source === "gmail" ? "Gmail" : "Local"} Live Scan (${scannedEmails.length})`);
+          renderEmailList(scannedEmails, `${source === "gmail" ? "Gmail" : "Local"} Live Scan (${scannedEmails.length})`, source);
           renderParsedEmail(em);
           renderInvestigationResult(data.investigation);
         },
         scan_complete: (ev) => {
           stopLiveTimer("done");
           appendStatusEvent({ stage: "scan_complete", message: ev.message, timestamp: ev.timestamp });
+          if (source === "gmail") {
+            state.gmailPollNextInSec = GMAIL_POLL_INTERVAL_SEC;
+            state.gmailLastPollNote = `Last scan ${ev.timestamp || new Date().toTimeString().slice(0, 8)} • ${scannedEmails.length} scanned`;
+            updateGmailPollIndicators();
+          }
         },
         error: (err) => {
           stopLiveTimer("error");
@@ -718,6 +753,189 @@
     } catch (err) {
       stopLiveTimer("error");
       appendStatusEvent({ stage: "error", message: err.message }, true);
+    } finally {
+      state.isScanning = false;
+    }
+  }
+
+  function isGmailAutoPollEnabled() {
+    const cb = document.getElementById("gmailAutoPollCheck");
+    return Boolean(cb && cb.checked);
+  }
+
+  function updateGmailPollIndicators() {
+    const pillGmail = document.getElementById("pillGmail");
+    const pollStatus = document.getElementById("gmailPollStatus");
+    const enabled = isGmailAutoPollEnabled();
+
+    if (!state.gmailReady) {
+      if (pillGmail) {
+        pillGmail.textContent = "Gmail: OAuth Needed";
+        pillGmail.className = "pill pill-warn";
+      }
+      if (pollStatus) {
+        pollStatus.textContent = "Paused (Gmail OAuth needed)";
+      }
+      return;
+    }
+
+    if (!enabled) {
+      if (pillGmail) {
+        pillGmail.textContent = "Gmail: Ready (Poll Off)";
+        pillGmail.className = "pill pill-ok";
+      }
+      if (pollStatus) {
+        pollStatus.textContent = state.gmailLastPollNote
+          ? `Off • ${state.gmailLastPollNote}`
+          : "Auto-poll paused";
+      }
+      return;
+    }
+
+    if (state.isScanning) {
+      if (pillGmail) {
+        pillGmail.textContent = "Gmail: Checking...";
+        pillGmail.className = "pill pill-info";
+      }
+      if (pollStatus) {
+        pollStatus.textContent = "Polling Gmail for new emails...";
+      }
+      return;
+    }
+
+    if (pillGmail) {
+      if (state.gmailNewAlertCount > 0) {
+        pillGmail.textContent = `Gmail: ${state.gmailNewAlertCount} new (${state.gmailPollNextInSec}s)`;
+        pillGmail.className = "pill pill-warn";
+      } else {
+        pillGmail.textContent = `Gmail: Auto-Poll (${state.gmailPollNextInSec}s)`;
+        pillGmail.className = "pill pill-ok";
+      }
+    }
+    if (pollStatus) {
+      const prefix = state.gmailLastPollNote ? `${state.gmailLastPollNote} • ` : "";
+      pollStatus.textContent = `${prefix}Next check in ${state.gmailPollNextInSec}s`;
+    }
+  }
+
+  function syncGmailAutoPollState() {
+    if (state.gmailPollTickId) {
+      clearInterval(state.gmailPollTickId);
+      state.gmailPollTickId = null;
+    }
+
+    if (state.gmailReady && isGmailAutoPollEnabled()) {
+      state.gmailPollNextInSec = GMAIL_POLL_INTERVAL_SEC;
+      state.gmailPollTickId = setInterval(() => {
+        if (!state.gmailReady || !isGmailAutoPollEnabled()) return;
+        if (state.isScanning) {
+          updateGmailPollIndicators();
+          return;
+        }
+        state.gmailPollNextInSec -= 1;
+        if (state.gmailPollNextInSec <= 0) {
+          state.gmailPollNextInSec = GMAIL_POLL_INTERVAL_SEC;
+          pollGmailForNewEmails();
+        } else {
+          updateGmailPollIndicators();
+        }
+      }, 1000);
+    }
+
+    updateGmailPollIndicators();
+  }
+
+  async function pollGmailForNewEmails() {
+    if (!state.gmailReady || state.isScanning || !isGmailAutoPollEnabled()) return;
+    state.isScanning = true;
+    updateGmailPollIndicators();
+
+    const query = getGmailQuery();
+    const maxResults = Number(document.getElementById("gmailMaxInput")?.value || 5);
+    const onEmailTab = state.activeTab === "email";
+    const newlyScanned = [];
+    let fedStarted = false;
+
+    try {
+      await streamSSE("/api/v1/emails/scan/stream", {
+        source: "gmail",
+        query,
+        max_results: maxResults,
+        include_spam_trash: true,
+        known_ids: Array.from(state.polledGmailIds),
+        strategy: getStrategy(),
+        incident_stage: document.getElementById("emailPostActionCheck")?.checked ? "POST_ACTION" : "PRE_ACTION",
+      }, {
+        status: (ev) => {
+          // Only stream into the live feed when on the Email tab and new emails are being processed
+          if (onEmailTab && ev.stage !== "reading_inbox" && ev.stage !== "inbox_listed") {
+            if (!fedStarted) {
+              mountResultsTemplate("emailResultsSlot");
+              resetLiveFeed("New Gmail message(s) detected — scanning...");
+              startLiveTimer();
+              fedStarted = true;
+            }
+            appendStatusEvent(ev);
+          }
+        },
+        email_result: (data) => {
+          const em = data.email;
+          em._verdict = data.investigation.verdict;
+          em._risk_score = data.investigation.risk_score;
+          em._investigation = data.investigation;
+          em._source = "gmail";
+          if (em.id) state.polledGmailIds.add(em.id);
+          newlyScanned.push(em);
+
+          // Prepend or update inside state.emails without losing previously listed messages
+          const existingIdx = state.emails.findIndex((x) => x.id === em.id);
+          if (existingIdx >= 0) {
+            state.emails[existingIdx] = em;
+          } else {
+            state.emails.unshift(em);
+          }
+          renderEmailList(state.emails, `Gmail ("${query || "All Mail"}")`, "gmail");
+
+          if (onEmailTab) {
+            if (!fedStarted) {
+              mountResultsTemplate("emailResultsSlot");
+              fedStarted = true;
+            }
+            renderParsedEmail(em);
+            renderInvestigationResult(data.investigation);
+          }
+        },
+        scan_complete: (ev) => {
+          if (fedStarted) {
+            stopLiveTimer("done");
+            appendStatusEvent({ stage: "scan_complete", message: ev.message, timestamp: ev.timestamp });
+          }
+          const ts = ev.timestamp || new Date().toTimeString().slice(0, 8);
+          if (newlyScanned.length > 0) {
+            state.gmailNewAlertCount += newlyScanned.length;
+            state.gmailLastPollNote = `Last check ${ts} • ${newlyScanned.length} new scanned`;
+          } else {
+            state.gmailLastPollNote = `Last check ${ts} • 0 new`;
+          }
+        },
+        error: (err) => {
+          if (fedStarted) {
+            stopLiveTimer("error");
+            appendStatusEvent({ stage: "error", message: err.message, timestamp: err.timestamp }, true);
+          }
+          state.gmailLastPollNote = `Poll error: ${err.message}`;
+        },
+      });
+    } catch (err) {
+      if (fedStarted) {
+        stopLiveTimer("error");
+        appendStatusEvent({ stage: "error", message: err.message }, true);
+      }
+      state.gmailLastPollNote = `Poll error: ${err.message}`;
+    } finally {
+      state.isScanning = false;
+      state.gmailPollNextInSec = GMAIL_POLL_INTERVAL_SEC;
+      updateGmailPollIndicators();
     }
   }
 
@@ -1036,6 +1254,13 @@
     document.getElementById("scanLocalInboxBtn").addEventListener("click", () => scanInboxLive("local"));
     document.getElementById("fetchGmailBtn").addEventListener("click", fetchGmailEmailsList);
     document.getElementById("scanGmailInboxBtn").addEventListener("click", () => scanInboxLive("gmail"));
+    document.getElementById("gmailAutoPollCheck").addEventListener("change", syncGmailAutoPollState);
+    document.getElementById("pillGmail").addEventListener("click", () => {
+      state.gmailNewAlertCount = 0;
+      switchTab("email");
+      document.querySelector('.subtab-btn[data-email-source="gmail"]')?.click();
+      updateGmailPollIndicators();
+    });
 
     document.getElementById("rawEmlFileInput").addEventListener("change", (e) => {
       const file = e.target.files[0];

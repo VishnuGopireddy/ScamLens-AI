@@ -158,10 +158,17 @@
           <div id="emailSourceGmail" class="email-source-panel">
             <div id="gmailAuthBanner" class="info-banner">Checking Gmail OAuth status...</div>
             <div class="toolbar">
-              <input id="gmailQueryInput" type="text" value="is:unread" placeholder="Gmail query (e.g. is:unread, label:SPAM)" />
+              <input id="gmailQueryInput" type="text" value="-in:trash -in:drafts" placeholder="Gmail query (blank = all mail, e.g. is:unread, label:SPAM)" />
               <input id="gmailMaxInput" type="number" min="1" max="25" value="5" style="width: 72px" title="Max messages" />
               <button type="button" class="btn btn-secondary" id="fetchGmailBtn">Fetch Inbox</button>
               <button type="button" class="btn btn-primary" id="scanGmailInboxBtn">Live Scan Inbox</button>
+            </div>
+            <div class="gmail-poll-bar">
+              <label class="inline-check" for="gmailAutoPollCheck">
+                <input type="checkbox" id="gmailAutoPollCheck" checked />
+                <span>Auto-poll Gmail every 1 min</span>
+              </label>
+              <span class="hint" id="gmailPollStatus">Waiting for Gmail status...</span>
             </div>
           </div>
 

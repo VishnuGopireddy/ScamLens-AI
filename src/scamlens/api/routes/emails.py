@@ -151,11 +151,19 @@ def build_non_interactive_gmail_reader() -> GmailReader:
     return GmailReader(service=service, auth_manager=auth_manager)
 
 
-def list_gmail_emails(query: str = "is:unread", max_results: int = 10) -> Dict[str, Any]:
-    """Fetch and parse live Gmail messages matching a search query."""
+def list_gmail_emails(
+    query: str = "-in:trash -in:drafts",
+    max_results: int = 10,
+    include_spam_trash: bool = True,
+) -> Dict[str, Any]:
+    """Fetch and parse live Gmail messages matching a search query (all inboxes + spam by default)."""
     reader = build_non_interactive_gmail_reader()
     clamped = max(1, min(int(max_results), 25))
-    messages = reader.fetch_messages(query=query or "is:unread", max_results=clamped)
+    messages = reader.fetch_messages(
+        query=query,
+        max_results=clamped,
+        include_spam_trash=include_spam_trash,
+    )
     return {
         "source": "gmail",
         "query": query,

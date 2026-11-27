@@ -742,15 +742,21 @@ class GmailReader:
         return self._service
 
     def list_message_summaries(
-        self, query: str = "is:unread", max_results: int = 10, user_id: str = "me"
+        self,
+        query: str = "is:unread",
+        max_results: int = 10,
+        user_id: str = "me",
+        include_spam_trash: bool = False,
     ) -> List[Dict[str, str]]:
         """List basic message references matching a query."""
-        results = (
-            self.service.users()
-            .messages()
-            .list(userId=user_id, q=query, maxResults=max_results)
-            .execute()
-        )
+        list_kwargs: Dict[str, Any] = {
+            "userId": user_id,
+            "maxResults": max_results,
+            "includeSpamTrash": include_spam_trash,
+        }
+        if query:
+            list_kwargs["q"] = query
+        results = self.service.users().messages().list(**list_kwargs).execute()
         return results.get("messages", [])
 
     def get_message(self, message_id: str, user_id: str = "me") -> EmailMessage:
@@ -764,11 +770,18 @@ class GmailReader:
         return parse_gmail_message(raw)
 
     def fetch_messages(
-        self, query: str = "is:unread", max_results: int = 10, user_id: str = "me"
+        self,
+        query: str = "is:unread",
+        max_results: int = 10,
+        user_id: str = "me",
+        include_spam_trash: bool = False,
     ) -> List[EmailMessage]:
         """Fetch, decode, and parse all messages matching query."""
         summaries = self.list_message_summaries(
-            query=query, max_results=max_results, user_id=user_id
+            query=query,
+            max_results=max_results,
+            user_id=user_id,
+            include_spam_trash=include_spam_trash,
         )
         messages: List[EmailMessage] = []
         for item in summaries:

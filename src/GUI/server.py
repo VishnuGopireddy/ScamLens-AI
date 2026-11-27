@@ -214,9 +214,13 @@ class ScamLensGUIHandler(BaseHTTPRequestHandler):
 
         if path == "/api/v1/emails/gmail":
             try:
-                query = params.get("query", ["is:unread"])[0]
+                query = params["query"][0] if "query" in params else "-in:trash -in:drafts"
                 max_res = int(params.get("max_results", ["10"])[0])
-                self._send_json(HTTPStatus.OK, list_gmail_emails(query=query, max_results=max_res))
+                include_spam = params.get("include_spam_trash", ["true"])[0].lower() in ("1", "true", "yes")
+                self._send_json(
+                    HTTPStatus.OK,
+                    list_gmail_emails(query=query, max_results=max_res, include_spam_trash=include_spam),
+                )
             except Exception as exc:
                 self._send_json(HTTPStatus.BAD_REQUEST, {"detail": str(exc)})
             return
@@ -294,7 +298,9 @@ class ScamLensGUIHandler(BaseHTTPRequestHandler):
         if path == "/api/v1/emails/scan/stream":
             def _scan_worker(emit: Any) -> None:
                 source = str(payload.get("source") or "local").lower()
-                query = str(payload.get("query") or "is:unread")
+                raw_query = payload.get("query")
+                query = "-in:trash -in:drafts" if raw_query is None else str(raw_query)
+                include_spam_trash = bool(payload.get("include_spam_trash", True))
                 max_results = max(1, min(int(payload.get("max_results") or 5), 25))
                 strategy = (strategy_q or payload.get("strategy") or "linear").lower()
                 stage_str = str(payload.get("incident_stage") or "PRE_ACTION")
@@ -306,6 +312,8 @@ class ScamLensGUIHandler(BaseHTTPRequestHandler):
                 investigator = ScamInvestigator()
 
                 if source == "gmail":
+                    raw_known = payload.get("known_ids") or []
+                    known_ids = {str(x) for x in raw_known if x}
                     emit(
                         "status",
                         {
@@ -315,18 +323,30 @@ class ScamLensGUIHandler(BaseHTTPRequestHandler):
                         },
                     )
                     reader = build_non_interactive_gmail_reader()
-                    summaries = reader.list_message_summaries(query=query, max_results=max_results)
-                    total = len(summaries)
+                    summaries = reader.list_message_summaries(
+                        query=query,
+                        max_results=max_results,
+                        include_spam_trash=include_spam_trash,
+                    )
+                    pending = [
+                        item for item in summaries
+                        if item.get("id") and item["id"] not in known_ids
+                    ]
+                    total = len(pending)
                     emit(
                         "status",
                         {
                             "stage": "inbox_listed",
-                            "message": f"Found {total} Gmail message(s) matching '{query}'",
+                            "message": (
+                                f"Found {total} new Gmail message(s) ({len(summaries)} total matching '{query}')"
+                                if known_ids
+                                else f"Found {total} Gmail message(s) matching '{query}'"
+                            ),
                             "timestamp": time.strftime("%H:%M:%S"),
-                            "data": {"total": total},
+                            "data": {"total": len(summaries), "new_count": total},
                         },
                     )
-                    for idx, item in enumerate(summaries, 1):
+                    for idx, item in enumerate(pending, 1):
                         msg_id = item["id"]
                         emit(
                             "status",
@@ -362,6 +382,20 @@ class ScamLensGUIHandler(BaseHTTPRequestHandler):
                                 "investigation": res.to_dict(),
                             },
                         )
+                    emit(
+                        "scan_complete",
+                        {
+                            "message": (
+                                f"Poll complete: {total} new Gmail message(s) scanned."
+                                if known_ids
+                                else "Inbox scan complete."
+                            ),
+                            "timestamp": time.strftime("%H:%M:%S"),
+                            "new_count": total,
+                            "total": len(summaries),
+                        },
+                    )
+                    return
                 else:
                     resolved = resolve_default_local_email_source(payload.get("dataset_source"))
                     emit(

@@ -204,6 +204,45 @@ class TestGUIServerAndStreaming(unittest.TestCase):
         self.assertIn("scoring", seen_stages)
         self.assertIn("completed", seen_stages)
 
+    def test_gmail_poll_skips_known_ids_in_scan_stream(self) -> None:
+        from unittest.mock import MagicMock, patch
+        from scamlens.extractors.email import EmailMessage
+
+        fake_msg_2 = EmailMessage(
+            id="msg_2",
+            thread_id="t_2",
+            subject="New KYC Alert",
+            sender="Alert <alert@fake-bank.xyz>",
+            sender_email="alert@fake-bank.xyz",
+            sender_domain="fake-bank.xyz",
+            body_cleaned="Verify now at http://fake-bank.xyz",
+            extracted_urls=["http://fake-bank.xyz"],
+        )
+        mock_reader = MagicMock()
+        mock_reader.list_message_summaries.return_value = [{"id": "msg_1"}, {"id": "msg_2"}]
+        mock_reader.get_message.return_value = fake_msg_2
+
+        with patch("GUI.server.build_non_interactive_gmail_reader", return_value=mock_reader):
+            status, _, raw = self._post_json(
+                "/api/v1/emails/scan/stream",
+                {"source": "gmail", "known_ids": ["msg_1"], "max_results": 5},
+            )
+
+        self.assertEqual(status, 200)
+        mock_reader.list_message_summaries.assert_called_once_with(
+            query="-in:trash -in:drafts",
+            max_results=5,
+            include_spam_trash=True,
+        )
+        events = _parse_sse(raw.decode("utf-8"))
+        email_results = [data for name, data in events if name == "email_result"]
+        self.assertEqual(len(email_results), 1)
+        self.assertEqual(email_results[0]["email"]["id"], "msg_2")
+        mock_reader.get_message.assert_called_once_with("msg_2")
+        complete_ev = next(data for name, data in events if name == "scan_complete")
+        self.assertEqual(complete_ev["new_count"], 1)
+        self.assertEqual(complete_ev["total"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()

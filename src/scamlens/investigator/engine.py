@@ -188,7 +188,16 @@ class ScamInvestigator:
                 "contact_check",
                 "Checking contact channels, phone numbers & support emails...",
             )
-            findings.extend(extract_contact_indicators(raw_text))
+            contact_findings = extract_contact_indicators(raw_text)
+            findings.extend(contact_findings)
+            self._emit(
+                on_progress,
+                "contact_check_done",
+                f"Contact channel check found {len(contact_findings)} indicator(s)",
+                detail="; ".join(f.summary for f in contact_findings)
+                if contact_findings
+                else "No fraudulent mobile helplines or spoofed support emails detected.",
+            )
 
         # 1. Privacy & PII sanitization (README §4 Obj 7)
         if self.settings.enable_pii_redaction and raw_text:
@@ -246,14 +255,34 @@ class ScamInvestigator:
 
         # 4. Multimodal screenshot & image analysis (README §4 Obj 1)
         for idx, img_path in enumerate(submission.image_paths, 1):
+            vision_model = getattr(self.ai, "vision_model", getattr(self.ai, "model", "default"))
             self._emit(
                 on_progress,
                 "analyzing_image",
-                f"Analyzing screenshot {idx}/{len(submission.image_paths)} via multimodal vision...",
+                f"[LLM VISION] {self.settings.default_ai_provider}/{vision_model} — Analyzing screenshot {idx}/{len(submission.image_paths)}...",
                 detail=str(img_path),
+                data={
+                    "provider": self.settings.default_ai_provider,
+                    "model": vision_model,
+                    "llm_call": True,
+                },
             )
+            t_vis0 = time.perf_counter()
             img_findings = extract_from_image(img_path, self.ai)
+            vis_ms = round((time.perf_counter() - t_vis0) * 1000.0, 2)
             findings.extend(img_findings)
+            self._emit(
+                on_progress,
+                "image_analyzed",
+                f"[LLM VISION] {self.settings.default_ai_provider}/{vision_model} — Screenshot {idx}/{len(submission.image_paths)} analyzed ({len(img_findings)} indicator(s))",
+                detail="; ".join(f.summary for f in img_findings) if img_findings else None,
+                data={
+                    "provider": self.settings.default_ai_provider,
+                    "model": vision_model,
+                    "latency_ms": vis_ms,
+                    "llm_call": True,
+                },
+            )
             provenance.append({
                 "target": img_path,
                 "service": f"multimodal_vision_{self.settings.default_ai_provider}",
@@ -367,7 +396,14 @@ class ScamInvestigator:
                 f"Decoding QR / UPI payload ({idx}/{len(submission.qr_payloads)})...",
                 detail=qr[:120],
             )
-            findings.extend(analyze_qr_payload(qr))
+            qr_findings = analyze_qr_payload(qr)
+            findings.extend(qr_findings)
+            self._emit(
+                on_progress,
+                "qr_analyzed",
+                f"QR / UPI payload ({idx}/{len(submission.qr_payloads)}) checked: {len(qr_findings)} indicator(s)",
+                detail="; ".join(f.summary for f in qr_findings) if qr_findings else None,
+            )
 
         has_content = bool(
             cleaned_text.strip() or detected_urls or submission.qr_payloads or submission.image_paths
@@ -466,7 +502,15 @@ class ScamInvestigator:
                 dispatcher=self.tool_dispatcher,
                 max_turns=2,
                 parallel_tools=True,
-                on_event=(lambda ev: self._emit(on_progress, ev["stage"], ev["message"], data=ev.get("data")))
+                on_event=(
+                    lambda ev: self._emit(
+                        on_progress,
+                        ev["stage"],
+                        ev["message"],
+                        detail=ev.get("detail"),
+                        data=ev.get("data"),
+                    )
+                )
                 if on_progress
                 else None,
             )
