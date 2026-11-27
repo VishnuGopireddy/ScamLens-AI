@@ -11,6 +11,20 @@ from scamlens.extractors.email import EmailMessage, GmailAuthManager, GmailReade
 from scamlens.rag.knowledge_base import RegionalKnowledgeBase
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[4]
+_GMAIL_PROFILE_CACHE: Dict[str, str] = {}
+
+
+def clear_email_caches() -> None:
+    """Clear cached Gmail profile lookups."""
+    _GMAIL_PROFILE_CACHE.clear()
+
+
+def _token_cache_key(token_path: Path) -> str:
+    try:
+        stat = token_path.stat()
+        return f"{token_path.resolve()}:{stat.st_mtime_ns}:{stat.st_size}"
+    except OSError:
+        return str(token_path)
 
 
 def _resolve_repo_path(path_str: str) -> Path:
@@ -71,13 +85,18 @@ def get_gmail_status() -> Dict[str, Any]:
     token_valid = False
     token_expired = False
     has_refresh_token = False
+    connected_email: Optional[str] = None
     status_note = "Not authenticated"
 
     if token_path.is_file():
+        cache_key = _token_cache_key(token_path)
+        connected_email = _GMAIL_PROFILE_CACHE.get(cache_key)
         try:
             from google.oauth2.credentials import Credentials
 
             creds = Credentials.from_authorized_user_file(str(token_path), scopes)
+            if not connected_email and getattr(creds, "account", None):
+                connected_email = str(creds.account).strip() or None
             token_valid = bool(creds.valid)
             token_expired = bool(creds.expired)
             has_refresh_token = bool(creds.refresh_token)
@@ -91,6 +110,15 @@ def get_gmail_status() -> Dict[str, Any]:
             status_note = "google-auth libraries not installed"
         except Exception as exc:
             status_note = f"Token parse error: {exc}"
+
+        if not connected_email and (token_valid or (token_expired and has_refresh_token)):
+            try:
+                reader = build_non_interactive_gmail_reader()
+                connected_email = reader.get_profile_email()
+                if connected_email:
+                    _GMAIL_PROFILE_CACHE[_token_cache_key(token_path)] = connected_email
+            except Exception:
+                pass
     elif cred_path.is_file():
         status_note = "credentials.json present; token.json not created yet"
     else:
@@ -103,6 +131,7 @@ def get_gmail_status() -> Dict[str, Any]:
         "token_expired": token_expired,
         "refreshable": has_refresh_token,
         "ready": token_valid or (token_expired and has_refresh_token),
+        "connected_email": connected_email,
         "scopes": scopes,
         "status_note": status_note,
     }
@@ -158,6 +187,17 @@ def list_gmail_emails(
 ) -> Dict[str, Any]:
     """Fetch and parse live Gmail messages matching a search query (all inboxes + spam by default)."""
     reader = build_non_interactive_gmail_reader()
+    connected_email: Optional[str] = None
+    try:
+        token_path = _resolve_repo_path(get_settings().gmail_token_file)
+        cache_key = _token_cache_key(token_path)
+        connected_email = _GMAIL_PROFILE_CACHE.get(cache_key)
+        if not connected_email:
+            connected_email = reader.get_profile_email()
+            if connected_email:
+                _GMAIL_PROFILE_CACHE[cache_key] = connected_email
+    except Exception:
+        pass
     clamped = max(1, min(int(max_results), 25))
     messages = reader.fetch_messages(
         query=query,
@@ -167,6 +207,7 @@ def list_gmail_emails(
     return {
         "source": "gmail",
         "query": query,
+        "connected_email": connected_email,
         "count": len(messages),
         "emails": [msg.to_dict() for msg in messages],
     }

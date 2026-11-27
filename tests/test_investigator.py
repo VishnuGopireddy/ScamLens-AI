@@ -142,7 +142,7 @@ class TestInvestigator(unittest.TestCase):
         )
         result = inv.investigate(submission, strategy="orchestrator")
         self.assertIn(result.verdict, (VerdictEnum.LIKELY_SCAM, VerdictEnum.SUSPICIOUS))
-        self.assertTrue(any(p.get("strategy") == "orchestrator_fallback_to_linear" for p in result.provenance))
+        self.assertTrue(any(p.get("strategy") == "orchestrator_deterministic_fallback" for p in result.provenance))
 
     @patch.object(OpenAICompatibleClient, "chat_completion")
     def test_investigate_email_orchestrator_on_hdfc_eml(self, mock_chat):
@@ -227,9 +227,12 @@ class TestInvestigator(unittest.TestCase):
     def test_api_handle_investigate_request_strategy_validation(self):
         res = handle_investigate_request(
             {"text": "Hello team, meeting at 3pm."},
-            strategy="linear",
+            strategy="orchestrator",
         )
         self.assertEqual(res["verdict"], VerdictEnum.NO_CLEAR_INDICATORS.value)
+
+        with self.assertRaises(ValueError):
+            handle_investigate_request({"text": "Hello"}, strategy="linear")
 
         with self.assertRaises(ValueError):
             handle_investigate_request({"text": "Hello"}, strategy="bogus")
@@ -255,7 +258,7 @@ class TestInvestigator(unittest.TestCase):
                 "https://click.grammarly.com/s/c/9mihnDwOdzlpym4mGWCQo6J6WyERI0V0CsNw4sD-CVu-x9WoCkCNnfhw9x3vUuo_PR2myVblMTNyOYecoidPqTj-JBFgJGInN3sZoVwe9_ND4a5ufBrbxiHrgAn6oMlIaxMixzVHTCJIBvAF-3KSH07l2FvXyzVuKehbSNefOkKOXfDs4hdXKA6Ks0-RjdP54FAhRYyrlP-PHt1ilB1XsyaGUJRW3iVDKtRsBkdQZqLyGbyuoOtKN6Jc-v7ijP-UciY8Dnj_8wL9S4uy_0G6aH06psNTvgARDWUD5noXfh5g80-yl40RTk6jFTJ2inge3pb69hg4b5b5tfkL8UFvXY-DEEA6IGpQj3PXP-c3UIAlw2Xds27cu3iER-KWEkvuvX2f2fxcNj8MnzRSUTc2QoUG6rztYwUPw_rAjM0PfSK4-zvX5VNae-XjDEdW_hhRRDNDyrxGM9eStOArGEfCFPtE_7o_wfnPEYln3erxyLkYnCJieoyN8fLi734RKTcK5GNv6z2L2kRzkcIhjFCXsIXeoLIfTMSYNjD1R08Q83CW0XYF6tu50gqA1oQz7o8xUSq_uWdU_F-Rt5v0A5bv9-ZoxwQOxYOPm9Sliw/U4xe20QUaRYkn2EcehcfV8e1-LM8x0QI/26",
             ],
         )
-        res = self.investigator.investigate_email(msg, strategy="linear")
+        res = self.investigator.investigate_email(msg)
         self.assertEqual(res.verdict, VerdictEnum.NO_CLEAR_INDICATORS)
         self.assertLess(res.risk_score, 35)
 

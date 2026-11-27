@@ -8,15 +8,15 @@ from pathlib import Path
 from typing import Optional
 
 
-def _load_dotenv_simple(env_path: Path) -> None:
-    """Lightweight .env file parser that sets os.environ if key is not already set."""
+def _load_dotenv_simple(env_path: Path, override: bool = False) -> None:
+    """Lightweight .env file parser that sets os.environ if key is not already set (or overrides)."""
     if not env_path.is_file():
         return
     try:
         try:
             from dotenv import load_dotenv
 
-            load_dotenv(env_path, override=False)
+            load_dotenv(env_path, override=override)
             return
         except ImportError:
             pass
@@ -35,7 +35,7 @@ def _load_dotenv_simple(env_path: Path) -> None:
                     val = val[1:-1]
                 elif "#" in val:
                     val = val.split("#", 1)[0].strip()
-                if key and key not in os.environ:
+                if key and (override or key not in os.environ):
                     os.environ[key] = val
     except (OSError, ValueError):
         pass
@@ -124,5 +124,63 @@ def get_settings() -> Settings:
     global _cached_settings
     if _cached_settings is None:
         _cached_settings = Settings()
+    return _cached_settings
+
+
+def clear_settings_cache() -> Settings:
+    """Reload .env and reset cached Settings so updated env config takes effect."""
+    global _cached_settings
+    _load_dotenv_simple(_ENV_FILE, override=True)
+    _cached_settings = Settings(
+        app_env=os.getenv("APP_ENV", "development"),
+        debug=os.getenv("DEBUG", "true").lower() in ("1", "true", "yes"),
+        log_level=os.getenv("LOG_LEVEL", "INFO"),
+        api_host=os.getenv("API_HOST", "0.0.0.0"),
+        api_port=int(os.getenv("API_PORT", "8000")),
+        secret_key=os.getenv("SECRET_KEY", "scamlens-dev-insecure-secret-key-32-bytes-min"),
+        default_ai_provider=os.getenv("DEFAULT_AI_PROVIDER", "custom"),
+        groq_api_key=os.getenv("GROQ_API_KEY"),
+        groq_model=os.getenv("GROQ_MODEL", "openai/gpt-oss-20b"),
+        groq_vision_model=os.getenv("GROQ_VISION_MODEL", "qwen/qwen3.8-27b"),
+        gemini_api_key=os.getenv("GEMINI_API_KEY"),
+        gemini_model=os.getenv("GEMINI_MODEL", "gemini-1.5-flash-latest"),
+        openai_api_key=os.getenv("OPENAI_API_KEY"),
+        openai_model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+        anthropic_api_key=os.getenv("ANTHROPIC_API_KEY"),
+        anthropic_model=os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022"),
+        custom_ai_base_url=os.getenv("CUSTOM_AI_BASE_URL"),
+        custom_ai_api_key=os.getenv("CUSTOM_AI_API_KEY"),
+        custom_ai_model=os.getenv("CUSTOM_AI_MODEL", "Qwen/Qwen3-8B"),
+        custom_ai_vision_model=os.getenv("CUSTOM_AI_VISION_MODEL", "Qwen/Qwen3-8B"),
+        custom_ai_ca_cert=os.getenv("CUSTOM_AI_CA_CERT"),
+        custom_ai_insecure_skip_verify=(
+            os.getenv("CUSTOM_AI_INSECURE_SKIP_VERIFY", "false").lower() in ("1", "true", "yes")
+        ),
+        vllm_base_url=os.getenv("VLLM_BASE_URL"),
+        vllm_api_key=os.getenv("VLLM_API_KEY"),
+        vllm_model=os.getenv("VLLM_MODEL"),
+        vllm_ca_cert=os.getenv("VLLM_CA_CERT"),
+        use_mock_intelligence=(
+            os.getenv("USE_MOCK_INTELLIGENCE", "true").lower() in ("1", "true", "yes")
+        ),
+        google_safe_browsing_api_key=os.getenv("GOOGLE_SAFE_BROWSING_API_KEY"),
+        virustotal_api_key=os.getenv("VIRUSTOTAL_API_KEY"),
+        whoisxml_api_key=os.getenv("WHOISXML_API_KEY"),
+        enable_pii_redaction=(
+            os.getenv("ENABLE_PII_REDACTION", "true").lower() in ("1", "true", "yes")
+        ),
+        max_image_upload_mb=int(os.getenv("MAX_IMAGE_UPLOAD_MB", "10")),
+        max_text_input_chars=int(os.getenv("MAX_TEXT_INPUT_CHARS", "10000")),
+        default_region=os.getenv("DEFAULT_REGION", "IN"),
+        enable_regional_advisories=(
+            os.getenv("ENABLE_REGIONAL_ADVISORIES", "true").lower() in ("1", "true", "yes")
+        ),
+        data_dir=Path(os.getenv("DATA_DIR", str(_PROJECT_ROOT / "data"))),
+        gmail_credentials_file=os.getenv("GMAIL_CREDENTIALS_FILE", "credentials.json"),
+        gmail_token_file=os.getenv("GMAIL_TOKEN_FILE", "token.json"),
+        gmail_scopes=os.getenv(
+            "GMAIL_SCOPES", "https://www.googleapis.com/auth/gmail.readonly"
+        ),
+    )
     return _cached_settings
 

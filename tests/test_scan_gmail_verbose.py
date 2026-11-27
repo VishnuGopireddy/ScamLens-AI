@@ -106,16 +106,25 @@ class TestScanGmailVerbose(unittest.TestCase):
         self.assertIn("Investigation complete", output)
         self.assertIn("Live process finished: 1 email(s) scanned", output)
 
+    @patch("scan_gmail.ScamInvestigator")
     @patch("scan_gmail.GmailReader")
     @patch("scan_gmail.GmailAuthManager")
     def test_scan_gmail_main_with_v_flag_streams_live_process(
-        self, _mock_auth_cls: MagicMock, mock_reader_cls: MagicMock
+        self,
+        _mock_auth_cls: MagicMock,
+        mock_reader_cls: MagicMock,
+        mock_inv_cls: MagicMock,
     ) -> None:
         mock_reader = MagicMock()
         mock_reader.service = MagicMock()
         mock_reader.list_message_summaries.return_value = [{"id": "msg_test_001"}]
         mock_reader.get_message.return_value = _sample_email()
         mock_reader_cls.return_value = mock_reader
+
+        inv = ScamInvestigator()
+        inv.intel.use_mock = True
+        inv.ai = OpenAICompatibleClient(api_key="", provider="groq")
+        mock_inv_cls.return_value = inv
 
         stdout_buf = io.StringIO()
         stderr_buf = io.StringIO()
@@ -156,10 +165,14 @@ class TestScanGmailVerbose(unittest.TestCase):
         self.assertIn("ScamLens-AI Live Process", err)
         self.assertIn("Investigation complete", err)
 
+    @patch("scan_gmail.ScamInvestigator")
     @patch("scan_gmail.GmailReader")
     @patch("scan_gmail.GmailAuthManager")
     def test_scan_gmail_with_v_handles_rich_markup_brackets_in_subject(
-        self, _mock_auth_cls: MagicMock, mock_reader_cls: MagicMock
+        self,
+        _mock_auth_cls: MagicMock,
+        mock_reader_cls: MagicMock,
+        mock_inv_cls: MagicMock,
     ) -> None:
         tricky_msg = _sample_email()
         tricky_msg.subject = "[/broken] [EXTERNAL] Alert [tag=1]"
@@ -168,6 +181,11 @@ class TestScanGmailVerbose(unittest.TestCase):
         mock_reader.list_message_summaries.return_value = [{"id": "msg_test_001"}]
         mock_reader.get_message.return_value = tricky_msg
         mock_reader_cls.return_value = mock_reader
+
+        inv = ScamInvestigator()
+        inv.intel.use_mock = True
+        inv.ai = OpenAICompatibleClient(api_key="", provider="groq")
+        mock_inv_cls.return_value = inv
 
         stdout_buf = io.StringIO()
         with redirect_stdout(stdout_buf):

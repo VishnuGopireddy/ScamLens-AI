@@ -18,12 +18,14 @@
     timerInterval: null,
     startTimeMs: 0,
     gmailReady: false,
+    gmailConnectedEmail: null,
     isScanning: false,
     polledGmailIds: new Set(),
     gmailPollTickId: null,
     gmailPollNextInSec: GMAIL_POLL_INTERVAL_SEC,
     gmailLastPollNote: "",
     gmailNewAlertCount: 0,
+    forceRescanOnFetch: false,
   };
 
   // ---------------------------------------------------------------------------
@@ -39,7 +41,7 @@
   }
 
   function getStrategy() {
-    return document.getElementById("strategySelect").value || "linear";
+    return "orchestrator";
   }
 
   function mountResultsTemplate(slotId) {
@@ -99,17 +101,84 @@
     if (subtitle) subtitle.textContent = subtitleText || "Running investigation...";
   }
 
+  const _LLM_STAGES = new Set([
+    "orchestrator_start",
+    "orchestrator_turn",
+    "llm_call_done",
+    "analyzing_image",
+    "image_analyzed",
+  ]);
+
+  function formatInlineMarkdown(raw) {
+    return escapeHtml(raw)
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  }
+
+  function formatReportSummaryHtml(summary) {
+    const lines = String(summary || "").split(/\r?\n/);
+    const out = [];
+    let inList = false;
+
+    const closeList = () => {
+      if (inList) {
+        out.push("</ul>");
+        inList = false;
+      }
+    };
+
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+      if (!line) {
+        closeList();
+        continue;
+      }
+      if (/^#{1,4}\s+/.test(line)) {
+        closeList();
+        out.push(`<h4>${formatInlineMarkdown(line.replace(/^#{1,4}\s+/, ""))}</h4>`);
+        continue;
+      }
+      if (/^\*\*[^*]+:?\*\*$/.test(line)) {
+        closeList();
+        out.push(`<h4>${formatInlineMarkdown(line.replace(/^\*\*|\*\*$/g, ""))}</h4>`);
+        continue;
+      }
+      if (/^[-*]\s+/.test(line)) {
+        if (!inList) {
+          out.push("<ul>");
+          inList = true;
+        }
+        out.push(`<li>${formatInlineMarkdown(line.replace(/^[-*]\s+/, ""))}</li>`);
+        continue;
+      }
+      closeList();
+      out.push(`<p>${formatInlineMarkdown(line)}</p>`);
+    }
+    closeList();
+    return out.join("");
+  }
+
+  const _TOOL_STAGES = new Set([
+    "orchestrator_tools_dispatched",
+    "orchestrator_tool_done",
+  ]);
+
   function appendStatusEvent(ev, isError = false) {
     const feed = document.getElementById("liveStatusFeed");
     const subtitle = document.getElementById("liveStageSubtitle");
     if (!feed) return;
 
     feed.querySelectorAll(".feed-item.latest").forEach((el) => el.classList.remove("latest"));
+    const stage = ev.stage || "status";
+    const isLlm = _LLM_STAGES.has(stage) || Boolean(ev.data && ev.data.llm_call);
+    const isTool = _TOOL_STAGES.has(stage);
     const li = document.createElement("li");
-    li.className = `feed-item latest${isError ? " error" : ""}`;
+    li.className = `feed-item latest${isLlm ? " llm-event" : ""}${isTool ? " tool-event" : ""}${isError ? " error" : ""}`;
     li.innerHTML = `
-      <span class="feed-time">${escapeHtml(ev.timestamp || "")}</span>
-      <span class="feed-stage">${escapeHtml(ev.stage || "status")}</span>
+      <div class="feed-top-row">
+        <span class="feed-time">${escapeHtml(ev.timestamp || "")}</span>
+        <span class="feed-stage">${escapeHtml(stage)}</span>
+      </div>
       <div class="feed-body">
         <div class="feed-msg">${escapeHtml(ev.message || "")}</div>
         ${ev.detail ? `<div class="feed-detail">${escapeHtml(ev.detail)}</div>` : ""}
@@ -129,11 +198,11 @@
         snapshot.classList.remove("hidden");
         snapshot.innerHTML = `
           <div><strong>Email Being Analyzed:</strong> ${escapeHtml(em.subject)}</div>
-          <div class="hint" style="margin-top:3px;">
-            <strong>From:</strong> ${escapeHtml(em.sender || em.sender_email)} &nbsp;|&nbsp;
-            <strong>Auth:</strong> SPF=${escapeHtml(em.spf_status)} / DKIM=${escapeHtml(em.dkim_status)} / DMARC=${escapeHtml(em.dmarc_status)} &nbsp;|&nbsp;
-            <strong>URLs:</strong> ${(em.extracted_urls || []).length} &nbsp;|&nbsp;
-            <strong>Attachments:</strong> ${(em.attachments || []).length}
+          <div class="snapshot-meta-row">
+            <span><strong>From:</strong> ${escapeHtml(em.sender || em.sender_email)}</span>
+            <span><strong>Auth:</strong> SPF=${escapeHtml(em.spf_status)} / DKIM=${escapeHtml(em.dkim_status)} / DMARC=${escapeHtml(em.dmarc_status)}</span>
+            <span><strong>URLs:</strong> ${(em.extracted_urls || []).length}</span>
+            <span><strong>Attachments:</strong> ${(em.attachments || []).length}</span>
           </div>
         `;
       }
@@ -258,7 +327,23 @@
     vBadge.textContent = result.verdict;
     vBadge.className = `verdict-badge ${verdictClass(result.verdict)}`;
 
-    document.getElementById("reportSummary").textContent = result.summary || "";
+    const fullSummary = (result.summary || "").trim();
+    const firstBreak = fullSummary.indexOf("\n\n");
+    const headline = firstBreak >= 0 ? fullSummary.slice(0, firstBreak) : fullSummary;
+    const narrative = firstBreak >= 0 ? fullSummary.slice(firstBreak + 2).trim() : "";
+
+    const headlineEl = document.getElementById("reportHeadline");
+    if (headlineEl) headlineEl.textContent = headline;
+
+    const summarySection = document.getElementById("reportSummarySection");
+    const summaryEl = document.getElementById("reportSummary");
+    if (narrative) {
+      summaryEl.innerHTML = formatReportSummaryHtml(narrative);
+      if (summarySection) summarySection.classList.remove("hidden");
+    } else {
+      summaryEl.innerHTML = "";
+      if (summarySection) summarySection.classList.add("hidden");
+    }
 
     const score = Number(result.risk_score || 0);
     document.getElementById("riskScoreValue").textContent = String(score);
@@ -305,9 +390,12 @@
 
     const provList = document.getElementById("provenanceList");
     const provSection = document.getElementById("provenanceSection");
-    if ((result.provenance || []).length) {
+    const provCount = document.getElementById("provenanceCount");
+    const provEntries = result.provenance || [];
+    if (provCount) provCount.textContent = String(provEntries.length);
+    if (provEntries.length) {
       provSection.classList.remove("hidden");
-      provList.innerHTML = result.provenance
+      provList.innerHTML = provEntries
         .map((p) => `<div class="prov-row">${escapeHtml(JSON.stringify(p))}</div>`)
         .join("");
     } else {
@@ -341,12 +429,21 @@
 
       const pillGmail = document.getElementById("pillGmail");
       state.gmailReady = Boolean(gmail.ready);
+      state.gmailConnectedEmail = gmail.connected_email || null;
       pillGmail.style.cursor = "pointer";
-      pillGmail.title = "Open Live Gmail Forensics";
+      pillGmail.title = state.gmailConnectedEmail
+        ? `Connected Gmail: ${state.gmailConnectedEmail} (click to open)`
+        : "Open Live Gmail Forensics";
 
       const banner = document.getElementById("gmailAuthBanner");
       if (banner) {
-        banner.textContent = `Gmail OAuth Status: ${gmail.status_note} (credentials.json: ${gmail.credentials_exists ? "found" : "missing"}, token.json: ${gmail.token_exists ? "found" : "missing"})`;
+        const acctPrefix = state.gmailConnectedEmail
+          ? `Connected: ${state.gmailConnectedEmail} • `
+          : "";
+        const missingNote = (!gmail.credentials_exists || !gmail.token_exists)
+          ? ` (credentials.json: ${gmail.credentials_exists ? "found" : "missing"}, token.json: ${gmail.token_exists ? "found" : "missing"})`
+          : "";
+        banner.textContent = `${acctPrefix}${gmail.status_note}${missingNote}`;
         banner.className = `info-banner ${gmail.ready ? "ok" : "warn"}`;
       }
       syncGmailAutoPollState();
@@ -641,6 +738,10 @@
   }
 
   async function fetchGmailEmailsList() {
+    if (state.forceRescanOnFetch) {
+      state.forceRescanOnFetch = false;
+      return scanInboxLive("gmail");
+    }
     mountResultsTemplate("emailResultsSlot");
     resetLiveFeed("Fetching Gmail messages...");
     startLiveTimer();
@@ -652,8 +753,13 @@
       const resp = await fetch(`/api/v1/emails/gmail?query=${encodeURIComponent(query)}&max_results=${maxResults}&include_spam_trash=true`);
       const data = await resp.json();
       if (!resp.ok) throw new Error(data.detail || "Failed to fetch Gmail");
+      if (data.connected_email && data.connected_email !== state.gmailConnectedEmail) {
+        state.gmailConnectedEmail = data.connected_email;
+        updateGmailPollIndicators();
+      }
       stopLiveTimer("done");
-      renderEmailList(data.emails || [], `Gmail ("${query || "All Mail"}")`, "gmail");
+      const acctLabel = state.gmailConnectedEmail ? ` — ${state.gmailConnectedEmail}` : "";
+      renderEmailList(data.emails || [], `Gmail ("${query || "All Mail"}")${acctLabel}`, "gmail");
       appendStatusEvent({ stage: "gmail_loaded", message: `Fetched and parsed ${data.count} Gmail message(s).`, timestamp: new Date().toTimeString().slice(0, 8) });
       if (state.emails.length) {
         renderParsedEmail(state.emails[0]);
@@ -672,7 +778,18 @@
 
     try {
       await streamSSE("/api/v1/investigate/email/stream", payload, {
-        status: (ev) => appendStatusEvent(ev),
+        status: (ev) => {
+          if (ev.stage === "inbox_listed" && ev.data && ev.data.connected_email) {
+            state.gmailConnectedEmail = ev.data.connected_email;
+            const banner = document.getElementById("gmailAuthBanner");
+            if (banner) {
+              banner.textContent = `Connected Email: ${state.gmailConnectedEmail} • Gmail OAuth active`;
+              banner.className = "info-banner ok";
+            }
+            updateGmailPollIndicators();
+          }
+          appendStatusEvent(ev);
+        },
         result: (data) => {
           stopLiveTimer("done");
           if (data.email) renderParsedEmail(data.email);
@@ -721,7 +838,18 @@
         strategy: getStrategy(),
         incident_stage: document.getElementById("emailPostActionCheck").checked ? "POST_ACTION" : "PRE_ACTION",
       }, {
-        status: (ev) => appendStatusEvent(ev),
+        status: (ev) => {
+          if (ev.stage === "inbox_listed" && ev.data && ev.data.connected_email) {
+            state.gmailConnectedEmail = ev.data.connected_email;
+            const banner = document.getElementById("gmailAuthBanner");
+            if (banner) {
+              banner.textContent = `Connected Email: ${state.gmailConnectedEmail} • Gmail OAuth active`;
+              banner.className = "info-banner ok";
+            }
+            updateGmailPollIndicators();
+          }
+          appendStatusEvent(ev);
+        },
         email_result: (data) => {
           const em = data.email;
           em._verdict = data.investigation.verdict;
@@ -758,6 +886,47 @@
     }
   }
 
+  async function clearEmailAndSystemCache() {
+    const btn = document.getElementById("clearCacheBtn");
+    if (btn) btn.disabled = true;
+    try {
+      state.polledGmailIds.clear();
+      state.emails = [];
+      state.selectedEmail = null;
+      state.gmailNewAlertCount = 0;
+      state.gmailLastPollNote = "Cache cleared — click Fetch Inbox to re-run";
+      state.forceRescanOnFetch = true;
+      state.gmailPollNextInSec = GMAIL_POLL_INTERVAL_SEC;
+
+      const listEl = document.getElementById("emailList");
+      if (listEl) {
+        listEl.innerHTML = `<p class="empty-state">Cache cleared. Click "Fetch Inbox" or "Live Scan Inbox" to re-fetch and run investigation.</p>`;
+      }
+      const countEl = document.getElementById("emailListCount");
+      if (countEl) countEl.textContent = "0 loaded";
+      const parsedBox = document.getElementById("parsedEmailInspector");
+      if (parsedBox) parsedBox.classList.add("hidden");
+
+      mountResultsTemplate("emailResultsSlot");
+      resetLiveFeed("Cache cleared. Ready to re-fetch & run orchestrator...");
+
+      const resp = await fetch("/api/v1/cache/clear", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+      if (resp.ok) {
+        await loadSystemStatus();
+      }
+      appendStatusEvent({
+        stage: "cache_cleared",
+        message: "Cleared cached emails, scanned IDs, and reloaded backend settings. Click Fetch Inbox to run again.",
+        timestamp: new Date().toTimeString().slice(0, 8),
+      });
+      updateGmailPollIndicators();
+    } catch (err) {
+      appendStatusEvent({ stage: "error", message: `Failed to clear cache: ${err.message}` }, true);
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
   function isGmailAutoPollEnabled() {
     const cb = document.getElementById("gmailAutoPollCheck");
     return Boolean(cb && cb.checked);
@@ -767,6 +936,8 @@
     const pillGmail = document.getElementById("pillGmail");
     const pollStatus = document.getElementById("gmailPollStatus");
     const enabled = isGmailAutoPollEnabled();
+
+    const acctTag = state.gmailConnectedEmail ? state.gmailConnectedEmail : "Gmail";
 
     if (!state.gmailReady) {
       if (pillGmail) {
@@ -781,7 +952,9 @@
 
     if (!enabled) {
       if (pillGmail) {
-        pillGmail.textContent = "Gmail: Ready (Poll Off)";
+        pillGmail.textContent = state.gmailConnectedEmail
+          ? `${acctTag} (Poll Off)`
+          : "Gmail: Ready (Poll Off)";
         pillGmail.className = "pill pill-ok";
       }
       if (pollStatus) {
@@ -794,7 +967,7 @@
 
     if (state.isScanning) {
       if (pillGmail) {
-        pillGmail.textContent = "Gmail: Checking...";
+        pillGmail.textContent = `${acctTag} • Checking...`;
         pillGmail.className = "pill pill-info";
       }
       if (pollStatus) {
@@ -805,10 +978,10 @@
 
     if (pillGmail) {
       if (state.gmailNewAlertCount > 0) {
-        pillGmail.textContent = `Gmail: ${state.gmailNewAlertCount} new (${state.gmailPollNextInSec}s)`;
+        pillGmail.textContent = `${acctTag} • ${state.gmailNewAlertCount} new (${state.gmailPollNextInSec}s)`;
         pillGmail.className = "pill pill-warn";
       } else {
-        pillGmail.textContent = `Gmail: Auto-Poll (${state.gmailPollNextInSec}s)`;
+        pillGmail.textContent = `${acctTag} • Auto-Poll (${state.gmailPollNextInSec}s)`;
         pillGmail.className = "pill pill-ok";
       }
     }
@@ -867,6 +1040,15 @@
         incident_stage: document.getElementById("emailPostActionCheck")?.checked ? "POST_ACTION" : "PRE_ACTION",
       }, {
         status: (ev) => {
+          if (ev.stage === "inbox_listed" && ev.data && ev.data.connected_email && ev.data.connected_email !== state.gmailConnectedEmail) {
+            state.gmailConnectedEmail = ev.data.connected_email;
+            const banner = document.getElementById("gmailAuthBanner");
+            if (banner) {
+              banner.textContent = `Connected Email: ${state.gmailConnectedEmail} • Gmail OAuth active`;
+              banner.className = "info-banner ok";
+            }
+            updateGmailPollIndicators();
+          }
           // Only stream into the live feed when on the Email tab and new emails are being processed
           if (onEmailTab && ev.stage !== "reading_inbox" && ev.stage !== "inbox_listed") {
             if (!fedStarted) {
@@ -1254,6 +1436,7 @@
     document.getElementById("scanLocalInboxBtn").addEventListener("click", () => scanInboxLive("local"));
     document.getElementById("fetchGmailBtn").addEventListener("click", fetchGmailEmailsList);
     document.getElementById("scanGmailInboxBtn").addEventListener("click", () => scanInboxLive("gmail"));
+    document.getElementById("clearCacheBtn").addEventListener("click", clearEmailAndSystemCache);
     document.getElementById("gmailAutoPollCheck").addEventListener("change", syncGmailAutoPollState);
     document.getElementById("pillGmail").addEventListener("click", () => {
       state.gmailNewAlertCount = 0;

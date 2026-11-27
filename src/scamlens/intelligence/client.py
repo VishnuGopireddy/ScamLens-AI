@@ -92,7 +92,7 @@ def extract_domain_from_url(url_or_domain: str) -> str:
 
 
 class ThreatIntelligenceClient:
-    """Interface for external threat intelligence checks (ICANN RDAP & VirusTotal v3)."""
+    """Interface for external threat intelligence checks (WhoisXML, ICANN RDAP & VirusTotal v3)."""
 
     def __init__(self, use_mock: Optional[bool] = None):
         self.settings = get_settings()
@@ -100,12 +100,146 @@ class ThreatIntelligenceClient:
             use_mock if use_mock is not None else self.settings.use_mock_intelligence
         )
         self.vt_api_key = self.settings.virustotal_api_key
+        self.whoisxml_api_key = self.settings.whoisxml_api_key
+
+    def _build_domain_age_finding(
+        self,
+        domain: str,
+        age_days: int,
+        reg_date_str: Optional[str],
+        source: str,
+        registrar: Optional[str] = None,
+    ) -> EvidenceItem:
+        """Build standardized domain-age EvidenceItem across RDAP and WhoisXML."""
+        date_display = reg_date_str[:10] if reg_date_str else "unknown date"
+        meta: Dict[str, Any] = {"domain": domain, "age_days": age_days}
+        if reg_date_str:
+            meta["registration_date"] = reg_date_str
+        if registrar:
+            meta["registrar"] = registrar
+
+        if age_days < 30:
+            return EvidenceItem(
+                category=EvidenceCategory.EXTERNAL_INTEL,
+                severity=SeverityLevel.HIGH,
+                summary=f"Newly registered domain ({age_days} days old)",
+                details=(
+                    f"Domain '{domain}' was registered on {date_display} "
+                    f"({age_days} days ago). Newly created domains claiming established identities are high-risk."
+                ),
+                is_verified=True,
+                source=source,
+                metadata=meta,
+            )
+        if age_days < 90:
+            return EvidenceItem(
+                category=EvidenceCategory.EXTERNAL_INTEL,
+                severity=SeverityLevel.MEDIUM,
+                summary=f"Recently created domain ({age_days} days old)",
+                details=f"Domain '{domain}' is less than 3 months old (registered {date_display}).",
+                is_verified=True,
+                source=source,
+                metadata=meta,
+            )
+        return EvidenceItem(
+            category=EvidenceCategory.EXTERNAL_INTEL,
+            severity=SeverityLevel.INFO,
+            summary=f"Established domain ({age_days // 365}+ years old)",
+            details=f"Domain '{domain}' was registered on {date_display} ({age_days} days old).",
+            is_verified=True,
+            source=source,
+            metadata=meta,
+        )
+
+    def _query_whoisxml(self, domain: str, query_domain: str) -> Optional[List[EvidenceItem]]:
+        """Query WhoisXML WhoisService API for domain registration age and registrar."""
+        if not self.whoisxml_api_key:
+            return None
+        try:
+            with httpx.Client(timeout=10.0) as client:
+                resp = client.get(
+                    "https://www.whoisxmlapi.com/whoisserver/WhoisService",
+                    params={
+                        "apiKey": self.whoisxml_api_key,
+                        "domainName": query_domain,
+                        "outputFormat": "JSON",
+                    },
+                )
+            if resp.status_code != 200:
+                logger.warning("WhoisXML query HTTP %s for %s", resp.status_code, query_domain)
+                return None
+
+            payload = resp.json()
+            if payload.get("ErrorMessage"):
+                logger.warning("WhoisXML API error for %s: %s", query_domain, payload["ErrorMessage"])
+                return None
+
+            record = payload.get("WhoisRecord") or {}
+            registry = record.get("registryData") or {}
+            registrar = record.get("registrarName") or registry.get("registrarName")
+
+            if record.get("dataError") == "MISSING_WHOIS_DATA" and not (
+                record.get("createdDate") or registry.get("createdDate") or record.get("estimatedDomainAge")
+            ):
+                return [
+                    EvidenceItem(
+                        category=EvidenceCategory.EXTERNAL_INTEL,
+                        severity=SeverityLevel.MEDIUM,
+                        summary="Domain WHOIS record missing (WhoisXML)",
+                        details=(
+                            f"Domain '{domain}' returned MISSING_WHOIS_DATA from WhoisXML. "
+                            "It may be unregistered, suspended, or an invalid top-level domain."
+                        ),
+                        is_verified=True,
+                        source="whoisxml",
+                        metadata={"domain": domain, "data_error": "MISSING_WHOIS_DATA"},
+                    )
+                ]
+
+            reg_date_str: Optional[str] = (
+                record.get("createdDate")
+                or registry.get("createdDate")
+                or record.get("createdDateNormalized")
+                or registry.get("createdDateNormalized")
+            )
+            age_days: Optional[int] = None
+            if reg_date_str:
+                try:
+                    clean_ts = reg_date_str.replace(" UTC", "Z").replace(" ", "T")
+                    if clean_ts.endswith("Z"):
+                        clean_ts = clean_ts[:-1] + "+00:00"
+                    reg_date = datetime.fromisoformat(clean_ts)
+                    if reg_date.tzinfo is None:
+                        reg_date = reg_date.replace(tzinfo=timezone.utc)
+                    age_days = max(0, (datetime.now(timezone.utc) - reg_date).days)
+                except ValueError:
+                    age_days = None
+
+            if age_days is None and record.get("estimatedDomainAge") is not None:
+                try:
+                    age_days = max(0, int(record["estimatedDomainAge"]))
+                except (TypeError, ValueError):
+                    age_days = None
+
+            if age_days is not None:
+                return [
+                    self._build_domain_age_finding(
+                        domain=domain,
+                        age_days=age_days,
+                        reg_date_str=reg_date_str,
+                        source="whoisxml",
+                        registrar=registrar,
+                    )
+                ]
+        except Exception as exc:
+            logger.warning("Live WhoisXML query failed (%s)", exc)
+        return None
 
     # --------------------------------------------------------------------------
-    # 1. ICANN RDAP / WHOIS Domain Age & Registration Checker
+    # 1. WhoisXML & ICANN RDAP / WHOIS Domain Age & Registration Checker
     # --------------------------------------------------------------------------
     def inspect_domain_whois_rdap(self, domain_or_url: str) -> List[EvidenceItem]:
-        """Inspect domain registration date and registrar via ICANN RDAP (RFC 7482).
+        """Inspect domain registration date and registrar via WhoisXML / ICANN RDAP (RFC 7482).
 
         Evaluates domain age:
         - Age < 30 days: HIGH severity (classic zero-day phishing indicator)
@@ -121,9 +255,14 @@ class ThreatIntelligenceClient:
         if domain.replace(".", "").isdigit():
             return findings
 
-        # 1. Live RDAP Query when use_mock=False
+        # 1. Live Lookup when use_mock=False (WhoisXML when configured, with ICANN RDAP fallback)
         if not self.use_mock:
             rdap_domain = _to_registrable_domain(domain)
+            if self.whoisxml_api_key:
+                whoisxml_findings = self._query_whoisxml(domain, rdap_domain)
+                if whoisxml_findings is not None:
+                    return whoisxml_findings
+
             try:
                 rdap_url = f"https://rdap.org/domain/{rdap_domain}"
                 with httpx.Client(timeout=10.0) as client:
@@ -141,47 +280,14 @@ class ThreatIntelligenceClient:
                                 reg_date_str.replace("Z", "+00:00")
                             )
                             age_days = (datetime.now(timezone.utc) - reg_date).days
-
-                            # Evaluate domain age
-                            if age_days < 30:
-                                findings.append(
-                                    EvidenceItem(
-                                        category=EvidenceCategory.EXTERNAL_INTEL,
-                                        severity=SeverityLevel.HIGH,
-                                        summary=f"Newly registered domain ({age_days} days old)",
-                                        details=(
-                                            f"Domain '{domain}' was registered on {reg_date.strftime('%Y-%m-%d')} "
-                                            f"({age_days} days ago). Newly created domains claiming established identities are high-risk."
-                                        ),
-                                        is_verified=True,
-                                        source="icann_rdap",
-                                        metadata={"domain": domain, "age_days": age_days, "registration_date": reg_date_str},
-                                    )
+                            findings.append(
+                                self._build_domain_age_finding(
+                                    domain=domain,
+                                    age_days=age_days,
+                                    reg_date_str=reg_date_str,
+                                    source="icann_rdap",
                                 )
-                            elif age_days < 90:
-                                findings.append(
-                                    EvidenceItem(
-                                        category=EvidenceCategory.EXTERNAL_INTEL,
-                                        severity=SeverityLevel.MEDIUM,
-                                        summary=f"Recently created domain ({age_days} days old)",
-                                        details=f"Domain '{domain}' is less than 3 months old.",
-                                        is_verified=True,
-                                        source="icann_rdap",
-                                        metadata={"domain": domain, "age_days": age_days},
-                                    )
-                                )
-                            else:
-                                findings.append(
-                                    EvidenceItem(
-                                        category=EvidenceCategory.EXTERNAL_INTEL,
-                                        severity=SeverityLevel.INFO,
-                                        summary=f"Established domain ({age_days // 365}+ years old)",
-                                        details=f"Domain '{domain}' was registered on {reg_date.strftime('%Y-%m-%d')} ({age_days} days old).",
-                                        is_verified=True,
-                                        source="icann_rdap",
-                                        metadata={"domain": domain, "age_days": age_days},
-                                    )
-                                )
+                            )
                             return findings
 
                     elif resp.status_code == 404:
@@ -340,8 +446,34 @@ class ThreatIntelligenceClient:
                             )
                         )
                         return findings
+                    else:
+                        logger.warning("VirusTotal query HTTP %s for %s", resp.status_code, url)
+                        findings.append(
+                            EvidenceItem(
+                                category=EvidenceCategory.EXTERNAL_INTEL,
+                                severity=SeverityLevel.INFO,
+                                summary=f"VirusTotal lookup unavailable (HTTP {resp.status_code})",
+                                details=f"VirusTotal API returned HTTP {resp.status_code} for '{url}'.",
+                                is_verified=False,
+                                source="virustotal_v3_offline",
+                                metadata={"status_code": resp.status_code},
+                            )
+                        )
+                        return findings
             except Exception as exc:
-                logger.debug("Live VirusTotal query failed (%s), using mock.", exc)
+                logger.warning("Live VirusTotal query failed (%s)", exc)
+                findings.append(
+                    EvidenceItem(
+                        category=EvidenceCategory.EXTERNAL_INTEL,
+                        severity=SeverityLevel.INFO,
+                        summary=f"VirusTotal query unreachable ({type(exc).__name__})",
+                        details=f"Could not connect to VirusTotal API for '{url}': {exc}",
+                        is_verified=False,
+                        source="virustotal_v3_offline",
+                        metadata={"error": str(exc)},
+                    )
+                )
+                return findings
 
         # 2. Simulated Offline / Mock Evaluation
         if _is_mock_malicious_url(url):

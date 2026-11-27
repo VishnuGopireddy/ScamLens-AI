@@ -149,7 +149,7 @@ def get_architecture_details() -> Dict[str, Any]:
                 "Concurrent Execution: OpenAICompatibleClient.run_agent_loop() dispatches tools via ThreadPoolExecutor (up to 8 workers).",
                 "Typed Evidence Capture: ToolDispatcher.execute_tool_with_evidence() returns JSON ToolMessages for the LLM AND typed EvidenceItems for deterministic scoring.",
                 "Turn 2 (Forced Synthesis): Omits tools (tools=None) on the final turn so the model correlates all tool outputs into a structured forensic narrative.",
-                "Resilient Fallback: Automatically falls back to the deterministic linear pipeline on ModelInferenceError or offline simulated mock output.",
+                "Resilient Fallback: Automatically runs deterministic fallback checks on ModelInferenceError or offline simulated mock output.",
             ],
             "details": {
                 "max_turns": 2,
@@ -307,7 +307,7 @@ def get_architecture_details() -> Dict[str, Any]:
         "runtime": health_check(),
         "orchestrator": {
             "strategy": "orchestrator",
-            "fallback_strategy": "linear",
+            "fallback_strategy": "deterministic_fallback",
             "max_turns": 2,
             "parallel_tools": True,
             "max_workers": 8,

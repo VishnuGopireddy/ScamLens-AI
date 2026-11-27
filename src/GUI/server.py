@@ -22,6 +22,7 @@ from urllib.parse import parse_qs, urlparse
 from scamlens.api.routes.architecture import get_architecture_details
 from scamlens.api.routes.emails import (
     build_non_interactive_gmail_reader,
+    clear_email_caches,
     get_gmail_status,
     get_registry_info,
     get_sample_cases,
@@ -34,6 +35,7 @@ from scamlens.api.routes.investigate import (
     handle_email_investigate_request,
     handle_investigate_request,
 )
+from scamlens.core.config import clear_settings_cache
 from scamlens.core.models import IncidentStage
 from scamlens.extractors.email import LocalEmailReader
 from scamlens.investigator.engine import ScamInvestigator
@@ -239,6 +241,19 @@ class ScamLensGUIHandler(BaseHTTPRequestHandler):
             self._send_json(HTTPStatus.BAD_REQUEST, {"detail": f"Invalid JSON body: {exc}"})
             return
 
+        if path == "/api/v1/cache/clear":
+            clear_email_caches()
+            clear_settings_cache()
+            self._send_json(
+                HTTPStatus.OK,
+                {
+                    "status": "cleared",
+                    "health": health_check(),
+                    "gmail": get_gmail_status(),
+                },
+            )
+            return
+
         if path == "/api/v1/investigate":
             try:
                 result = handle_investigate_request(payload, strategy=strategy_q)
@@ -302,7 +317,7 @@ class ScamLensGUIHandler(BaseHTTPRequestHandler):
                 query = "-in:trash -in:drafts" if raw_query is None else str(raw_query)
                 include_spam_trash = bool(payload.get("include_spam_trash", True))
                 max_results = max(1, min(int(payload.get("max_results") or 5), 25))
-                strategy = (strategy_q or payload.get("strategy") or "linear").lower()
+                strategy = (strategy_q or payload.get("strategy") or "orchestrator").lower()
                 stage_str = str(payload.get("incident_stage") or "PRE_ACTION")
                 try:
                     stage = IncidentStage(stage_str)
@@ -323,6 +338,11 @@ class ScamLensGUIHandler(BaseHTTPRequestHandler):
                         },
                     )
                     reader = build_non_interactive_gmail_reader()
+                    connected_email: Optional[str] = None
+                    try:
+                        connected_email = reader.get_profile_email()
+                    except Exception:
+                        connected_email = None
                     summaries = reader.list_message_summaries(
                         query=query,
                         max_results=max_results,
@@ -343,7 +363,11 @@ class ScamLensGUIHandler(BaseHTTPRequestHandler):
                                 else f"Found {total} Gmail message(s) matching '{query}'"
                             ),
                             "timestamp": time.strftime("%H:%M:%S"),
-                            "data": {"total": len(summaries), "new_count": total},
+                            "data": {
+                                "total": len(summaries),
+                                "new_count": total,
+                                "connected_email": connected_email,
+                            },
                         },
                     )
                     for idx, item in enumerate(pending, 1):

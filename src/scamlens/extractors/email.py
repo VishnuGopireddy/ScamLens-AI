@@ -741,6 +741,12 @@ class GmailReader:
             self._service = self._auth_manager.build_service()
         return self._service
 
+    def get_profile_email(self, user_id: str = "me") -> Optional[str]:
+        """Return the authenticated Gmail account's email address."""
+        profile = self.service.users().getProfile(userId=user_id).execute()
+        email_addr = profile.get("emailAddress") if isinstance(profile, dict) else None
+        return str(email_addr).strip() if email_addr else None
+
     def list_message_summaries(
         self,
         query: str = "is:unread",

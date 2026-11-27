@@ -32,13 +32,7 @@
     </div>
 
     <div class="global-controls">
-      <label class="control-inline" for="strategySelect">
-        <span>Strategy:</span>
-        <select id="strategySelect">
-          <option value="linear">Linear (Deterministic Fast)</option>
-          <option value="orchestrator">Orchestrator (Phase 1 AI Tools)</option>
-        </select>
-      </label>
+      <span class="pill pill-info">Engine: Phase 1 AI Orchestrator</span>
       <button class="tab-btn tab-btn-tech" data-tab="architecture" role="tab" title="Inspect Orchestrator, 9 Tools &amp; Architecture">
         Technical Details
       </button>
@@ -157,18 +151,29 @@
           <!-- LIVE GMAIL CONTROLS -->
           <div id="emailSourceGmail" class="email-source-panel">
             <div id="gmailAuthBanner" class="info-banner">Checking Gmail OAuth status...</div>
-            <div class="toolbar">
-              <input id="gmailQueryInput" type="text" value="-in:trash -in:drafts" placeholder="Gmail query (blank = all mail, e.g. is:unread, label:SPAM)" />
-              <input id="gmailMaxInput" type="number" min="1" max="25" value="5" style="width: 72px" title="Max messages" />
-              <button type="button" class="btn btn-secondary" id="fetchGmailBtn">Fetch Inbox</button>
-              <button type="button" class="btn btn-primary" id="scanGmailInboxBtn">Live Scan Inbox</button>
+            <div class="gmail-controls-stack">
+              <div class="toolbar gmail-toolbar">
+                <div class="toolbar-field toolbar-field-grow">
+                  <label class="toolbar-label" for="gmailQueryInput">Search Query</label>
+                  <input id="gmailQueryInput" type="text" value="-in:trash -in:drafts" placeholder="Blank = all mail, or e.g. is:unread, label:SPAM" />
+                </div>
+                <div class="toolbar-field toolbar-field-compact">
+                  <label class="toolbar-label" for="gmailMaxInput">Max</label>
+                  <input id="gmailMaxInput" type="number" min="1" max="25" value="5" title="Max messages" />
+                </div>
+              </div>
+              <div class="toolbar-actions gmail-actions-row">
+                <button type="button" class="btn btn-secondary" id="fetchGmailBtn">Fetch Inbox</button>
+                <button type="button" class="btn btn-primary" id="scanGmailInboxBtn">Live Scan Inbox</button>
+                <button type="button" class="btn btn-ghost" id="clearCacheBtn" title="Clear cached emails, scanned IDs, and reload config so the next fetch re-runs the orchestrator">Clear Cache</button>
+              </div>
             </div>
             <div class="gmail-poll-bar">
               <label class="inline-check" for="gmailAutoPollCheck">
                 <input type="checkbox" id="gmailAutoPollCheck" checked />
                 <span>Auto-poll Gmail every 1 min</span>
               </label>
-              <span class="hint" id="gmailPollStatus">Waiting for Gmail status...</span>
+              <span class="hint poll-status-pill" id="gmailPollStatus">Waiting for Gmail status...</span>
             </div>
           </div>
 
@@ -368,8 +373,8 @@
             <!-- Fallback Box inside/bottom of Phase 1 -->
             <g class="svg-node" data-diag-comp="orchestrator">
               <rect x="220" y="268" width="440" height="50" rx="8" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.3" />
-              <text x="440" y="289" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="700">RESILIENT LINEAR FALLBACK</text>
-              <text x="440" y="306" text-anchor="middle" fill="#fde68a" font-size="10">On ModelInferenceError or offline mock -&gt; runs deterministic _investigate_linear()</text>
+              <text x="440" y="289" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="700">RESILIENT OFFLINE FALLBACK</text>
+              <text x="440" y="306" text-anchor="middle" fill="#fde68a" font-size="10">On ModelInferenceError or offline mock -&gt; runs deterministic fallback checks</text>
             </g>
             <path d="M307,172 L307,262" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrowAmber)" />
 
@@ -459,7 +464,7 @@
         <div class="verdict-header">
           <div class="verdict-main">
             <span class="verdict-badge" id="verdictBadge">Verdict</span>
-            <p class="report-summary" id="reportSummary"></p>
+            <p class="report-headline" id="reportHeadline"></p>
           </div>
           <div class="score-widgets">
             <div class="score-box">
@@ -473,6 +478,11 @@
               <div class="score-bar-track"><div class="score-bar-fill conf-fill" id="confidenceBar"></div></div>
             </div>
           </div>
+        </div>
+
+        <div class="report-section" id="reportSummarySection">
+          <h3>Investigation Summary</h3>
+          <div class="report-summary" id="reportSummary"></div>
         </div>
 
         <div class="report-section">
@@ -494,8 +504,13 @@
         </div>
 
         <div class="report-section" id="provenanceSection">
-          <h3>Investigation Provenance &amp; Tool Trace</h3>
-          <div id="provenanceList" class="provenance-list"></div>
+          <details class="provenance-details">
+            <summary class="provenance-summary-toggle">
+              <span>Investigation Provenance &amp; Tool Trace</span>
+              <span class="badge badge-info" id="provenanceCount">0</span>
+            </summary>
+            <div id="provenanceList" class="provenance-list"></div>
+          </details>
         </div>
 
         <p class="disclaimer-box" id="disclaimerText"></p>

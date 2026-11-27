@@ -281,6 +281,46 @@ class TestOpenAICompat(unittest.TestCase):
         second_call_kwargs = mock_chat.call_args_list[1].kwargs
         self.assertIsNone(second_call_kwargs["tools"])
 
+    def test_whoisxml_live_integration_with_mock_http(self) -> None:
+        from unittest.mock import MagicMock, patch
+        from scamlens.intelligence.client import ThreatIntelligenceClient
+
+        fake_resp = MagicMock()
+        fake_resp.status_code = 200
+        fake_resp.json.return_value = {
+            "WhoisRecord": {
+                "createdDate": "2026-11-24T00:00:00Z",
+                "registrarName": "NameCheap, Inc.",
+            }
+        }
+        client = ThreatIntelligenceClient(use_mock=False)
+        client.whoisxml_api_key = "test_whoisxml_key"
+
+        with patch("scamlens.intelligence.client.httpx.Client") as mock_http:
+            mock_http.return_value.__enter__.return_value.get.return_value = fake_resp
+            findings = client.inspect_domain_whois_rdap("http://fake-sbi.xyz/login")
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].source, "whoisxml")
+        self.assertEqual(findings[0].metadata.get("registrar"), "NameCheap, Inc.")
+
+    def test_virustotal_live_error_does_not_fall_back_to_mock(self) -> None:
+        from unittest.mock import MagicMock, patch
+        from scamlens.intelligence.client import ThreatIntelligenceClient
+
+        fake_resp = MagicMock()
+        fake_resp.status_code = 429
+        client = ThreatIntelligenceClient(use_mock=False)
+        client.vt_api_key = "test_vt_key"
+
+        with patch("scamlens.intelligence.client.httpx.Client") as mock_http:
+            mock_http.return_value.__enter__.return_value.get.return_value = fake_resp
+            findings = client.check_virustotal_reputation("https://example.com")
+
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0].source, "virustotal_v3_offline")
+        self.assertNotIn("Simulated", findings[0].summary)
+
 
 if __name__ == "__main__":
     unittest.main()

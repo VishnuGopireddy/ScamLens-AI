@@ -71,7 +71,7 @@ def handle_investigate_request(
 ) -> Dict[str, Any]:
     """Execute investigation for an incoming payload dictionary."""
     stage = _parse_stage(payload.get("incident_stage", "PRE_ACTION"))
-    resolved_strategy = (strategy or payload.get("strategy") or "linear").lower()
+    resolved_strategy = (strategy or payload.get("strategy") or "orchestrator").lower()
 
     uploaded_images = payload.get("uploaded_images") or []
     explicit_paths = list(payload.get("image_paths", []) or [])
@@ -117,7 +117,7 @@ def handle_email_investigate_request(
     """Read, parse, and investigate an email from local dataset, Gmail, or raw MIME text."""
     source = str(payload.get("source") or "local").lower()
     stage = _parse_stage(payload.get("incident_stage", "PRE_ACTION"))
-    resolved_strategy = (strategy or payload.get("strategy") or "linear").lower()
+    resolved_strategy = (strategy or payload.get("strategy") or "orchestrator").lower()
 
     def _emit(stage_name: str, message: str, detail: Optional[str] = None, data: Optional[Dict[str, Any]] = None) -> None:
         if on_progress is None:

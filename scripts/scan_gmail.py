@@ -162,9 +162,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
         "--strategy",
         "--agent-architecture",
         dest="strategy",
-        choices=["linear", "orchestrator"],
-        default="linear",
-        help="Investigation execution strategy: deterministic 'linear' (default) or Phase 1 'orchestrator'",
+        choices=["orchestrator"],
+        default="orchestrator",
+        help="Investigation execution strategy (default: Phase 1 'orchestrator')",
     )
     parser.add_argument(
         "-v",

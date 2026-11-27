@@ -219,6 +219,7 @@ class TestGUIServerAndStreaming(unittest.TestCase):
             extracted_urls=["http://fake-bank.xyz"],
         )
         mock_reader = MagicMock()
+        mock_reader.get_profile_email.return_value = "user@gmail.com"
         mock_reader.list_message_summaries.return_value = [{"id": "msg_1"}, {"id": "msg_2"}]
         mock_reader.get_message.return_value = fake_msg_2
 
@@ -235,6 +236,8 @@ class TestGUIServerAndStreaming(unittest.TestCase):
             include_spam_trash=True,
         )
         events = _parse_sse(raw.decode("utf-8"))
+        listed_ev = next(data for name, data in events if name == "status" and data.get("stage") == "inbox_listed")
+        self.assertEqual(listed_ev["data"]["connected_email"], "user@gmail.com")
         email_results = [data for name, data in events if name == "email_result"]
         self.assertEqual(len(email_results), 1)
         self.assertEqual(email_results[0]["email"]["id"], "msg_2")
@@ -242,6 +245,18 @@ class TestGUIServerAndStreaming(unittest.TestCase):
         complete_ev = next(data for name, data in events if name == "scan_complete")
         self.assertEqual(complete_ev["new_count"], 1)
         self.assertEqual(complete_ev["total"], 2)
+
+    def test_clear_cache_endpoint_resets_caches(self) -> None:
+        from scamlens.api.routes.emails import _GMAIL_PROFILE_CACHE
+
+        _GMAIL_PROFILE_CACHE["dummy"] = "test@gmail.com"
+        status, _, raw = self._post_json("/api/v1/cache/clear", {})
+        self.assertEqual(status, 200)
+        data = json.loads(raw.decode("utf-8"))
+        self.assertEqual(data["status"], "cleared")
+        self.assertIn("health", data)
+        self.assertIn("gmail", data)
+        self.assertEqual(len(_GMAIL_PROFILE_CACHE), 0)
 
 
 if __name__ == "__main__":

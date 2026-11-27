@@ -37,7 +37,7 @@ from scamlens.rag.knowledge_base import RegionalKnowledgeBase
 
 logger = logging.getLogger(__name__)
 
-SUPPORTED_STRATEGIES = ("linear", "orchestrator")
+SUPPORTED_STRATEGIES = ("orchestrator",)
 
 
 def _deduplicate_evidence(items: List[EvidenceItem]) -> List[EvidenceItem]:
@@ -95,7 +95,7 @@ class ScamInvestigator:
         self,
         email_msg: EmailMessage,
         incident_stage: IncidentStage = IncidentStage.PRE_ACTION,
-        strategy: str = "linear",
+        strategy: str = "orchestrator",
         on_progress: ProgressCallback = None,
     ) -> InvestigationResult:
         """Run an end-to-end multi-evidence investigation on a parsed email."""
@@ -128,16 +128,10 @@ class ScamInvestigator:
             f"Email header forensics found {len(email_evidence)} indicator(s)",
             detail="; ".join(item.summary for item in email_evidence) if email_evidence else "No header spoofing or dangerous attachments flagged.",
         )
-        if strategy == "orchestrator":
-            return self._investigate_orchestrator(
-                submission,
-                extra_evidence=email_evidence,
-                email_msg=email_msg,
-                on_progress=on_progress,
-            )
-        return self._investigate_linear(
+        return self._investigate_orchestrator(
             submission,
             extra_evidence=email_evidence,
+            email_msg=email_msg,
             on_progress=on_progress,
         )
 
@@ -145,16 +139,12 @@ class ScamInvestigator:
         self,
         submission: InvestigationSubmission,
         extra_evidence: Optional[List[EvidenceItem]] = None,
-        strategy: str = "linear",
+        strategy: str = "orchestrator",
         on_progress: ProgressCallback = None,
     ) -> InvestigationResult:
-        """Run an end-to-end multi-evidence investigation using the selected strategy."""
+        """Run an end-to-end multi-evidence investigation using Phase 1 Orchestrator."""
         self._validate_strategy(strategy)
-        if strategy == "orchestrator":
-            return self._investigate_orchestrator(
-                submission, extra_evidence=extra_evidence, on_progress=on_progress
-            )
-        return self._investigate_linear(
+        return self._investigate_orchestrator(
             submission, extra_evidence=extra_evidence, on_progress=on_progress
         )
 
@@ -338,13 +328,13 @@ class ScamInvestigator:
         )
         return result
 
-    def _investigate_linear(
+    def _run_deterministic_fallback(
         self,
         submission: InvestigationSubmission,
         extra_evidence: Optional[List[EvidenceItem]] = None,
         on_progress: ProgressCallback = None,
     ) -> InvestigationResult:
-        """Deterministic 1-pass linear investigation pipeline."""
+        """Internal deterministic fallback checks when the orchestrator LLM is unavailable."""
         cleaned_text, detected_urls, findings, provenance = self._run_common_pre_checks(
             submission, extra_evidence=extra_evidence, on_progress=on_progress
         )
@@ -458,7 +448,7 @@ class ScamInvestigator:
         email_msg: Optional[EmailMessage] = None,
         on_progress: ProgressCallback = None,
     ) -> InvestigationResult:
-        """Phase 1: 2-Turn Parallel Fan-Out / Fan-In Tool Orchestrator with linear fallback."""
+        """Phase 1: 2-Turn Parallel Fan-Out / Fan-In Tool Orchestrator with offline deterministic fallback."""
         cleaned_text, detected_urls, findings, provenance = self._run_common_pre_checks(
             submission, extra_evidence=extra_evidence, on_progress=on_progress
         )
@@ -475,13 +465,13 @@ class ScamInvestigator:
             self._emit(
                 on_progress,
                 "orchestrator_fallback",
-                "Configured AI client does not support tool calling; falling back to linear pipeline.",
+                "Configured AI client does not support tool calling; running deterministic fallback checks.",
             )
             provenance.append({
-                "strategy": "orchestrator_fallback_to_linear",
+                "strategy": "orchestrator_deterministic_fallback",
                 "reason": "Configured AI client does not support tool calling loop.",
             })
-            return self._investigate_linear(
+            return self._run_deterministic_fallback(
                 submission, extra_evidence=extra_evidence, on_progress=on_progress
             )
 
@@ -515,18 +505,18 @@ class ScamInvestigator:
                 else None,
             )
         except ModelInferenceError as exc:
-            logger.warning("Phase 1 orchestrator LLM unreachable (%s); falling back to linear pipeline.", exc)
+            logger.warning("Phase 1 orchestrator LLM unreachable (%s); running deterministic fallback checks.", exc)
             self._emit(
                 on_progress,
                 "orchestrator_fallback",
-                "AI endpoint unreachable; automatically falling back to deterministic linear pipeline.",
+                "AI endpoint unreachable; automatically running deterministic fallback checks.",
                 detail=str(exc),
             )
-            fallback = self._investigate_linear(
+            fallback = self._run_deterministic_fallback(
                 submission, extra_evidence=extra_evidence, on_progress=on_progress
             )
             fallback.provenance.append({
-                "strategy": "orchestrator_fallback_to_linear",
+                "strategy": "orchestrator_deterministic_fallback",
                 "reason": str(exc),
             })
             return fallback
@@ -539,13 +529,13 @@ class ScamInvestigator:
             self._emit(
                 on_progress,
                 "orchestrator_fallback",
-                "AI provider running in simulated offline mode; running deterministic linear checks instead.",
+                "AI provider running in simulated offline mode; running deterministic fallback checks instead.",
             )
-            fallback = self._investigate_linear(
+            fallback = self._run_deterministic_fallback(
                 submission, extra_evidence=extra_evidence, on_progress=on_progress
             )
             fallback.provenance.append({
-                "strategy": "orchestrator_fallback_to_linear",
+                "strategy": "orchestrator_deterministic_fallback",
                 "reason": "AI provider returned simulated offline response with no tool calls.",
             })
             return fallback
